@@ -7,6 +7,8 @@ import { MediaKit } from "./pages/MediaKit.tsx"
 import { Terminos } from "./pages/Terminos.tsx"
 import { Privacidad } from "./pages/Privacidad.tsx"
 import { Cookies } from "./pages/Cookies.tsx"
+import { SuscripcionConfirma } from "./pages/SuscripcionConfirma.tsx"
+import { SuscripcionBienvenida } from "./pages/SuscripcionBienvenida.tsx"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -17,6 +19,8 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/terminos" element={<Terminos />} />
         <Route path="/privacidad" element={<Privacidad />} />
         <Route path="/cookies" element={<Cookies />} />
+        <Route path="/suscripcion/confirma" element={<SuscripcionConfirma />} />
+        <Route path="/suscripcion/bienvenida" element={<SuscripcionBienvenida />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

@@ -1,34 +1,50 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { Check, Loader2, ArrowRight } from "lucide-react"
+import { Loader2, ArrowRight } from "lucide-react"
 import { FadeIn } from "@/components/FadeIn"
 import { newsletter } from "@/content/site"
 
 const schema = z.object({
   email: z.string().email("Introduce un email válido."),
+  consent: z.literal(true, {
+    message: "Debes aceptar la política de privacidad.",
+  }),
 })
 type FormValues = z.infer<typeof schema>
 
-type Status = "idle" | "loading" | "success" | "error"
+type Status = "idle" | "loading" | "error"
 
 export function Newsletter() {
+  const navigate = useNavigate()
   const [status, setStatus] = useState<Status>("idle")
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(schema) })
 
-  const onSubmit = async (_values: FormValues) => {
-    void _values
+  const onSubmit = async (values: FormValues) => {
     setStatus("loading")
+    setErrorMsg(null)
     try {
-      // TODO: integrate with Beehiiv / Resend / ConvertKit
-      await new Promise((r) => setTimeout(r, 800))
-      setStatus("success")
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: values.email, consent: values.consent }),
+      })
+      if (!res.ok) {
+        const data = (await res.json().catch(() => ({}))) as { error?: string }
+        setErrorMsg(data.error ?? "Algo salió mal. Intenta de nuevo.")
+        setStatus("error")
+        return
+      }
+      navigate("/suscripcion/confirma")
     } catch {
+      setErrorMsg("Error de red. Intenta de nuevo.")
       setStatus("error")
     }
   }
@@ -64,58 +80,71 @@ export function Newsletter() {
         </FadeIn>
 
         <FadeIn delay={0.3}>
-          {status === "success" ? (
-            <div className="mx-auto max-w-md h-14 rounded-full bg-emerald-500/10 border border-emerald-400/30 flex items-center justify-center gap-3 text-emerald-300">
-              <Check className="h-5 w-5" aria-hidden="true" />
-              <span>{newsletter.success}</span>
-            </div>
-          ) : (
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="mx-auto max-w-md"
-              noValidate
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="mx-auto max-w-md"
+            noValidate
+          >
+            <div
+              className={`relative h-14 rounded-full bg-black/40 border ${
+                errors.email || status === "error"
+                  ? "border-red-400/60"
+                  : "border-white/10 focus-within:border-white/30"
+              } transition-colors`}
             >
-              <div
-                className={`relative h-14 rounded-full bg-black/40 border ${
-                  errors.email || status === "error"
-                    ? "border-red-400/60"
-                    : "border-white/10 focus-within:border-white/30"
-                } transition-colors`}
+              <input
+                type="email"
+                placeholder={newsletter.placeholder}
+                aria-label="Email"
+                disabled={status === "loading"}
+                {...register("email")}
+                className="absolute inset-0 h-full w-full bg-transparent pl-6 pr-36 text-sm text-white placeholder:text-zinc-500 focus:outline-none rounded-full"
+              />
+              <button
+                type="submit"
+                disabled={status === "loading"}
+                className="absolute right-1.5 top-1.5 bottom-1.5 px-6 rounded-full bg-white text-black text-sm font-medium hover:bg-zinc-200 transition-colors inline-flex items-center gap-2 disabled:opacity-60"
               >
-                <input
-                  type="email"
-                  placeholder={newsletter.placeholder}
-                  aria-label="Email"
-                  disabled={status === "loading"}
-                  {...register("email")}
-                  className="absolute inset-0 h-full w-full bg-transparent pl-6 pr-36 text-sm text-white placeholder:text-zinc-500 focus:outline-none rounded-full"
-                />
-                <button
-                  type="submit"
-                  disabled={status === "loading"}
-                  className="absolute right-1.5 top-1.5 bottom-1.5 px-6 rounded-full bg-white text-black text-sm font-medium hover:bg-zinc-200 transition-colors inline-flex items-center gap-2 disabled:opacity-60"
+                {status === "loading" ? (
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                ) : (
+                  <>
+                    {newsletter.cta}
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </>
+                )}
+              </button>
+            </div>
+            {errors.email && (
+              <p className="mt-3 text-xs text-red-400">{errors.email.message}</p>
+            )}
+            {errorMsg && !errors.email && (
+              <p className="mt-3 text-xs text-red-400">{errorMsg}</p>
+            )}
+            <label className="mt-5 flex items-start gap-3 text-xs text-zinc-500 text-left cursor-pointer">
+              <input
+                type="checkbox"
+                {...register("consent")}
+                className="mt-0.5 h-4 w-4 rounded border-white/20 bg-black/40 accent-white cursor-pointer"
+              />
+              <span>
+                Acepto recibir la newsletter y la{" "}
+                <a
+                  href="/privacidad"
+                  className="underline decoration-zinc-600 hover:decoration-white"
                 >
-                  {status === "loading" ? (
-                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                  ) : (
-                    <>
-                      {newsletter.cta}
-                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                    </>
-                  )}
-                </button>
-              </div>
-              {errors.email && (
-                <p className="mt-3 text-xs text-red-400">{errors.email.message}</p>
-              )}
-              {status === "error" && !errors.email && (
-                <p className="mt-3 text-xs text-red-400">
-                  Algo salió mal. Intenta de nuevo.
-                </p>
-              )}
-              <p className="mt-5 text-xs text-zinc-600">{newsletter.finePrint}</p>
-            </form>
-          )}
+                  política de privacidad
+                </a>
+                .
+              </span>
+            </label>
+            {errors.consent && (
+              <p className="mt-2 text-xs text-red-400 text-left">
+                {errors.consent.message}
+              </p>
+            )}
+            <p className="mt-4 text-xs text-zinc-600">{newsletter.finePrint}</p>
+          </form>
         </FadeIn>
       </div>
     </section>
