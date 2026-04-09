@@ -31,16 +31,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Debug — confirm secrets are visible (does not print values)
-        env:
-          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-          IG_BUSINESS_ACCOUNT_ID: ${{ secrets.IG_BUSINESS_ACCOUNT_ID }}
-        run: |
-          echo "IG_ACCESS_TOKEN set? ${IG_ACCESS_TOKEN:+yes}${IG_ACCESS_TOKEN:-NO}"
-          echo "IG_ACCESS_TOKEN length: ${#IG_ACCESS_TOKEN}"
-          echo "IG_BUSINESS_ACCOUNT_ID set? ${IG_BUSINESS_ACCOUNT_ID:+yes}${IG_BUSINESS_ACCOUNT_ID:-NO}"
-          echo "IG_BUSINESS_ACCOUNT_ID length: ${#IG_BUSINESS_ACCOUNT_ID}"
-
       - name: Fetch content
         env:
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
