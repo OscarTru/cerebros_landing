@@ -10,6 +10,73 @@ import { dynamicContent, type IgTopReel } from "@/content/dynamic"
 const CONTACT_EMAIL = "contacto@cerebrosesponjosos.com"
 const INSTAGRAM_PROFILE = "https://instagram.com/cerebrosesponjosos"
 
+interface Package {
+  tier: string
+  title: string
+  tagline: string
+  items: string[]
+  delivery: string
+  featured?: boolean
+}
+
+const PACKAGES: Package[] = [
+  {
+    tier: "Básico",
+    title: "Mención",
+    tagline: "Para marcas que quieren empezar",
+    items: [
+      "1 reel de 60–90s con mención de marca",
+      "Integración sutil en copy/hook",
+      "1 publicación en Instagram feed",
+      "Crédito en stories (24h)",
+    ],
+    delivery: "Entrega en 5 días hábiles",
+  },
+  {
+    tier: "Estándar",
+    title: "Integración",
+    tagline: "Para colaboraciones puntuales",
+    items: [
+      "3 reels de formato único",
+      "Mención explícita en hook + copy + CTA",
+      "1 carousel + 3 stories con marca",
+      "1 post en feed dedicado",
+      "Duración: campaña 7 días",
+    ],
+    delivery: "Entrega en 10 días hábiles",
+    featured: true,
+  },
+  {
+    tier: "Premium",
+    title: "Serie",
+    tagline: "Para lanzamientos o campañas grandes",
+    items: [
+      "7–15 reels (serie completa)",
+      "Posicionamiento de marca en narrativa",
+      "Carousels + stories + TikToks",
+      "Assets diseñados custom (gráficas, overlays)",
+      "1 post de recap/resumen",
+      "Análisis post-campaña (métricas)",
+      "Duración: campaña 15–30 días",
+    ],
+    delivery: "Entrega en 20 días hábiles",
+  },
+  {
+    tier: "Custom",
+    title: "Arquitectura Completa",
+    tagline: "Para partnerships estratégicos",
+    items: [
+      "Diseño end-to-end de campaña",
+      "Múltiples series o formatos",
+      "Content strategy personalizada",
+      "Reuniones de alineación (2–3)",
+      "Métricas y reportes semanales",
+      "Contacto directo + soporte post-lanzamiento",
+    ],
+    delivery: "Duración y deliverables a medida",
+  },
+]
+
 function formatNumber(n: number | null | undefined): string {
   if (n == null) return "—"
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
@@ -216,33 +283,9 @@ export function MediaKit() {
                 </h2>
               </FadeIn>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {[
-                  {
-                    title: "Reel patrocinado",
-                    body: "Una pieza educativa con tu marca integrada de forma orgánica — el formato que mejor funciona con nuestra audiencia.",
-                  },
-                  {
-                    title: "Carrusel educativo",
-                    body: "Contenido largo en slides, ideal para explicar productos o campañas con profundidad.",
-                  },
-                  {
-                    title: "Menciones en YouTube",
-                    body: "Integración natural dentro de los episodios largos del canal.",
-                  },
-                  {
-                    title: "Newsletter patrocinado",
-                    body: "Colocación dedicada en nuestra newsletter semanal a suscriptores de alta intención.",
-                  },
-                ].map((f, i) => (
-                  <FadeIn key={f.title} delay={i * 0.05}>
-                    <div className="rounded-2xl border border-white/[0.08] bg-[#111113] p-7 h-full">
-                      <h3 className="text-lg font-medium text-white mb-2">
-                        {f.title}
-                      </h3>
-                      <p className="text-sm text-zinc-400 leading-relaxed">
-                        {f.body}
-                      </p>
-                    </div>
+                {PACKAGES.map((p, i) => (
+                  <FadeIn key={p.title} delay={i * 0.05}>
+                    <PackageCard pkg={p} />
                   </FadeIn>
                 ))}
               </div>
@@ -291,6 +334,53 @@ export function MediaKit() {
         <Footer />
       </div>
     </LazyMotion>
+  )
+}
+
+function PackageCard({ pkg }: { pkg: Package }) {
+  return (
+    <div
+      className={`relative flex h-full flex-col rounded-2xl border p-7 ${
+        pkg.featured
+          ? "border-white/25 bg-white/[0.04]"
+          : "border-white/[0.08] bg-[#111113]"
+      }`}
+    >
+      {pkg.featured && (
+        <div className="absolute -top-3 right-6 px-3 py-1 rounded-full bg-white text-black text-[10px] font-mono uppercase tracking-wider">
+          Más elegido
+        </div>
+      )}
+      <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500 mb-2">
+        {pkg.tier}
+      </p>
+      <h3
+        className="font-serif text-white leading-tight mb-2"
+        style={{ fontSize: "clamp(1.5rem, 2.2vw, 2rem)" }}
+      >
+        {pkg.title}
+      </h3>
+      <p className="text-sm text-zinc-400 mb-6">{pkg.tagline}</p>
+      <ul className="flex-1 space-y-2.5 mb-6">
+        {pkg.items.map((item) => (
+          <li key={item} className="flex gap-3 text-sm text-zinc-300 leading-snug">
+            <span aria-hidden="true" className="text-zinc-600 mt-[1px]">
+              ·
+            </span>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+      <p className="text-xs text-zinc-500 mb-5">{pkg.delivery}</p>
+      <Button asChild size="md" variant={pkg.featured ? "primary" : "ghost"}>
+        <a
+          href={`mailto:${CONTACT_EMAIL}?subject=Cotización · ${pkg.title}`}
+        >
+          Solicita una cotización
+          <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+        </a>
+      </Button>
+    </div>
   )
 }
 
