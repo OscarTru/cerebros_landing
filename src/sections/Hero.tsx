@@ -1,4 +1,5 @@
 import { motion } from "framer-motion"
+import { Link } from "react-router-dom"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { FadeIn } from "@/components/FadeIn"
@@ -27,29 +28,6 @@ export function Hero() {
       </div>
 
       <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto">
-        {/* Logo */}
-        <motion.div
-          className="mb-12 relative w-40 h-40 sm:w-48 sm:h-48 flex items-center justify-center"
-          animate={{ y: [0, -8, 0] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 rounded-full"
-            style={{
-              background:
-                "radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%)",
-              filter: "blur(20px)",
-            }}
-          />
-          <img
-            src="/assets/brain.png"
-            alt="Cerebros Esponjosos logo"
-            className="relative w-full h-full object-contain"
-            style={{ mixBlendMode: "screen" }}
-          />
-        </motion.div>
-
         {/* Eyebrow */}
         <FadeIn>
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.02] text-xs font-medium text-zinc-400 mb-8">
@@ -97,10 +75,10 @@ export function Hero() {
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Button>
             <Button asChild size="lg" variant="ghost">
-              <a href={hero.ctaSecondary.href}>
+              <Link to={hero.ctaSecondary.href}>
                 {hero.ctaSecondary.label}
                 <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-              </a>
+              </Link>
             </Button>
           </div>
         </FadeIn>

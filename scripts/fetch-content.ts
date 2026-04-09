@@ -27,20 +27,48 @@ interface IgPost {
   timestamp: string
 }
 
+interface IgStats {
+  username: string
+  name: string | null
+  profilePictureUrl: string | null
+  followersCount: number
+  mediaCount: number
+  reach30d: number | null
+  profileViews30d: number | null
+  accountsEngaged30d: number | null
+  topReels: Array<{
+    id: string
+    permalink: string
+    thumbnailUrl: string | null
+    caption: string
+    views: number | null
+    likes: number | null
+    comments: number | null
+    shares: number | null
+    saved: number | null
+  }>
+}
+
 interface ContentCache {
   latestVideo: LatestVideo | null
   instagramPosts: IgPost[]
+  instagramStats: IgStats | null
   fetchedAt: string | null
 }
 
 function readCache(): ContentCache {
-  if (!existsSync(OUTPUT)) {
-    return { latestVideo: null, instagramPosts: [], fetchedAt: null }
+  const empty: ContentCache = {
+    latestVideo: null,
+    instagramPosts: [],
+    instagramStats: null,
+    fetchedAt: null,
   }
+  if (!existsSync(OUTPUT)) return empty
   try {
-    return JSON.parse(readFileSync(OUTPUT, "utf8")) as ContentCache
+    const parsed = JSON.parse(readFileSync(OUTPUT, "utf8")) as Partial<ContentCache>
+    return { ...empty, ...parsed }
   } catch {
-    return { latestVideo: null, instagramPosts: [], fetchedAt: null }
+    return empty
   }
 }
 
@@ -107,6 +135,127 @@ async function fetchInstagram(): Promise<IgPost[]> {
   }))
 }
 
+async function fetchInstagramStats(): Promise<IgStats> {
+  console.log("→ Fetching Instagram account + insights…")
+  if (!IG_TOKEN) throw new Error("Missing IG_ACCESS_TOKEN env var")
+  const base = "https://graph.instagram.com/v21.0"
+
+  // 1. Account profile
+  const profRes = await fetch(
+    `${base}/me?fields=username,name,profile_picture_url,followers_count,media_count&access_token=${IG_TOKEN}`
+  )
+  if (!profRes.ok) {
+    const body = await profRes.text()
+    throw new Error(`IG profile ${profRes.status}: ${body.slice(0, 200)}`)
+  }
+  const prof = (await profRes.json()) as {
+    username: string
+    name?: string
+    profile_picture_url?: string
+    followers_count: number
+    media_count: number
+  }
+
+  // 2. 30-day account insights (best-effort)
+  const since = Math.floor(Date.now() / 1000) - 30 * 24 * 60 * 60
+  const until = Math.floor(Date.now() / 1000)
+  let reach30d: number | null = null
+  let profileViews30d: number | null = null
+  let accountsEngaged30d: number | null = null
+  try {
+    const metrics = "reach,profile_views,accounts_engaged"
+    const insRes = await fetch(
+      `${base}/me/insights?metric=${metrics}&period=day&metric_type=total_value&since=${since}&until=${until}&access_token=${IG_TOKEN}`
+    )
+    if (insRes.ok) {
+      const ins = (await insRes.json()) as {
+        data?: Array<{ name: string; total_value?: { value: number } }>
+      }
+      for (const m of ins.data ?? []) {
+        const v = m.total_value?.value ?? null
+        if (m.name === "reach") reach30d = v
+        if (m.name === "profile_views") profileViews30d = v
+        if (m.name === "accounts_engaged") accountsEngaged30d = v
+      }
+    } else {
+      console.warn(`  ⚠ account insights ${insRes.status} — skipping`)
+    }
+  } catch (e) {
+    console.warn(`  ⚠ account insights failed: ${(e as Error).message}`)
+  }
+
+  // 3. Top reels by views — fetch last 20 reels and rank
+  const mediaRes = await fetch(
+    `${base}/me/media?fields=id,caption,media_type,media_product_type,permalink,thumbnail_url,media_url&limit=25&access_token=${IG_TOKEN}`
+  )
+  if (!mediaRes.ok) {
+    const body = await mediaRes.text()
+    throw new Error(`IG media ${mediaRes.status}: ${body.slice(0, 200)}`)
+  }
+  const mediaJson = (await mediaRes.json()) as {
+    data?: Array<{
+      id: string
+      caption?: string
+      media_type: string
+      media_product_type?: string
+      permalink: string
+      thumbnail_url?: string
+      media_url: string
+    }>
+  }
+  const reels = (mediaJson.data ?? []).filter(
+    (m) => m.media_type === "VIDEO" || m.media_product_type === "REELS"
+  )
+
+  const withInsights = await Promise.all(
+    reels.slice(0, 12).map(async (r) => {
+      try {
+        const res = await fetch(
+          `${base}/${r.id}/insights?metric=views,likes,comments,shares,saved&access_token=${IG_TOKEN}`
+        )
+        if (!res.ok) return { r, metrics: {} as Record<string, number> }
+        const j = (await res.json()) as {
+          data?: Array<{ name: string; values?: Array<{ value: number }> }>
+        }
+        const metrics: Record<string, number> = {}
+        for (const m of j.data ?? []) {
+          metrics[m.name] = m.values?.[0]?.value ?? 0
+        }
+        return { r, metrics }
+      } catch {
+        return { r, metrics: {} as Record<string, number> }
+      }
+    })
+  )
+
+  const topReels = withInsights
+    .sort((a, b) => (b.metrics.views ?? 0) - (a.metrics.views ?? 0))
+    .slice(0, 3)
+    .map(({ r, metrics }) => ({
+      id: r.id,
+      permalink: r.permalink,
+      thumbnailUrl: r.thumbnail_url ?? r.media_url ?? null,
+      caption: r.caption ?? "",
+      views: metrics.views ?? null,
+      likes: metrics.likes ?? null,
+      comments: metrics.comments ?? null,
+      shares: metrics.shares ?? null,
+      saved: metrics.saved ?? null,
+    }))
+
+  return {
+    username: prof.username,
+    name: prof.name ?? null,
+    profilePictureUrl: prof.profile_picture_url ?? null,
+    followersCount: prof.followers_count,
+    mediaCount: prof.media_count,
+    reach30d,
+    profileViews30d,
+    accountsEngaged30d,
+    topReels,
+  }
+}
+
 async function main() {
   const cache = readCache()
   const next: ContentCache = { ...cache, fetchedAt: new Date().toISOString() }
@@ -125,6 +274,16 @@ async function main() {
   } catch (err) {
     console.warn(`  ⚠ Instagram failed, keeping cache: ${(err as Error).message}`)
     next.instagramPosts = cache.instagramPosts
+  }
+
+  try {
+    next.instagramStats = await fetchInstagramStats()
+    console.log(
+      `  ✓ IG stats: ${next.instagramStats.followersCount} followers, ${next.instagramStats.topReels.length} top reels`
+    )
+  } catch (err) {
+    console.warn(`  ⚠ IG stats failed, keeping cache: ${(err as Error).message}`)
+    next.instagramStats = cache.instagramStats
   }
 
   mkdirSync(dirname(OUTPUT), { recursive: true })

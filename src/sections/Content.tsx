@@ -1,8 +1,6 @@
-import { ArrowUpRight, Play, Camera, BookOpen, AtSign } from "lucide-react"
+import { ArrowUpRight, Play, BookOpen } from "lucide-react"
 import { FadeIn } from "@/components/FadeIn"
 import { dynamicContent, type IgPost } from "@/content/dynamic"
-
-const INSTAGRAM_PROFILE = "https://instagram.com/cerebrosesponjosos"
 
 export function Content() {
   const { latestVideo, instagramPosts } = dynamicContent
@@ -26,14 +24,16 @@ export function Content() {
         </FadeIn>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-          {/* YouTube — 8 cols, row-span-2 */}
-          <FadeIn className="md:col-span-8 md:row-span-2">
-            <YouTubeCard video={latestVideo} />
-          </FadeIn>
+          {/* Reels — 2 últimos, tall 9:16 */}
+          {instagramPosts.slice(0, 2).map((p, i) => (
+            <FadeIn key={p.id} delay={i * 0.05} className="md:col-span-4">
+              <ReelCard post={p} />
+            </FadeIn>
+          ))}
 
-          {/* Instagram — 4 cols, row-span-2 */}
-          <FadeIn delay={0.1} className="md:col-span-4 md:row-span-2">
-            <InstagramCard posts={instagramPosts} />
+          {/* YouTube short — tall 9:16 */}
+          <FadeIn delay={0.1} className="md:col-span-4">
+            <YouTubeShortCard video={latestVideo} />
           </FadeIn>
 
           {/* Blog — full width */}
@@ -46,10 +46,43 @@ export function Content() {
   )
 }
 
-function YouTubeCard({ video }: { video: typeof dynamicContent.latestVideo }) {
+function ReelCard({ post }: { post: IgPost }) {
+  const thumb = post.thumbnailUrl ?? post.mediaUrl
+  const alt = post.caption ? post.caption.slice(0, 100) : "Instagram reel"
+  return (
+    <a
+      href={post.permalink}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group block h-full rounded-2xl border border-white/[0.08] bg-[#111113] overflow-hidden hover:border-white/[0.2] transition-all"
+    >
+      <div className="relative aspect-[9/16] overflow-hidden">
+        <img
+          src={thumb}
+          alt={alt}
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-700"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+        <div className="absolute top-5 left-5 text-[10px] font-mono uppercase tracking-[0.2em] text-white/80">
+          Instagram · Reel
+        </div>
+        <div className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white text-black flex items-center justify-center group-hover:scale-110 transition-transform">
+          <Play className="h-4 w-4 fill-black" aria-hidden="true" />
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 p-5">
+          <p className="text-sm text-white/90 line-clamp-2">{alt}</p>
+        </div>
+      </div>
+    </a>
+  )
+}
+
+function YouTubeShortCard({ video }: { video: typeof dynamicContent.latestVideo }) {
   const href = video?.url ?? "#"
   const title = video?.title ?? "Próximamente"
-  const thumb = video?.thumbnail
+  // Shorts: use hqdefault (480x360) — works reliably
+  const thumb = video ? `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg` : null
 
   return (
     <a
@@ -58,19 +91,14 @@ function YouTubeCard({ video }: { video: typeof dynamicContent.latestVideo }) {
       rel={video ? "noopener noreferrer" : undefined}
       className="group block h-full rounded-2xl border border-white/[0.08] bg-[#111113] overflow-hidden hover:border-white/[0.2] transition-all"
     >
-      <div className="relative aspect-[16/10] overflow-hidden">
+      <div className="relative aspect-[9/16] overflow-hidden">
         {thumb ? (
           <img
             src={thumb}
             alt={title}
             loading="eager"
-            className="absolute inset-0 h-full w-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-[1.02] transition-all duration-700"
-            onError={(e) => {
-              const img = e.currentTarget
-              if (video && img.src.includes("maxresdefault")) {
-                img.src = `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`
-              }
-            }}
+            /* hqdefault has black bars — scale up + cover crops them */
+            className="absolute inset-0 h-full w-full object-cover scale-[1.8] opacity-85 group-hover:opacity-100 group-hover:scale-[1.85] transition-all duration-700"
           />
         ) : (
           <div
@@ -78,85 +106,23 @@ function YouTubeCard({ video }: { video: typeof dynamicContent.latestVideo }) {
             aria-hidden="true"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-        <div className="absolute top-6 right-6 w-14 h-14 rounded-full bg-white text-black flex items-center justify-center group-hover:scale-110 transition-transform">
-          <Play className="h-5 w-5 fill-black" aria-hidden="true" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
+        <div className="absolute top-5 left-5 text-[10px] font-mono uppercase tracking-[0.2em] text-white/80">
+          YouTube · Short
         </div>
-        <div className="absolute bottom-0 left-0 right-0 p-8">
-          <p className="text-xs font-mono uppercase tracking-[0.2em] text-zinc-400 mb-3">
+        <div className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white text-black flex items-center justify-center group-hover:scale-110 transition-transform">
+          <Play className="h-4 w-4 fill-black" aria-hidden="true" />
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 p-5">
+          <p className="text-xs font-mono uppercase tracking-[0.2em] text-zinc-400 mb-2">
             Último episodio
           </p>
-          <h3
-            className="font-serif text-white leading-tight"
-            style={{ fontSize: "clamp(1.5rem, 2.5vw, 2.25rem)" }}
-          >
+          <h3 className="font-serif text-white leading-tight text-lg line-clamp-2">
             {title}
           </h3>
         </div>
       </div>
     </a>
-  )
-}
-
-function InstagramCard({ posts }: { posts: IgPost[] }) {
-  return (
-    <div className="flex h-full flex-col rounded-2xl border border-white/[0.08] bg-[#111113] overflow-hidden">
-      <div className="flex items-center justify-between px-6 pt-6 pb-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-white/5 border border-white/10">
-            <AtSign className="h-4 w-4" aria-hidden="true" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-white leading-none">Instagram</p>
-            <p className="text-xs text-zinc-500 mt-1">@cerebrosesponjosos</p>
-          </div>
-        </div>
-      </div>
-
-      {posts.length > 0 ? (
-        <div className="flex-1 flex flex-col gap-1 px-1 pb-1">
-          {posts.map((p) => (
-            <a
-              key={p.id}
-              href={p.permalink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative block flex-1 overflow-hidden rounded-xl"
-            >
-              <img
-                src={p.thumbnailUrl ?? p.mediaUrl}
-                alt={p.caption ? p.caption.slice(0, 100) : "Instagram post"}
-                loading="lazy"
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-              />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
-              {p.mediaType !== "IMAGE" && (
-                <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/60 text-[10px] text-white uppercase tracking-wider">
-                  {p.mediaType === "VIDEO" ? "Video" : "Carrusel"}
-                </div>
-              )}
-            </a>
-          ))}
-        </div>
-      ) : (
-        <div className="flex-1 flex items-center justify-center px-6 pb-6">
-          <div className="text-center">
-            <Camera className="h-8 w-8 text-zinc-600 mx-auto mb-3" aria-hidden="true" />
-            <p className="text-sm text-zinc-500">Próximamente</p>
-          </div>
-        </div>
-      )}
-
-      <a
-        href={INSTAGRAM_PROFILE}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center justify-between px-6 py-4 border-t border-white/[0.06] text-sm text-zinc-300 hover:text-white transition-colors"
-      >
-        <span>Ver comunidad</span>
-        <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-      </a>
-    </div>
   )
 }
 

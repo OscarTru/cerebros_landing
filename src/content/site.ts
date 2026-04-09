@@ -26,7 +26,7 @@ export const hero = {
   subcopy:
     "Convertimos la neurología en algo que puedes entender, recordar y aplicar.",
   ctaPrimary: { label: "Conócenos", target: "#nosotros" },
-  ctaSecondary: { label: "Ver último episodio", href: "#contenido" },
+  ctaSecondary: { label: "Colaboraciones", href: "/media-kit" },
 }
 
 export const manifestoText =

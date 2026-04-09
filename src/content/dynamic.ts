@@ -20,9 +20,34 @@ export interface IgPost {
   timestamp: string
 }
 
+export interface IgTopReel {
+  id: string
+  permalink: string
+  thumbnailUrl: string | null
+  caption: string
+  views: number | null
+  likes: number | null
+  comments: number | null
+  shares: number | null
+  saved: number | null
+}
+
+export interface IgStats {
+  username: string
+  name: string | null
+  profilePictureUrl: string | null
+  followersCount: number
+  mediaCount: number
+  reach30d: number | null
+  profileViews30d: number | null
+  accountsEngaged30d: number | null
+  topReels: IgTopReel[]
+}
+
 export interface DynamicContent {
   latestVideo: LatestVideo | null
   instagramPosts: IgPost[]
+  instagramStats: IgStats | null
   fetchedAt: string | null
 }
 
