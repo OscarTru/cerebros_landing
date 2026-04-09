@@ -8,7 +8,6 @@ const YT_CHANNEL_ID = "UC_0iMtxeDkSRB3KjVKsonUA"
 const YT_RSS = `https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL_ID}`
 
 const IG_TOKEN = process.env.IG_ACCESS_TOKEN
-const IG_BUSINESS_ID = process.env.IG_BUSINESS_ACCOUNT_ID
 
 interface LatestVideo {
   id: string
@@ -73,17 +72,17 @@ async function fetchYouTube(): Promise<LatestVideo | null> {
 }
 
 async function fetchInstagram(): Promise<IgPost[]> {
-  console.log("→ Fetching Instagram Graph API…")
-  if (!IG_TOKEN || !IG_BUSINESS_ID) {
-    throw new Error("Missing IG_ACCESS_TOKEN or IG_BUSINESS_ACCOUNT_ID env vars")
+  console.log("→ Fetching Instagram API (graph.instagram.com)…")
+  if (!IG_TOKEN) {
+    throw new Error("Missing IG_ACCESS_TOKEN env var")
   }
   const fields =
     "id,caption,media_type,media_url,permalink,thumbnail_url,timestamp"
-  const url = `https://graph.facebook.com/v19.0/${IG_BUSINESS_ID}/media?fields=${fields}&limit=3&access_token=${IG_TOKEN}`
+  const url = `https://graph.instagram.com/v21.0/me/media?fields=${fields}&limit=3&access_token=${IG_TOKEN}`
   const res = await fetch(url)
   if (!res.ok) {
     const body = await res.text()
-    throw new Error(`IG Graph API ${res.status}: ${body.slice(0, 200)}`)
+    throw new Error(`IG API ${res.status}: ${body.slice(0, 200)}`)
   }
   const json = (await res.json()) as {
     data?: Array<{

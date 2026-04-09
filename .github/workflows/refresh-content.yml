@@ -34,7 +34,6 @@ jobs:
       - name: Fetch content
         env:
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-          IG_BUSINESS_ACCOUNT_ID: ${{ secrets.IG_BUSINESS_ACCOUNT_ID }}
         run: npm run fetch:content
 
       - name: Commit changes if any
