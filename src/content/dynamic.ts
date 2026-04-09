@@ -41,6 +41,16 @@ export interface IgStats {
   reach30d: number | null
   profileViews30d: number | null
   accountsEngaged30d: number | null
+  reelsSampled: number
+  avgViewsPerReel: number | null
+  avgLikesPerReel: number | null
+  avgCommentsPerReel: number | null
+  avgEngagementRate: number | null
+  totalReelViews: number
+  totalReelLikes: number
+  totalReelComments: number
+  totalReelShares: number
+  totalReelSaves: number
   topReels: IgTopReel[]
 }
 

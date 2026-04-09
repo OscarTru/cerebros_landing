@@ -21,22 +21,29 @@ export function MediaKit() {
   const stats = dynamicContent.instagramStats
   const reels = stats?.topReels ?? []
 
-  // Engagement rate = (avg likes+comments of top reels) / followers
-  const engagementRate = (() => {
-    if (!stats || stats.followersCount === 0 || reels.length === 0) return null
-    const totals = reels.reduce(
-      (acc, r) => acc + (r.likes ?? 0) + (r.comments ?? 0) + (r.shares ?? 0) + (r.saved ?? 0),
-      0
-    )
-    const avg = totals / reels.length
-    return (avg / stats.followersCount) * 100
-  })()
-
   const metrics = [
     {
       label: "Seguidores",
       value: formatNumber(stats?.followersCount ?? null),
-      sub: "@cerebrosesponjosos",
+      sub: "@cerebros.esponjosos",
+    },
+    {
+      label: "Engagement rate",
+      value:
+        stats?.avgEngagementRate != null
+          ? `${stats.avgEngagementRate.toFixed(2)}%`
+          : "—",
+      sub: `últimos ${stats?.reelsSampled ?? 0} reels`,
+    },
+    {
+      label: "Views promedio",
+      value: formatNumber(stats?.avgViewsPerReel ?? null),
+      sub: "por reel",
+    },
+    {
+      label: "Likes promedio",
+      value: formatNumber(stats?.avgLikesPerReel ?? null),
+      sub: "por reel",
     },
     {
       label: "Alcance · 30 días",
@@ -49,9 +56,14 @@ export function MediaKit() {
       sub: "últimos 30 días",
     },
     {
-      label: "Engagement rate",
-      value: engagementRate != null ? `${engagementRate.toFixed(1)}%` : "—",
-      sub: "promedio top reels",
+      label: "Views totales",
+      value: formatNumber(stats?.totalReelViews ?? null),
+      sub: `suma ${stats?.reelsSampled ?? 0} reels`,
+    },
+    {
+      label: "Publicaciones",
+      value: formatNumber(stats?.mediaCount ?? null),
+      sub: "total en Instagram",
     },
   ]
 

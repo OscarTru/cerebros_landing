@@ -36,6 +36,16 @@ interface IgStats {
   reach30d: number | null
   profileViews30d: number | null
   accountsEngaged30d: number | null
+  reelsSampled: number
+  avgViewsPerReel: number | null
+  avgLikesPerReel: number | null
+  avgCommentsPerReel: number | null
+  avgEngagementRate: number | null
+  totalReelViews: number
+  totalReelLikes: number
+  totalReelComments: number
+  totalReelShares: number
+  totalReelSaves: number
   topReels: Array<{
     id: string
     permalink: string
@@ -184,9 +194,9 @@ async function fetchInstagramStats(): Promise<IgStats> {
     console.warn(`  ⚠ account insights failed: ${(e as Error).message}`)
   }
 
-  // 3. Top reels by views — fetch last 20 reels and rank
+  // 3. Recent reels — fetch last 50 media items, filter reels, compute metrics
   const mediaRes = await fetch(
-    `${base}/me/media?fields=id,caption,media_type,media_product_type,permalink,thumbnail_url,media_url&limit=25&access_token=${IG_TOKEN}`
+    `${base}/me/media?fields=id,caption,media_type,media_product_type,permalink,thumbnail_url,media_url&limit=50&access_token=${IG_TOKEN}`
   )
   if (!mediaRes.ok) {
     const body = await mediaRes.text()
@@ -208,7 +218,7 @@ async function fetchInstagramStats(): Promise<IgStats> {
   )
 
   const withInsights = await Promise.all(
-    reels.slice(0, 12).map(async (r) => {
+    reels.slice(0, 24).map(async (r) => {
       try {
         const res = await fetch(
           `${base}/${r.id}/insights?metric=views,likes,comments,shares,saved&access_token=${IG_TOKEN}`
@@ -228,20 +238,51 @@ async function fetchInstagramStats(): Promise<IgStats> {
     })
   )
 
-  const topReels = withInsights
+  const mapReel = ({
+    r,
+    metrics,
+  }: (typeof withInsights)[number]) => ({
+    id: r.id,
+    permalink: r.permalink,
+    thumbnailUrl: r.thumbnail_url ?? r.media_url ?? null,
+    caption: r.caption ?? "",
+    views: metrics.views ?? null,
+    likes: metrics.likes ?? null,
+    comments: metrics.comments ?? null,
+    shares: metrics.shares ?? null,
+    saved: metrics.saved ?? null,
+  })
+
+  const topReels = [...withInsights]
     .sort((a, b) => (b.metrics.views ?? 0) - (a.metrics.views ?? 0))
     .slice(0, 3)
-    .map(({ r, metrics }) => ({
-      id: r.id,
-      permalink: r.permalink,
-      thumbnailUrl: r.thumbnail_url ?? r.media_url ?? null,
-      caption: r.caption ?? "",
-      views: metrics.views ?? null,
-      likes: metrics.likes ?? null,
-      comments: metrics.comments ?? null,
-      shares: metrics.shares ?? null,
-      saved: metrics.saved ?? null,
-    }))
+    .map(mapReel)
+
+  // Aggregates across ALL fetched reels (classical engagement rate)
+  const reelsSampled = withInsights.length
+  const sumViews = withInsights.reduce((a, { metrics }) => a + (metrics.views ?? 0), 0)
+  const sumLikes = withInsights.reduce((a, { metrics }) => a + (metrics.likes ?? 0), 0)
+  const sumComments = withInsights.reduce(
+    (a, { metrics }) => a + (metrics.comments ?? 0),
+    0
+  )
+  const sumShares = withInsights.reduce(
+    (a, { metrics }) => a + (metrics.shares ?? 0),
+    0
+  )
+  const sumSaved = withInsights.reduce(
+    (a, { metrics }) => a + (metrics.saved ?? 0),
+    0
+  )
+  const avgViewsPerReel = reelsSampled > 0 ? Math.round(sumViews / reelsSampled) : null
+  const avgLikesPerReel = reelsSampled > 0 ? Math.round(sumLikes / reelsSampled) : null
+  const avgCommentsPerReel =
+    reelsSampled > 0 ? Math.round(sumComments / reelsSampled) : null
+  // Classical engagement rate = avg(likes+comments per post) / followers * 100
+  const avgEngagementRate =
+    reelsSampled > 0 && prof.followers_count > 0
+      ? ((sumLikes + sumComments) / reelsSampled / prof.followers_count) * 100
+      : null
 
   return {
     username: prof.username,
@@ -252,6 +293,16 @@ async function fetchInstagramStats(): Promise<IgStats> {
     reach30d,
     profileViews30d,
     accountsEngaged30d,
+    reelsSampled,
+    avgViewsPerReel,
+    avgLikesPerReel,
+    avgCommentsPerReel,
+    avgEngagementRate,
+    totalReelViews: sumViews,
+    totalReelLikes: sumLikes,
+    totalReelComments: sumComments,
+    totalReelShares: sumShares,
+    totalReelSaves: sumSaved,
     topReels,
   }
 }
