@@ -86,13 +86,20 @@ export const footer = {
     {
       title: "Legal",
       links: [
-        { label: "Términos", href: "#" },
-        { label: "Privacidad", href: "#" },
+        { label: "Términos", href: "/terminos" },
+        { label: "Privacidad", href: "/privacidad" },
+        { label: "Cookies", href: "/cookies" },
       ],
     },
     {
       title: "Contacto",
-      links: [{ label: "hola@cerebrosesponjosos.com", href: "mailto:hola@cerebrosesponjosos.com" }],
+      links: [
+        {
+          label: "contacto@cerebrosesponjosos.com",
+          href: "mailto:contacto@cerebrosesponjosos.com",
+        },
+        { label: "Media Kit", href: "/media-kit" },
+      ],
     },
   ],
 }

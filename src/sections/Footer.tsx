@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import { footer } from "@/content/site"
 
 export function Footer() {
@@ -21,16 +22,24 @@ export function Footer() {
                   {col.title}
                 </p>
                 <ul className="flex flex-col gap-3">
-                  {col.links.map((l) => (
-                    <li key={l.label}>
-                      <a
-                        href={l.href}
-                        className="text-sm text-zinc-300 hover:text-white transition-colors"
-                      >
-                        {l.label}
-                      </a>
-                    </li>
-                  ))}
+                  {col.links.map((l) => {
+                    const isInternal = l.href.startsWith("/")
+                    const className =
+                      "text-sm text-zinc-300 hover:text-white transition-colors"
+                    return (
+                      <li key={l.label}>
+                        {isInternal ? (
+                          <Link to={l.href} className={className}>
+                            {l.label}
+                          </Link>
+                        ) : (
+                          <a href={l.href} className={className}>
+                            {l.label}
+                          </a>
+                        )}
+                      </li>
+                    )
+                  })}
                 </ul>
               </div>
             ))}
