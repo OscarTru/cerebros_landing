@@ -20,7 +20,7 @@ export function Hero() {
           className="w-[900px] h-[900px] rounded-full"
           style={{
             background:
-              "radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 60%)",
+              "radial-gradient(circle, var(--c-glow) 0%, transparent 60%)",
           }}
           animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
@@ -28,25 +28,14 @@ export function Hero() {
       </div>
 
       <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto">
-        {/* Eyebrow */}
-        <FadeIn>
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.02] text-xs font-medium text-zinc-400 mb-8">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            </span>
-            {hero.eyebrow}
-          </div>
-        </FadeIn>
-
         {/* Title */}
         <FadeIn delay={0.1}>
           <h1
             className="font-serif leading-[0.95] tracking-[-0.03em] mb-8"
             style={{ fontSize: "clamp(3rem, 8vw, 7.5rem)" }}
           >
-            <span className="block text-white">{hero.titleTop}</span>
-            <span className="block italic text-zinc-500">
+            <span className="block text-[var(--c-text)]">{hero.titleTop}</span>
+            <span className="block italic text-[var(--c-text-faint)]">
               {hero.titleBottom}
             </span>
           </h1>
@@ -54,7 +43,7 @@ export function Hero() {
 
         {/* Subcopy */}
         <FadeIn delay={0.2}>
-          <p className="text-lg text-zinc-400 max-w-xl mx-auto mb-12 leading-relaxed">
+          <p className="text-lg text-[var(--c-text-muted)] max-w-xl mx-auto mb-12 leading-relaxed">
             {hero.subcopy}
           </p>
         </FadeIn>
@@ -93,7 +82,11 @@ export function Hero() {
         aria-hidden="true"
       >
         <motion.div
-          className="w-px h-10 bg-gradient-to-b from-transparent via-white/40 to-transparent"
+          className="w-px h-10"
+          style={{
+            background:
+              "linear-gradient(to bottom, transparent, var(--c-border-strong), transparent)",
+          }}
           animate={{ scaleY: [0.3, 1, 0.3] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
         />

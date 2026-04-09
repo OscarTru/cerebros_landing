@@ -5,19 +5,19 @@ export function Founders() {
   return (
     <section
       id="nosotros"
-      className="relative py-32 px-6 border-t border-white/[0.06] z-10"
+      className="relative py-32 px-6 border-t border-[var(--c-border)] z-10"
     >
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <FadeIn className="mb-20 max-w-2xl">
-          <p className="text-xs uppercase tracking-[0.2em] text-zinc-500 mb-4">
+          <p className="text-xs uppercase tracking-[0.2em] text-[var(--c-text-subtle)] mb-4">
             Quiénes somos
           </p>
           <h2
-            className="font-serif text-white leading-[1.05] tracking-[-0.02em]"
+            className="font-serif text-[var(--c-text)] leading-[1.05] tracking-[-0.02em]"
             style={{ fontSize: "clamp(2.25rem, 5vw, 4rem)" }}
           >
-            Dos residentes, <span className="italic text-zinc-400">una conversación.</span>
+            Dos residentes, <span className="italic text-[var(--c-text-muted)]">una conversación.</span>
           </h2>
         </FadeIn>
 
@@ -34,7 +34,7 @@ export function Founders() {
                 }`}
               >
                 <div className="md:col-span-5">
-                  <div className="relative overflow-hidden rounded-2xl aspect-[4/5] bg-[#111113] border border-white/[0.08]">
+                  <div className="relative overflow-hidden rounded-2xl aspect-[4/5] bg-[var(--c-surface)] border border-[var(--c-border)]">
                     <img
                       src={f.photo}
                       alt={f.name}
@@ -44,20 +44,20 @@ export function Founders() {
                   </div>
                 </div>
                 <div className="md:col-span-7">
-                  <p className="text-xs font-mono uppercase tracking-[0.2em] text-zinc-500 mb-4">
+                  <p className="text-xs font-mono uppercase tracking-[0.2em] text-[var(--c-text-subtle)] mb-4">
                     {f.orderLabel}
                   </p>
                   <h3
-                    className="font-serif text-white mb-3"
+                    className="font-serif text-[var(--c-text)] mb-3"
                     style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)" }}
                   >
                     {f.name}
                   </h3>
-                  <p className="text-xs font-mono uppercase tracking-[0.15em] text-zinc-500 mb-8">
+                  <p className="text-xs font-mono uppercase tracking-[0.15em] text-[var(--c-text-subtle)] mb-8">
                     {f.role}
                   </p>
                   <p
-                    className="text-zinc-400 leading-[1.75] text-base"
+                    className="text-[var(--c-text-muted)] leading-[1.75] text-base"
                     style={{ maxWidth: "55ch" }}
                   >
                     {f.bio}

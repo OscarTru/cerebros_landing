@@ -52,11 +52,11 @@ export function Newsletter() {
   return (
     <section
       id="newsletter"
-      className="relative py-40 px-6 bg-[#111113] border-y border-white/[0.06] z-10"
+      className="relative py-40 px-6 bg-[var(--c-surface)] border-y border-[var(--c-border)] z-10"
     >
       <div className="max-w-3xl mx-auto text-center">
         <FadeIn>
-          <div className="inline-block px-4 py-1 border border-white/10 rounded-full text-[11px] font-mono tracking-[0.25em] uppercase text-zinc-400 mb-10">
+          <div className="inline-block px-4 py-1 border border-[var(--c-border)] rounded-full text-[11px] font-mono tracking-[0.25em] uppercase text-[var(--c-text-subtle)] mb-10">
             · {newsletter.eyebrow} ·
           </div>
         </FadeIn>
@@ -66,15 +66,15 @@ export function Newsletter() {
             className="font-serif leading-[1.05] tracking-[-0.02em] mb-10"
             style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}
           >
-            <span className="block text-white">{newsletter.titleA}</span>
-            <span className="block italic text-zinc-500">
+            <span className="block text-[var(--c-text)]">{newsletter.titleA}</span>
+            <span className="block italic text-[var(--c-text-faint)]">
               {newsletter.titleB}
             </span>
           </h2>
         </FadeIn>
 
         <FadeIn delay={0.2}>
-          <p className="text-base text-zinc-400 max-w-xl mx-auto mb-12 leading-relaxed">
+          <p className="text-base text-[var(--c-text-muted)] max-w-xl mx-auto mb-12 leading-relaxed">
             {newsletter.subcopy}
           </p>
         </FadeIn>
@@ -86,10 +86,10 @@ export function Newsletter() {
             noValidate
           >
             <div
-              className={`relative h-14 rounded-full bg-black/40 border ${
+              className={`relative h-14 rounded-full bg-[var(--c-surface-2)] border ${
                 errors.email || status === "error"
                   ? "border-red-400/60"
-                  : "border-white/10 focus-within:border-white/30"
+                  : "border-[var(--c-border)] focus-within:border-[var(--c-border-strong)]"
               } transition-colors`}
             >
               <input
@@ -98,12 +98,12 @@ export function Newsletter() {
                 aria-label="Email"
                 disabled={status === "loading"}
                 {...register("email")}
-                className="absolute inset-0 h-full w-full bg-transparent pl-6 pr-36 text-sm text-white placeholder:text-zinc-500 focus:outline-none rounded-full"
+                className="absolute inset-0 h-full w-full bg-transparent pl-6 pr-36 text-sm text-[var(--c-text)] placeholder:text-[var(--c-text-subtle)] focus:outline-none rounded-full"
               />
               <button
                 type="submit"
                 disabled={status === "loading"}
-                className="absolute right-1.5 top-1.5 bottom-1.5 px-6 rounded-full bg-white text-black text-sm font-medium hover:bg-zinc-200 transition-colors inline-flex items-center gap-2 disabled:opacity-60"
+                className="absolute right-1.5 top-1.5 bottom-1.5 px-6 rounded-full bg-[var(--c-invert)] text-[var(--c-invert-fg)] text-sm font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2 disabled:opacity-60"
               >
                 {status === "loading" ? (
                   <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -121,17 +121,17 @@ export function Newsletter() {
             {errorMsg && !errors.email && (
               <p className="mt-3 text-xs text-red-400">{errorMsg}</p>
             )}
-            <label className="mt-5 flex items-start gap-3 text-xs text-zinc-500 text-left cursor-pointer">
+            <label className="mt-5 flex items-start gap-3 text-xs text-[var(--c-text-subtle)] text-left cursor-pointer">
               <input
                 type="checkbox"
                 {...register("consent")}
-                className="mt-0.5 h-4 w-4 rounded border-white/20 bg-black/40 accent-white cursor-pointer"
+                className="mt-0.5 h-4 w-4 rounded border-[var(--c-border-strong)] bg-[var(--c-surface-2)] accent-[var(--c-invert)] cursor-pointer"
               />
               <span>
                 Acepto recibir la newsletter y la{" "}
                 <a
                   href="/privacidad"
-                  className="underline decoration-zinc-600 hover:decoration-white"
+                  className="underline decoration-[var(--c-border-strong)] hover:decoration-[var(--c-text)]"
                 >
                   política de privacidad
                 </a>
@@ -143,7 +143,7 @@ export function Newsletter() {
                 {errors.consent.message}
               </p>
             )}
-            <p className="mt-4 text-xs text-zinc-600">{newsletter.finePrint}</p>
+            <p className="mt-4 text-xs text-[var(--c-text-faint)]">{newsletter.finePrint}</p>
           </form>
         </FadeIn>
       </div>

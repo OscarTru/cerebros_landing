@@ -9,6 +9,19 @@
     <meta property="og:title" content="Cerebros Esponjosos" />
     <meta property="og:description" content="Educación en neurología. Lenguaje humano y útil." />
     <meta property="og:type" content="website" />
+    <script>
+      // No-flash theme init — runs before React mounts
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var isDark = stored ? stored === "dark" : prefersDark;
+          if (isDark) document.documentElement.classList.add("dark");
+        } catch (e) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

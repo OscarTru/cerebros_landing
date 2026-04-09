@@ -17,7 +17,7 @@ function Word({
   const opacity = useTransform(progress, range, [0.18, 1])
   return (
     <motion.span
-      className={`mr-[0.25em] inline-block ${italic ? "italic text-zinc-300" : ""}`}
+      className={`mr-[0.25em] inline-block ${italic ? "italic text-[var(--c-text-muted)]" : ""}`}
       style={{ opacity }}
     >
       {word}
@@ -45,11 +45,11 @@ export function Manifesto() {
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0) 65%)",
+            "radial-gradient(circle, var(--c-glow) 0%, transparent 65%)",
         }}
       />
       <p
-        className="relative font-serif text-white leading-[1.15] max-w-5xl mx-auto"
+        className="relative font-serif text-[var(--c-text)] leading-[1.15] max-w-5xl mx-auto"
         style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)" }}
       >
         {words.map((word, i) => {

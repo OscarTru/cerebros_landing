@@ -11,7 +11,7 @@ import { Footer } from "@/sections/Footer"
 export default function App() {
   return (
     <LazyMotion features={domAnimation}>
-      <div className="relative min-h-screen bg-[#0a0a0b] text-zinc-100 overflow-x-hidden font-sans">
+      <div className="relative min-h-screen bg-[var(--c-bg)] text-[var(--c-text)] overflow-x-hidden font-sans">
         <NoiseOverlay />
         <Nav />
         <main className="relative z-10">

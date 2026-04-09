@@ -8,18 +8,18 @@ export function Content() {
   return (
     <section
       id="contenido"
-      className="relative py-32 px-6 border-t border-white/[0.06] z-10"
+      className="relative py-32 px-6 border-t border-[var(--c-border)] z-10"
     >
       <div className="max-w-6xl mx-auto">
         <FadeIn className="mb-16 max-w-2xl">
-          <p className="text-xs uppercase tracking-[0.2em] text-zinc-500 mb-4">
+          <p className="text-xs uppercase tracking-[0.2em] text-[var(--c-text-subtle)] mb-4">
             Contenido
           </p>
           <h2
-            className="font-serif text-white leading-[1.05] tracking-[-0.02em]"
+            className="font-serif text-[var(--c-text)] leading-[1.05] tracking-[-0.02em]"
             style={{ fontSize: "clamp(2.25rem, 5vw, 4rem)" }}
           >
-            El universo <span className="italic text-zinc-400">Cerebros Esponjosos.</span>
+            El universo <span className="italic text-[var(--c-text-muted)]">Cerebros Esponjosos.</span>
           </h2>
         </FadeIn>
 
@@ -54,7 +54,7 @@ function ReelCard({ post }: { post: IgPost }) {
       href={post.permalink}
       target="_blank"
       rel="noopener noreferrer"
-      className="group block h-full rounded-2xl border border-white/[0.08] bg-[#111113] overflow-hidden hover:border-white/[0.2] transition-all"
+      className="group block h-full rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] overflow-hidden hover:border-[var(--c-border-strong)] transition-all"
     >
       <div className="relative aspect-[9/16] overflow-hidden">
         <img
@@ -63,8 +63,14 @@ function ReelCard({ post }: { post: IgPost }) {
           loading="lazy"
           className="absolute inset-0 h-full w-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-700"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-        <div className="absolute top-5 left-5 text-[10px] font-mono uppercase tracking-[0.2em] text-white/80">
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.1) 55%, transparent)",
+          }}
+        />
+        <div className="absolute top-5 left-5 text-[10px] font-mono uppercase tracking-[0.2em] text-white/85">
           Instagram · Reel
         </div>
         <div className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white text-black flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -81,7 +87,6 @@ function ReelCard({ post }: { post: IgPost }) {
 function YouTubeShortCard({ video }: { video: typeof dynamicContent.latestVideo }) {
   const href = video?.url ?? "#"
   const title = video?.title ?? "Próximamente"
-  // Shorts: use hqdefault (480x360) — works reliably
   const thumb = video ? `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg` : null
 
   return (
@@ -89,7 +94,7 @@ function YouTubeShortCard({ video }: { video: typeof dynamicContent.latestVideo 
       href={href}
       target={video ? "_blank" : undefined}
       rel={video ? "noopener noreferrer" : undefined}
-      className="group block h-full rounded-2xl border border-white/[0.08] bg-[#111113] overflow-hidden hover:border-white/[0.2] transition-all"
+      className="group block h-full rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] overflow-hidden hover:border-[var(--c-border-strong)] transition-all"
     >
       <div className="relative aspect-[9/16] overflow-hidden">
         {thumb ? (
@@ -97,24 +102,29 @@ function YouTubeShortCard({ video }: { video: typeof dynamicContent.latestVideo 
             src={thumb}
             alt={title}
             loading="eager"
-            /* hqdefault has black bars — scale up + cover crops them */
             className="absolute inset-0 h-full w-full object-cover scale-[1.8] opacity-85 group-hover:opacity-100 group-hover:scale-[1.85] transition-all duration-700"
           />
         ) : (
           <div
-            className="absolute inset-0 bg-gradient-to-br from-zinc-800 via-zinc-900 to-black"
+            className="absolute inset-0 bg-[var(--c-surface-2)]"
             aria-hidden="true"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
-        <div className="absolute top-5 left-5 text-[10px] font-mono uppercase tracking-[0.2em] text-white/80">
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.1) 55%, transparent)",
+          }}
+        />
+        <div className="absolute top-5 left-5 text-[10px] font-mono uppercase tracking-[0.2em] text-white/85">
           YouTube · Short
         </div>
         <div className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white text-black flex items-center justify-center group-hover:scale-110 transition-transform">
           <Play className="h-4 w-4 fill-black" aria-hidden="true" />
         </div>
         <div className="absolute bottom-0 left-0 right-0 p-5">
-          <p className="text-xs font-mono uppercase tracking-[0.2em] text-zinc-400 mb-2">
+          <p className="text-xs font-mono uppercase tracking-[0.2em] text-white/70 mb-2">
             Último episodio
           </p>
           <h3 className="font-serif text-white leading-tight text-lg line-clamp-2">
@@ -130,21 +140,21 @@ function BlogCard() {
   return (
     <a
       href="#"
-      className="group flex items-center justify-between gap-6 rounded-2xl border border-white/[0.08] bg-[#111113] p-7 hover:border-white/[0.2] hover:-translate-y-0.5 transition-all"
+      className="group flex items-center justify-between gap-6 rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-7 hover:border-[var(--c-border-strong)] hover:-translate-y-0.5 transition-all"
     >
       <div className="flex items-center gap-6">
-        <div className="p-3 rounded-xl bg-white/5 border border-white/10 group-hover:bg-white group-hover:text-black transition-colors">
+        <div className="p-3 rounded-xl bg-[var(--c-surface-2)] border border-[var(--c-border)] group-hover:bg-[var(--c-invert)] group-hover:text-[var(--c-invert-fg)] transition-colors">
           <BookOpen className="h-5 w-5" aria-hidden="true" />
         </div>
         <div>
-          <h3 className="text-lg font-medium text-white mb-1">Artículos y Blog</h3>
-          <p className="text-sm text-zinc-500">
+          <h3 className="text-lg font-medium text-[var(--c-text)] mb-1">Artículos y Blog</h3>
+          <p className="text-sm text-[var(--c-text-subtle)]">
             Literatura digerida para leer en 5 minutos.
           </p>
         </div>
       </div>
       <ArrowUpRight
-        className="h-5 w-5 text-zinc-500 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all"
+        className="h-5 w-5 text-[var(--c-text-subtle)] group-hover:text-[var(--c-text)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all"
         aria-hidden="true"
       />
     </a>
