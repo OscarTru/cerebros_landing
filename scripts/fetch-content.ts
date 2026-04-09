@@ -41,6 +41,7 @@ interface IgStats {
   avgLikesPerReel: number | null
   avgCommentsPerReel: number | null
   avgEngagementRate: number | null
+  avgEngagementRateByViews: number | null
   totalReelViews: number
   totalReelLikes: number
   totalReelComments: number
@@ -283,6 +284,23 @@ async function fetchInstagramStats(): Promise<IgStats> {
     reelsSampled > 0 && prof.followers_count > 0
       ? ((sumLikes + sumComments) / reelsSampled / prof.followers_count) * 100
       : null
+  // Engagement rate by views (Beacons-style) = (likes+comments+shares+saves) / views, avg per reel
+  const perReelErByViews = withInsights
+    .map(({ metrics }) => {
+      const v = metrics.views ?? 0
+      if (v === 0) return null
+      const interactions =
+        (metrics.likes ?? 0) +
+        (metrics.comments ?? 0) +
+        (metrics.shares ?? 0) +
+        (metrics.saved ?? 0)
+      return (interactions / v) * 100
+    })
+    .filter((x): x is number => x != null)
+  const avgEngagementRateByViews =
+    perReelErByViews.length > 0
+      ? perReelErByViews.reduce((a, b) => a + b, 0) / perReelErByViews.length
+      : null
 
   return {
     username: prof.username,
@@ -298,6 +316,7 @@ async function fetchInstagramStats(): Promise<IgStats> {
     avgLikesPerReel,
     avgCommentsPerReel,
     avgEngagementRate,
+    avgEngagementRateByViews,
     totalReelViews: sumViews,
     totalReelLikes: sumLikes,
     totalReelComments: sumComments,

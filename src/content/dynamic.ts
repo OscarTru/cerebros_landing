@@ -46,6 +46,7 @@ export interface IgStats {
   avgLikesPerReel: number | null
   avgCommentsPerReel: number | null
   avgEngagementRate: number | null
+  avgEngagementRateByViews: number | null
   totalReelViews: number
   totalReelLikes: number
   totalReelComments: number

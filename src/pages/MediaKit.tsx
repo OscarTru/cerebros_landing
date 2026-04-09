@@ -28,12 +28,20 @@ export function MediaKit() {
       sub: "@cerebros.esponjosos",
     },
     {
-      label: "Engagement rate",
+      label: "ER · por views",
+      value:
+        stats?.avgEngagementRateByViews != null
+          ? `${stats.avgEngagementRateByViews.toFixed(1)}%`
+          : "—",
+      sub: `últimos ${stats?.reelsSampled ?? 0} reels`,
+    },
+    {
+      label: "ER · por seguidores",
       value:
         stats?.avgEngagementRate != null
           ? `${stats.avgEngagementRate.toFixed(2)}%`
           : "—",
-      sub: `últimos ${stats?.reelsSampled ?? 0} reels`,
+      sub: "fórmula clásica",
     },
     {
       label: "Views promedio",
@@ -139,7 +147,7 @@ export function MediaKit() {
                   <span className="italic text-zinc-400">sí lee los captions.</span>
                 </h2>
               </FadeIn>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {metrics.map((m, i) => (
                   <FadeIn key={m.label} delay={i * 0.05}>
                     <div className="rounded-2xl border border-white/[0.08] bg-[#111113] p-6 h-full">
