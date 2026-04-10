@@ -121,11 +121,11 @@ export function Newsletter() {
             {errorMsg && !errors.email && (
               <p className="mt-3 text-xs text-red-400">{errorMsg}</p>
             )}
-            <label className="mt-5 flex items-start gap-3 text-xs text-[var(--c-text-subtle)] text-left cursor-pointer">
+            <label className="mt-5 flex items-center justify-center gap-3 text-xs text-[var(--c-text-subtle)] text-center cursor-pointer">
               <input
                 type="checkbox"
                 {...register("consent")}
-                className="mt-0.5 h-4 w-4 rounded border-[var(--c-border-strong)] bg-[var(--c-surface-2)] accent-[var(--c-invert)] cursor-pointer"
+                className="h-4 w-4 rounded border-[var(--c-border-strong)] bg-[var(--c-surface-2)] accent-[var(--c-invert)] cursor-pointer shrink-0"
               />
               <span>
                 Acepto recibir la newsletter y la{" "}
@@ -139,7 +139,7 @@ export function Newsletter() {
               </span>
             </label>
             {errors.consent && (
-              <p className="mt-2 text-xs text-red-400 text-left">
+              <p className="mt-2 text-xs text-red-400 text-center">
                 {errors.consent.message}
               </p>
             )}

@@ -50,7 +50,7 @@ export function Footer() {
         <div className="pt-8 border-t border-[var(--c-border)] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[var(--c-text-faint)]">
           <p>{footer.copyright}</p>
           <p className="font-mono uppercase tracking-[0.2em]">
-            Desde la residencia, con cuidado.
+            Hecho con ♥
           </p>
         </div>
       </div>

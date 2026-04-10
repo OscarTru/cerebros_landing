@@ -24,19 +24,17 @@ export const hero = {
   titleTop: "Cerebros",
   titleBottom: "Esponjosos",
   subcopy:
-    "Convertimos la neurología en algo que puedes entender, recordar y aplicar.",
+    "Convertimos las Neurociencias en algo que puedas entender, recordar y aplicar.",
   ctaPrimary: { label: "Conócenos", target: "#nosotros" },
   ctaSecondary: { label: "Colaboraciones", href: "/media-kit" },
 }
 
-export const manifestoText =
-  "Ciencia y vida real. Medicina y narrativa. Dos residentes pensando en voz alta para que la neurología deje de sentirse como un idioma ajeno."
-
-export const manifestoItalicWords = [
-  "Ciencia",
-  "vida",
-  "real.",
-  "narrativa.",
+export const manifestoSegments: { text: string; italic: boolean }[] = [
+  { text: "La neurociencia en palabras que entiendes.", italic: false },
+  { text: "Dos residentes, una misión:", italic: true },
+  { text: "convertir el trauma médico en curiosidad,", italic: false },
+  { text: "la complejidad en historias,", italic: true },
+  { text: "la ciencia en poder.", italic: false },
 ]
 
 export const founders: Founder[] = [
@@ -63,7 +61,7 @@ export const newsletter = {
   titleA: "La gente no solo aprende.",
   titleB: "Se queda por cómo lo contamos.",
   subcopy:
-    "Una vez a la semana. Sin ruido. Solo lo que de verdad vale la pena recordar.",
+    "Aprende algo una vez por semana que no sabías que tu cerebro necesitaba.",
   placeholder: "hola@tucorreo.com",
   cta: "Suscribirse",
   finePrint: "Cero spam. Te puedes salir cuando quieras.",
@@ -71,7 +69,7 @@ export const newsletter = {
 }
 
 export const footer = {
-  tagline: "Hecho con cuidado desde la residencia de neurología.",
+  tagline: "Entendiendo cómo funciona tu cerebro.",
   copyright: "© 2026 Steph & Oscar",
   columns: [
     {

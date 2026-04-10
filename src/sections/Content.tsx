@@ -1,4 +1,5 @@
 import { ArrowUpRight, Play, BookOpen } from "lucide-react"
+import { Link } from "react-router-dom"
 import { FadeIn } from "@/components/FadeIn"
 import { dynamicContent, type IgPost } from "@/content/dynamic"
 
@@ -138,25 +139,30 @@ function YouTubeShortCard({ video }: { video: typeof dynamicContent.latestVideo 
 
 function BlogCard() {
   return (
-    <a
-      href="#"
+    <Link
+      to="/blog/tu-cerebro-no-descansa-cuando-duermes"
       className="group flex items-center justify-between gap-6 rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-7 hover:border-[var(--c-border-strong)] hover:-translate-y-0.5 transition-all"
     >
       <div className="flex items-center gap-6">
-        <div className="p-3 rounded-xl bg-[var(--c-surface-2)] border border-[var(--c-border)] group-hover:bg-[var(--c-invert)] group-hover:text-[var(--c-invert-fg)] transition-colors">
+        <div className="p-3 rounded-xl bg-[var(--c-surface-2)] border border-[var(--c-border)] group-hover:bg-[var(--c-invert)] group-hover:text-[var(--c-invert-fg)] transition-colors shrink-0">
           <BookOpen className="h-5 w-5" aria-hidden="true" />
         </div>
         <div>
-          <h3 className="text-lg font-medium text-[var(--c-text)] mb-1">Artículos y Blog</h3>
+          <p className="text-xs font-mono uppercase tracking-[0.2em] text-[var(--c-text-subtle)] mb-2">
+            Blog · Último artículo
+          </p>
+          <h3 className="font-serif text-xl text-[var(--c-text)] leading-snug mb-1">
+            Tu cerebro no descansa cuando duermes. Hace algo mucho más importante.
+          </h3>
           <p className="text-sm text-[var(--c-text-subtle)]">
-            Literatura digerida para leer en 5 minutos.
+            por Oscar Trujillo · 8 min de lectura
           </p>
         </div>
       </div>
       <ArrowUpRight
-        className="h-5 w-5 text-[var(--c-text-subtle)] group-hover:text-[var(--c-text)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all"
+        className="h-5 w-5 text-[var(--c-text-subtle)] group-hover:text-[var(--c-text)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0"
         aria-hidden="true"
       />
-    </a>
+    </Link>
   )
 }

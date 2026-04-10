@@ -1,26 +1,26 @@
 import { useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import type { MotionValue } from "framer-motion"
-import { manifestoText, manifestoItalicWords } from "@/content/site"
+import { manifestoSegments } from "@/content/site"
 
-function Word({
-  word,
+function Segment({
+  text,
+  italic,
   range,
   progress,
-  italic,
 }: {
-  word: string
+  text: string
+  italic: boolean
   range: [number, number]
   progress: MotionValue<number>
-  italic: boolean
 }) {
-  const opacity = useTransform(progress, range, [0.18, 1])
+  const opacity = useTransform(progress, range, [0.15, 1])
   return (
     <motion.span
-      className={`mr-[0.25em] inline-block ${italic ? "italic text-[var(--c-text-muted)]" : ""}`}
+      className={`mr-[0.3em] inline ${italic ? "italic text-[var(--c-text-muted)]" : "text-[var(--c-text)]"}`}
       style={{ opacity }}
     >
-      {word}
+      {text}
     </motion.span>
   )
 }
@@ -31,8 +31,6 @@ export function Manifesto() {
     target: ref,
     offset: ["start 0.8", "end 0.4"],
   })
-
-  const words = manifestoText.split(" ")
 
   return (
     <section
@@ -49,19 +47,17 @@ export function Manifesto() {
         }}
       />
       <p
-        className="relative font-serif text-[var(--c-text)] leading-[1.15] max-w-5xl mx-auto"
+        className="relative font-serif leading-[1.15] max-w-5xl mx-auto"
         style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)" }}
       >
-        {words.map((word, i) => {
-          const start = i / words.length
-          const end = start + 1 / words.length
-          const clean = word.replace(/[.,]/g, "")
-          const italic = manifestoItalicWords.includes(word) || manifestoItalicWords.includes(clean)
+        {manifestoSegments.map((seg, i) => {
+          const start = i / manifestoSegments.length
+          const end = start + 1 / manifestoSegments.length
           return (
-            <Word
+            <Segment
               key={i}
-              word={word}
-              italic={italic}
+              text={seg.text}
+              italic={seg.italic}
               range={[start, end]}
               progress={scrollYProgress}
             />
