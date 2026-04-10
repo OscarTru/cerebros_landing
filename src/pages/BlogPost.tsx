@@ -1,4 +1,4 @@
-import { Suspense, lazy, useState, useEffect } from "react"
+import { Suspense, lazy, useState, useEffect, useMemo } from "react"
 import { useParams, Navigate } from "react-router-dom"
 import { BlogLayout } from "@/layouts/BlogLayout"
 
@@ -33,10 +33,14 @@ export function BlogPost() {
     loader().then((mod) => setFrontmatter(mod.frontmatter))
   }, [loader])
 
-  if (notFound) return <Navigate to="/" replace />
-  if (!frontmatter) return <div className="min-h-screen bg-[var(--c-bg)]" />
+  const Article = useMemo(
+    () => (loader ? lazy(loader) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [path]
+  )
 
-  const Article = lazy(loader!)
+  if (notFound) return <Navigate to="/" replace />
+  if (!frontmatter || !Article) return <div className="min-h-screen bg-[var(--c-bg)]" />
 
   return (
     <BlogLayout
@@ -45,7 +49,7 @@ export function BlogPost() {
       author={frontmatter.author}
       description={frontmatter.description}
     >
-      <Suspense fallback={null}>
+      <Suspense fallback={<div className="min-h-[40vh]" />}>
         <Article />
       </Suspense>
     </BlogLayout>
