@@ -60,7 +60,32 @@ export default async function handler(req: Request): Promise<Response> {
   console.log(`Subscribed: ${email}`)
 
   // Send welcome email via Resend
-  const resendRes = await fetch("https://api.resend.com/emails", {
+  const sendEmail = (subject: string, html: string) =>
+    fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${resendKey}`,
+      },
+      body: JSON.stringify({
+        from: "Cerebros Esponjosos <hola@cerebrosesponjosos.com>",
+        to: email,
+        subject,
+        html,
+      }),
+    })
+
+  const welcomeRes = await sendEmail(
+    "Bienvenido a Esponjosos — Cerebros Esponjosos",
+    welcomeHtml(),
+  )
+  if (!welcomeRes.ok) {
+    console.error("Resend welcome error:", welcomeRes.status, await welcomeRes.text())
+  }
+
+  // Schedule first newsletter edition 5 minutes after signup via Resend's scheduled_at
+  const sendAt = new Date(Date.now() + 5 * 60_000).toISOString()
+  const editionRes = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -69,15 +94,13 @@ export default async function handler(req: Request): Promise<Response> {
     body: JSON.stringify({
       from: "Cerebros Esponjosos <hola@cerebrosesponjosos.com>",
       to: email,
-      subject: "Bienvenido a El Privado — Cerebros Esponjosos",
-      html: welcomeHtml(),
+      subject: "Tu cerebro no descansa cuando duermes — Esponjosos #1",
+      html: firstEditionHtml(),
+      scheduled_at: sendAt,
     }),
   })
-
-  if (!resendRes.ok) {
-    const err = await resendRes.text()
-    console.error("Resend error:", resendRes.status, err)
-    // Don't fail the subscription if email fails — they're already saved
+  if (!editionRes.ok) {
+    console.error("Resend edition error:", editionRes.status, await editionRes.text())
   }
 
   return json({ ok: true })
@@ -90,7 +113,7 @@ function welcomeHtml(): string {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Bienvenido a El Privado &mdash; Cerebros Esponjosos</title>
+  <title>Bienvenido a Esponjosos &mdash; Cerebros Esponjosos</title>
   <!--[if mso]>
   <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
   <![endif]-->
@@ -122,7 +145,7 @@ function welcomeHtml(): string {
 
         <!-- BADGE -->
         <tr><td align="center" style="padding:40px 0 16px;">
-          <span style="display:inline-block; border:1px solid rgba(0,0,0,0.18); border-radius:9999px; padding:5px 20px; font-family:'Inter',sans-serif; font-size:10px; font-weight:500; letter-spacing:0.25em; text-transform:uppercase; color:#71717a;">&middot; El Privado &middot;</span>
+          <span style="display:inline-block; border:1px solid rgba(0,0,0,0.18); border-radius:9999px; padding:5px 20px; font-family:'Inter',sans-serif; font-size:10px; font-weight:500; letter-spacing:0.25em; text-transform:uppercase; color:#71717a;">&middot; Esponjosos &middot;</span>
         </td></tr>
 
         <!-- HERO -->
@@ -154,7 +177,7 @@ function welcomeHtml(): string {
             Cada semana te traemos algo que cambia c&oacute;mo entiendes lo que te pasa por dentro &mdash; no desde arriba, no como una clase, sino como dos m&eacute;dicos que acaban de encontrar algo y no pueden guard&aacute;rselo.
           </p>
           <p style="font-family:'Inter',sans-serif; font-size:15px; font-weight:300; line-height:1.75; color:#52525b; margin-bottom:20px;">
-            El nombre es <strong style="font-weight:500; color:#18181b;">El Privado</strong> porque es exactamente eso: lo que no cabe en un Reel de 60 segundos. Las ideas que necesitan espacio para respirar. La ciencia que merece m&aacute;s de una frase.
+            Le llamamos <strong style="font-weight:500; color:#18181b;">Esponjosos</strong> porque as&iacute; es como queremos que se sienta: tu cerebro absorbiendo algo bueno, sin presi&oacute;n, sin formato acad&eacute;mico, solo dos residentes que encontraron algo y no pueden guard&aacute;rselo.
           </p>
           <p style="font-family:'Inter',sans-serif; font-size:15px; font-weight:300; line-height:1.75; color:#52525b; margin-bottom:0;">
             Nos alegra que est&eacute;s aqu&iacute;.
@@ -280,7 +303,7 @@ function welcomeHtml(): string {
 
           <!-- Fine print -->
           <p style="font-family:'Inter',sans-serif; font-size:11px; font-weight:300; color:#a1a1aa; line-height:1.7;">
-            Recibiste este email porque te suscribiste a El Privado.<br/>
+            Recibiste este email porque te suscribiste a Esponjosos.<br/>
             &copy; Cerebros Esponjosos
           </p>
         </td></tr>
@@ -291,6 +314,204 @@ function welcomeHtml(): string {
     </td></tr>
   </table>
   <!-- /WRAPPER -->
+
+</body>
+</html>`
+}
+
+function firstEditionHtml(): string {
+  return `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Tu cerebro no descansa cuando duermes &mdash; Esponjosos #1</title>
+  <!--[if mso]>
+  <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+  <![endif]-->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500&display=swap');
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background-color:#fafaf9; font-family:'Inter',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif; -webkit-font-smoothing:antialiased; color:#18181b; }
+    @media only screen and (max-width:480px) {
+      .cover-title { font-size:28px !important; }
+      .section-pad { padding-left:24px !important; padding-right:24px !important; }
+      .article-title { font-size:22px !important; }
+    }
+  </style>
+</head>
+<body style="margin:0; padding:0; background-color:#fafaf9;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#fafaf9;">
+    <tr><td align="center" style="padding:40px 16px;">
+
+      <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px; width:100%;">
+
+        <!-- HEADER -->
+        <tr><td style="padding:28px 0; border-bottom:1px solid rgba(0,0,0,0.08);">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td><a href="https://www.cerebrosesponjosos.com" style="font-family:'Instrument Serif',Georgia,serif; font-size:18px; font-weight:400; color:#18181b; text-decoration:none; letter-spacing:-0.02em;">Cerebros Esponjosos</a></td>
+              <td style="text-align:right;"><span style="font-family:'Inter',sans-serif; font-size:11px; font-weight:300; color:#a1a1aa; letter-spacing:0.05em;">Primera edici&oacute;n</span></td>
+            </tr>
+          </table>
+        </td></tr>
+
+        <!-- COVER (dark) -->
+        <tr><td style="background-color:#18181b; padding:52px 48px 48px;" class="section-pad">
+          <p style="font-family:'Inter',sans-serif; font-size:9px; font-weight:500; letter-spacing:0.22em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-bottom:10px;">Tu primera edici&oacute;n</p>
+          <span style="display:inline-block; border:1px solid rgba(255,255,255,0.2); border-radius:9999px; padding:5px 16px; font-family:'Inter',sans-serif; font-size:9px; font-weight:500; letter-spacing:0.2em; text-transform:uppercase; color:rgba(255,255,255,0.45); margin-bottom:32px;">&middot; Esponjosos &middot;</span>
+          <h1 class="cover-title" style="font-family:'Instrument Serif',Georgia,serif; font-size:38px; font-weight:400; line-height:1.18; color:#ffffff; margin-bottom:8px; letter-spacing:-0.03em;">
+            Esto es lo que<br/><span style="font-style:italic; color:rgba(255,255,255,0.45);">no cabe en 60 segundos.</span>
+          </h1>
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0;">
+            <tr><td style="border-top:1px solid rgba(255,255,255,0.1);"></td></tr>
+          </table>
+          <p style="font-family:'Inter',sans-serif; font-size:14px; font-weight:300; line-height:1.8; color:rgba(255,255,255,0.6);">
+            Cada semana seleccionamos un tema del cerebro que merece m&aacute;s de un Reel. Lo analizamos, lo sustentamos con ciencia real, y te lo traemos aqu&iacute;.<br/><br/>
+            Esta es tu primera edici&oacute;n de <strong style="color:rgba(255,255,255,0.85); font-weight:400;">Esponjosos</strong>. Sin publicidad. Sin relleno. Solo lo que vale la pena leer.
+          </p>
+        </td></tr>
+
+        <!-- BODY -->
+        <tr><td style="background-color:#ffffff;">
+
+          <!-- ART&Iacute;CULO PRINCIPAL -->
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr><td class="section-pad" style="padding:44px 48px 40px; border-bottom:1px solid rgba(0,0,0,0.06);">
+              <p style="font-family:'Inter',sans-serif; font-size:9px; font-weight:500; letter-spacing:0.2em; text-transform:uppercase; color:#a1a1aa; margin-bottom:18px;">Art&iacute;culo de fondo</p>
+              <a href="https://www.cerebrosesponjosos.com/blog/tu-cerebro-no-descansa-cuando-duermes" class="article-title" style="font-family:'Instrument Serif',Georgia,serif; font-size:26px; font-weight:400; line-height:1.28; color:#18181b; text-decoration:none; display:block; margin-bottom:18px; letter-spacing:-0.02em;">
+                Tu cerebro no descansa cuando duermes
+              </a>
+              <p style="font-family:'Inter',sans-serif; font-size:14px; font-weight:300; line-height:1.8; color:#52525b; margin-bottom:10px;">
+                Piensa en la &uacute;ltima vez que te acostaste tarde. Te despertaste sintiendo que algo faltaba. Ten&iacute;as raz&oacute;n &mdash; solo que lo que perdiste no fue descanso.
+              </p>
+              <p style="font-family:'Inter',sans-serif; font-size:14px; font-weight:300; line-height:1.8; color:#52525b; margin-bottom:10px;">
+                En 2018, el NIH mantuvo a personas sanas despiertas una sola noche y midi&oacute; los niveles de beta-amiloide en su cerebro &mdash; la prote&iacute;na del Alzheimer. Despu&eacute;s de una noche, hab&iacute;an subido un 5% en el hipocampo y el t&aacute;lamo. Eso es solo el principio de lo que pasa mientras duermes: tu cerebro archiva, edita emociones y hace una limpieza activa. <strong style="font-weight:500; color:#18181b;">Ninguna de esas tres cosas puede hacerlas de d&iacute;a.</strong>
+              </p>
+              <p style="font-family:'Inter',sans-serif; font-size:11px; font-weight:300; color:#a1a1aa; margin-bottom:24px;">Por Oscar Trujillo &nbsp;&middot;&nbsp; 8 min de lectura</p>
+              <a href="https://www.cerebrosesponjosos.com/blog/tu-cerebro-no-descansa-cuando-duermes" style="font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:#18181b; text-decoration:none; border-bottom:1px solid #18181b; padding-bottom:2px; letter-spacing:0.02em;">Leer art&iacute;culo completo &rarr;</a>
+            </td></tr>
+
+            <!-- NOTICIAS -->
+            <tr><td class="section-pad" style="padding:40px 48px; border-bottom:1px solid rgba(0,0,0,0.06);">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
+                <tr>
+                  <td><span style="font-family:'Inter',sans-serif; font-size:9px; font-weight:500; letter-spacing:0.2em; text-transform:uppercase; color:#a1a1aa;">Lo que pas&oacute; esta semana</span></td>
+                  <td style="text-align:right;"><span style="font-family:'Instrument Serif',Georgia,serif; font-size:13px; font-style:italic; color:#a1a1aa;">3 noticias</span></td>
+                </tr>
+              </table>
+
+              <!-- Noticia 1 -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+                <tr><td>
+                  <p style="font-family:'Inter',sans-serif; font-size:9px; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:#a1a1aa; margin-bottom:7px;">Nature Communications &middot; 2026</p>
+                  <a href="https://www.nature.com/articles/s41467-026-68374-8" style="font-family:'Instrument Serif',Georgia,serif; font-size:17px; font-weight:400; color:#18181b; line-height:1.38; text-decoration:none; display:block; margin-bottom:8px; letter-spacing:-0.01em;">Confirmado en humanos: el sistema glinf&aacute;tico elimina las prote&iacute;nas del Alzheimer solo cuando dormimos</a>
+                  <p style="font-family:'Inter',sans-serif; font-size:13px; font-weight:300; line-height:1.72; color:#71717a;">Por primera vez en sujetos humanos, el equipo de Maiken Nedergaard demostr&oacute; que el l&iacute;quido cefalorraqu&iacute;deo arrastra activamente beta-amiloide y tau fosforilada fuera del cerebro durante el sue&ntilde;o. El hallazgo convierte la privaci&oacute;n cr&oacute;nica de sue&ntilde;o en un factor de riesgo de Alzheimer directamente modificable.</p>
+                </td></tr>
+              </table>
+
+              <!-- Divider -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+                <tr><td style="border-top:1px solid rgba(0,0,0,0.04);"></td></tr>
+              </table>
+
+              <!-- Noticia 2 -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+                <tr><td>
+                  <p style="font-family:'Inter',sans-serif; font-size:9px; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:#a1a1aa; margin-bottom:7px;">Cell &middot; enero 2025</p>
+                  <a href="https://www.cell.com/cell/fulltext/S0092-8674(24)01343-6" style="font-family:'Instrument Serif',Georgia,serif; font-size:17px; font-weight:400; color:#18181b; line-height:1.38; text-decoration:none; display:block; margin-bottom:8px; letter-spacing:-0.01em;">Descubierto el mecanismo exacto que impulsa la limpieza cerebral durante el sue&ntilde;o profundo</a>
+                  <p style="font-family:'Inter',sans-serif; font-size:13px; font-weight:300; line-height:1.72; color:#71717a;">El laboratorio de Nedergaard identific&oacute; que durante el sue&ntilde;o NREM el tronco cerebral libera peque&ntilde;as ondas de norepinefrina cada 50 segundos. Esas ondas contraen los vasos sangu&iacute;neos y generan pulsaciones r&iacute;tmicas que act&uacute;an como una bomba, empujando el l&iacute;quido a trav&eacute;s del sistema glinf&aacute;tico. Adem&aacute;s, el zolpidem &mdash; uno de los somn&iacute;feros m&aacute;s recetados del mundo &mdash; suprime estas oscilaciones.</p>
+                </td></tr>
+              </table>
+
+              <!-- Divider -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+                <tr><td style="border-top:1px solid rgba(0,0,0,0.04);"></td></tr>
+              </table>
+
+              <!-- Noticia 3 -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr><td>
+                  <p style="font-family:'Inter',sans-serif; font-size:9px; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:#a1a1aa; margin-bottom:7px;">JAMA Network Open &middot; 2024</p>
+                  <a href="https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2841638" style="font-family:'Instrument Serif',Georgia,serif; font-size:17px; font-weight:400; color:#18181b; line-height:1.38; text-decoration:none; display:block; margin-bottom:8px; letter-spacing:-0.01em;">Ejercicio en la mediana edad reduce el riesgo de demencia hasta en un 45%</a>
+                  <p style="font-family:'Inter',sans-serif; font-size:13px; font-weight:300; line-height:1.72; color:#71717a;">Un estudio del Framingham Heart Study encontr&oacute; que quienes hac&iacute;an ejercicio regular entre los 45 y 64 a&ntilde;os reduc&iacute;an su riesgo de demencia en un 41%, y quienes lo manten&iacute;an despu&eacute;s de los 65 llegaban a un 45%. El mecanismo: el ejercicio aer&oacute;bico aumenta el BDNF, promueve la neurog&eacute;nesis hipocampal y reduce la neuroinflamaci&oacute;n cr&oacute;nica.</p>
+                </td></tr>
+              </table>
+            </td></tr>
+
+            <!-- IDEA PARA LLEVAR -->
+            <tr><td class="section-pad" style="padding:40px 48px; background-color:#f4f4f5; border-bottom:1px solid rgba(0,0,0,0.06);">
+              <p style="font-family:'Inter',sans-serif; font-size:9px; font-weight:500; letter-spacing:0.2em; text-transform:uppercase; color:#a1a1aa; margin-bottom:20px;">Una idea para llevar</p>
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="width:3px; background-color:#18181b;"></td>
+                  <td style="padding-left:20px;">
+                    <p style="font-family:'Instrument Serif',Georgia,serif; font-size:19px; font-style:italic; font-weight:400; line-height:1.6; color:#18181b;">
+                      &ldquo;El sue&ntilde;o no es el intervalo entre d&iacute;as productivos. Es el proceso que hace posible que los d&iacute;as productivos ocurran.&rdquo;
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td></tr>
+
+            <!-- FIRMA -->
+            <tr><td class="section-pad" style="padding:40px 48px 44px;">
+              <p style="font-family:'Inter',sans-serif; font-size:14px; font-weight:300; color:#71717a; line-height:1.78; margin-bottom:24px;">
+                Esto es Esponjosos. Una vez por semana, en tu correo, sin ruido.<br/><br/>
+                Si esta edici&oacute;n te hizo pensar diferente sobre algo que das por sentado cada noche, ya hicimos nuestro trabajo. La pr&oacute;xima semana seguimos.
+              </p>
+              <p style="font-family:'Instrument Serif',Georgia,serif; font-size:16px; font-weight:400; color:#18181b;">Oscar &amp; Stephanie</p>
+              <p style="font-family:'Inter',sans-serif; font-size:12px; font-weight:300; color:#a1a1aa; margin-top:3px;">Cerebros Esponjosos</p>
+            </td></tr>
+          </table>
+
+        </td></tr>
+
+        <!-- DIVIDER -->
+        <tr><td style="border-top:1px solid rgba(0,0,0,0.08); font-size:0; line-height:0;">&nbsp;</td></tr>
+
+        <!-- FOOTER -->
+        <tr><td align="center" style="padding:32px 24px 40px;">
+          <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin-bottom:20px;">
+            <tr>
+              <td style="padding:0 12px;">
+                <a href="https://www.instagram.com/cerebros.esponjosos/" target="_blank" style="text-decoration:none;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a1a1aa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#a1a1aa" stroke="none"/></svg>
+                </a>
+              </td>
+              <td style="padding:0 12px;">
+                <a href="https://www.tiktok.com/@cerebros.esponjosos" target="_blank" style="text-decoration:none;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#a1a1aa" style="display:block;"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.74a4.85 4.85 0 0 1-1.01-.05z"/></svg>
+                </a>
+              </td>
+              <td style="padding:0 12px;">
+                <a href="https://www.youtube.com/@CerebrosEsponjosos" target="_blank" style="text-decoration:none;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a1a1aa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#a1a1aa" stroke="none"/></svg>
+                </a>
+              </td>
+            </tr>
+          </table>
+          <p style="font-family:'Inter',sans-serif; font-size:12px; color:#a1a1aa; margin-bottom:16px;">
+            <a href="https://www.instagram.com/cerebros.esponjosos/" style="color:#71717a; text-decoration:none; margin:0 10px;">Instagram</a>
+            <span style="color:#d4d4d8;">&middot;</span>
+            <a href="https://www.tiktok.com/@cerebros.esponjosos" style="color:#71717a; text-decoration:none; margin:0 10px;">TikTok</a>
+            <span style="color:#d4d4d8;">&middot;</span>
+            <a href="https://www.youtube.com/@CerebrosEsponjosos" style="color:#71717a; text-decoration:none; margin:0 10px;">YouTube</a>
+            <span style="color:#d4d4d8;">&middot;</span>
+            <a href="https://www.cerebrosesponjosos.com" style="color:#71717a; text-decoration:none; margin:0 10px;">Web</a>
+          </p>
+          <p style="font-family:'Inter',sans-serif; font-size:11px; font-weight:300; color:#a1a1aa; line-height:1.7;">
+            Recibiste este email porque te suscribiste a Esponjosos.<br/>
+            &copy; Cerebros Esponjosos
+          </p>
+        </td></tr>
+
+      </table>
+
+    </td></tr>
+  </table>
 
 </body>
 </html>`

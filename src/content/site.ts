@@ -58,7 +58,7 @@ export const founders: Founder[] = [
 ]
 
 export const newsletter = {
-  eyebrow: "El Privado",
+  eyebrow: "Esponjosos",
   titleA: "La gente no solo aprende.",
   titleB: "Se queda por cómo lo contamos.",
   subcopy:
