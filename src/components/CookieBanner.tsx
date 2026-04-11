@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { X, ChevronDown, ChevronUp } from "lucide-react"
+import { X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 type CookieConsent = {
@@ -91,14 +91,6 @@ export function CookieBanner() {
               .
             </p>
 
-            {/* Customization toggle */}
-            <button
-              onClick={() => setShowDetails((v) => !v)}
-              className="flex items-center gap-1.5 text-xs text-[var(--c-text-subtle)] hover:text-[var(--c-text)] transition-colors mb-4"
-            >
-              {showDetails ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-              Personalizar preferencias
-            </button>
 
             {/* Detail toggles */}
             <AnimatePresence>
@@ -175,12 +167,18 @@ export function CookieBanner() {
                 </button>
               ) : (
                 <button
-                  onClick={reject}
+                  onClick={() => setShowDetails(true)}
                   className="flex-1 px-4 py-2.5 rounded-full border border-[var(--c-border-strong)] text-[var(--c-text)] text-xs font-medium hover:bg-[var(--c-surface-2)] transition-colors"
                 >
-                  Solo necesarias
+                  Personalizar
                 </button>
               )}
+              <button
+                onClick={reject}
+                className="flex-1 px-4 py-2.5 rounded-full border border-[var(--c-border-strong)] text-[var(--c-text-subtle)] text-xs font-medium hover:bg-[var(--c-surface-2)] transition-colors"
+              >
+                Rechazar
+              </button>
             </div>
           </div>
         </motion.div>
