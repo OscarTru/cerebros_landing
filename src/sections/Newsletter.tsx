@@ -86,11 +86,11 @@ export function Newsletter() {
             noValidate
           >
             <div
-              className={`relative h-14 rounded-full bg-[var(--c-surface-2)] border ${
+              className={`relative h-14 rounded-full bg-[var(--c-surface-2)] ring-1 ${
                 errors.email || status === "error"
-                  ? "border-red-400/60"
-                  : "border-[var(--c-border)] focus-within:border-[var(--c-border-strong)]"
-              } transition-colors`}
+                  ? "ring-red-400/60"
+                  : "ring-transparent focus-within:ring-2 focus-within:ring-[var(--c-text-muted)]"
+              } transition-all`}
             >
               <input
                 type="email"
@@ -98,12 +98,13 @@ export function Newsletter() {
                 aria-label="Email"
                 disabled={status === "loading"}
                 {...register("email")}
-                className="absolute inset-0 h-full w-full bg-transparent pl-6 pr-36 text-sm text-[var(--c-text)] placeholder:text-[var(--c-text-subtle)] focus:outline-none rounded-full"
+                className="absolute inset-0 h-full w-full bg-transparent pl-6 pr-36 text-sm text-[var(--c-text)] placeholder:text-[var(--c-text-subtle)] outline-none focus:outline-none focus:ring-0 rounded-full"
+                style={{ outline: "none", boxShadow: "none" }}
               />
               <button
                 type="submit"
                 disabled={status === "loading"}
-                className="absolute right-1.5 top-1.5 bottom-1.5 px-6 rounded-full bg-[var(--c-invert)] text-[var(--c-invert-fg)] text-sm font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2 disabled:opacity-60"
+                className="absolute right-1.5 top-1.5 bottom-1.5 px-6 rounded-full bg-[var(--c-invert)] text-[var(--c-invert-fg)] text-sm font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2 disabled:opacity-60 cursor-pointer"
               >
                 {status === "loading" ? (
                   <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
