@@ -8,13 +8,10 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [
-    {
-      enforce: 'pre',
-      ...mdx({
-        remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
-      }),
-    },
     react(),
+    mdx({
+      remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
+    }),
     tailwindcss(),
   ],
   resolve: {
