@@ -15,7 +15,7 @@ const modules = import.meta.glob("../content/blog/*.mdx", { eager: true })
 
 function getAllPosts(): PostMeta[] {
   return Object.entries(modules)
-    .map(([path, mod]) => {
+    .map(([, mod]) => {
       const m = mod as { frontmatter?: PostMeta }
       if (!m.frontmatter) return null
       return m.frontmatter
