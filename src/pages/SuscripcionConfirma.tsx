@@ -37,7 +37,7 @@ export function SuscripcionConfirma() {
             </FadeIn>
             <FadeIn delay={0.05}>
               <p className="text-xs uppercase tracking-[0.2em] text-[var(--c-text-subtle)] mb-4">
-                Casi listo
+                Listo
               </p>
             </FadeIn>
             <FadeIn delay={0.1}>
@@ -45,19 +45,19 @@ export function SuscripcionConfirma() {
                 className="font-serif text-[var(--c-text)] leading-[1.05] tracking-[-0.02em] mb-8"
                 style={{ fontSize: "clamp(2.25rem, 5vw, 4rem)" }}
               >
-                Revisa tu{" "}
-                <span className="italic text-[var(--c-text-faint)]">correo.</span>
+                Ya eres{" "}
+                <span className="italic text-[var(--c-text-faint)]">parte.</span>
               </h1>
             </FadeIn>
             <FadeIn delay={0.15}>
               <p className="text-lg text-[var(--c-text-muted)] leading-relaxed mb-4 max-w-lg mx-auto">
-                Te enviamos un email con un enlace de confirmación. Haz click
-                para activar tu suscripción — así nos aseguramos que eres tú.
+                Te enviamos un email de bienvenida. Nos vemos en tu bandeja
+                de entrada cada semana.
               </p>
             </FadeIn>
             <FadeIn delay={0.2}>
               <p className="text-sm text-[var(--c-text-faint)] mb-12">
-                ¿No lo encuentras? Revisa la carpeta de spam o promociones.
+                ¿No lo ves? Revisa la carpeta de spam o promociones.
               </p>
             </FadeIn>
             <FadeIn delay={0.25}>
