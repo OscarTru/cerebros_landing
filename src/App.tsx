@@ -5,6 +5,7 @@ import { Hero } from "@/sections/Hero"
 import { Manifesto } from "@/sections/Manifesto"
 import { Founders } from "@/sections/Founders"
 import { Content } from "@/sections/Content"
+import { Ebook } from "@/sections/Ebook"
 import { Newsletter } from "@/sections/Newsletter"
 import { Footer } from "@/sections/Footer"
 
@@ -19,6 +20,7 @@ export default function App() {
           <Manifesto />
           <Founders />
           <Content />
+          <Ebook />
           <Newsletter />
         </main>
         <Footer />
