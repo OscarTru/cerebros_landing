@@ -1,7 +1,27 @@
 import { ArrowUpRight, Play, BookOpen } from "lucide-react"
 import { Link } from "react-router-dom"
+import { motion } from "framer-motion"
 import { FadeIn } from "@/components/FadeIn"
 import { dynamicContent, type IgPost } from "@/content/dynamic"
+import { easeOut, viewportOnce } from "@/lib/motion"
+
+interface PostMeta {
+  slug: string
+  title: string
+  date: string
+  description: string
+  author: string
+}
+
+const blogModules = import.meta.glob("../content/blog/*.mdx", { eager: true })
+
+function getLatestPost(): PostMeta | null {
+  const posts = Object.values(blogModules)
+    .map((m) => (m as { frontmatter?: PostMeta }).frontmatter)
+    .filter(Boolean)
+    .sort((a, b) => (a!.date < b!.date ? 1 : -1)) as PostMeta[]
+  return posts[0] ?? null
+}
 
 export function Content() {
   const { latestVideo, instagramPosts } = dynamicContent
@@ -27,20 +47,39 @@ export function Content() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
           {/* Reels — 2 últimos, tall 9:16 */}
           {instagramPosts.slice(0, 2).map((p, i) => (
-            <FadeIn key={p.id} delay={i * 0.05} className="md:col-span-4">
+            <motion.div
+              key={p.id}
+              className="md:col-span-4"
+              initial={{ opacity: 0, y: 32, scale: 0.97 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={viewportOnce}
+              transition={{ duration: 0.7, delay: i * 0.08, ease: easeOut }}
+            >
               <ReelCard post={p} />
-            </FadeIn>
+            </motion.div>
           ))}
 
           {/* YouTube short — tall 9:16 */}
-          <FadeIn delay={0.1} className="md:col-span-4">
+          <motion.div
+            className="md:col-span-4"
+            initial={{ opacity: 0, y: 32, scale: 0.97 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={viewportOnce}
+            transition={{ duration: 0.7, delay: 0.16, ease: easeOut }}
+          >
             <YouTubeShortCard video={latestVideo} />
-          </FadeIn>
+          </motion.div>
 
           {/* Blog — full width */}
-          <FadeIn delay={0.15} className="md:col-span-12">
+          <motion.div
+            className="md:col-span-12"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={viewportOnce}
+            transition={{ duration: 0.7, delay: 0.24, ease: easeOut }}
+          >
             <BlogCard />
-          </FadeIn>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -138,9 +177,12 @@ function YouTubeShortCard({ video }: { video: typeof dynamicContent.latestVideo 
 }
 
 function BlogCard() {
+  const post = getLatestPost()
+  if (!post) return null
+
   return (
     <Link
-      to="/blog/tu-cerebro-no-descansa-cuando-duermes"
+      to={`/blog/${post.slug}`}
       className="group flex items-center justify-between gap-6 rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-7 hover:border-[var(--c-border-strong)] hover:-translate-y-0.5 transition-all"
     >
       <div className="flex items-center gap-6">
@@ -152,10 +194,10 @@ function BlogCard() {
             Blog · Último artículo
           </p>
           <h3 className="font-serif text-xl text-[var(--c-text)] leading-snug mb-1">
-            Tu cerebro no descansa cuando duermes. Hace algo mucho más importante.
+            {post.title}
           </h3>
           <p className="text-sm text-[var(--c-text-subtle)]">
-            por Oscar Trujillo · 8 min de lectura
+            por {post.author}
           </p>
         </div>
       </div>

@@ -3,6 +3,8 @@ import { createRoot } from "react-dom/client"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import "./index.css"
 import App from "./App.tsx"
+import { Blog } from "./pages/Blog.tsx"
+import { Podcast } from "./pages/Podcast.tsx"
 import { BlogPost } from "./pages/BlogPost.tsx"
 import { MediaKit } from "./pages/MediaKit.tsx"
 import { Terminos } from "./pages/Terminos.tsx"
@@ -17,6 +19,8 @@ createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/podcast" element={<Podcast />} />
         <Route path="/blog/:slug" element={<BlogPost />} />
         <Route path="/media-kit" element={<MediaKit />} />
         <Route path="/terminos" element={<Terminos />} />

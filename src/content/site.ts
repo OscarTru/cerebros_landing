@@ -17,6 +17,7 @@ export const navLinks: NavLink[] = [
   { label: "Nosotros", href: "#nosotros" },
   { label: "Contenido", href: "#contenido" },
   { label: "Newsletter", href: "#newsletter" },
+  { label: "Blog", href: "/blog" },
 ]
 
 export const hero = {
@@ -75,10 +76,8 @@ export const footer = {
     {
       title: "Contenido",
       links: [
-        { label: "YouTube", href: "#" },
-        { label: "Podcast", href: "#" },
-        { label: "Instagram", href: "#" },
-        { label: "Blog", href: "#" },
+        { label: "Blog", href: "/blog" },
+        { label: "Podcast", href: "/podcast" },
       ],
     },
     {

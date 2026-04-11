@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import { Menu } from "lucide-react"
+import { Link } from "react-router-dom"
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { navLinks } from "@/content/site"
@@ -33,12 +34,15 @@ export function Nav() {
         <ul className="hidden md:flex items-center gap-10 text-sm text-[var(--c-text-muted)]">
           {navLinks.map((l) => (
             <li key={l.href}>
-              <a
-                href={l.href}
-                className="hover:text-[var(--c-text)] transition-colors"
-              >
-                {l.label}
-              </a>
+              {l.href.startsWith("/") ? (
+                <Link to={l.href} className="hover:text-[var(--c-text)] transition-colors">
+                  {l.label}
+                </Link>
+              ) : (
+                <a href={l.href} className="hover:text-[var(--c-text)] transition-colors">
+                  {l.label}
+                </a>
+              )}
             </li>
           ))}
         </ul>
@@ -57,12 +61,21 @@ export function Nav() {
                 <div className="mt-16 flex flex-col gap-8">
                   {navLinks.map((l) => (
                     <SheetClose asChild key={l.href}>
-                      <a
-                        href={l.href}
-                        className="font-serif text-3xl text-[var(--c-text)] hover:text-[var(--c-text-muted)] transition-colors"
-                      >
-                        {l.label}
-                      </a>
+                      {l.href.startsWith("/") ? (
+                        <Link
+                          to={l.href}
+                          className="font-serif text-3xl text-[var(--c-text)] hover:text-[var(--c-text-muted)] transition-colors"
+                        >
+                          {l.label}
+                        </Link>
+                      ) : (
+                        <a
+                          href={l.href}
+                          className="font-serif text-3xl text-[var(--c-text)] hover:text-[var(--c-text-muted)] transition-colors"
+                        >
+                          {l.label}
+                        </a>
+                      )}
                     </SheetClose>
                   ))}
                 </div>
