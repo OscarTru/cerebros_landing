@@ -10,7 +10,7 @@ import { LikeButton } from "@/components/LikeButton"
 import { ReadingProgressBar } from "@/components/ReadingProgressBar"
 import { TableOfContents } from "@/components/TableOfContents"
 import { isCloudinaryId, cloudinaryUrl, cloudinarySrcSet } from "@/lib/cloudinary"
-import { slugify, type Heading } from "@/lib/readingTime"
+import type { Heading } from "@/lib/readingTime"
 
 interface PostNav {
   slug: string
@@ -98,20 +98,6 @@ function ShareBar({ title, slug }: { title: string; slug: string }) {
   )
 }
 
-// MDX heading components that inject slugified IDs for TOC anchor links
-function makeHeadingComponents() {
-  const H2 = ({ children }: { children?: ReactNode }) => {
-    const text = typeof children === "string" ? children : ""
-    return <h2 id={slugify(text)}>{children}</h2>
-  }
-  const H3 = ({ children }: { children?: ReactNode }) => {
-    const text = typeof children === "string" ? children : ""
-    return <h3 id={slugify(text)}>{children}</h3>
-  }
-  return { h2: H2, h3: H3 }
-}
-
-const headingComponents = makeHeadingComponents()
 
 export function BlogLayout({
   title,
@@ -289,5 +275,3 @@ export function BlogLayout({
   )
 }
 
-// Re-export heading components so BlogPost can pass them to MDX Article
-export { headingComponents }

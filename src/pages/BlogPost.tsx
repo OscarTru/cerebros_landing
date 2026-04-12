@@ -1,6 +1,7 @@
 import { Suspense, lazy, useState, useEffect, useMemo } from "react"
 import { useParams, Navigate } from "react-router-dom"
-import { BlogLayout, headingComponents } from "@/layouts/BlogLayout"
+import { BlogLayout } from "@/layouts/BlogLayout"
+import { headingComponents } from "@/lib/headingComponents"
 import { EbookCTA } from "@/components/EbookCTA"
 import { getAdjacentPosts, type PostMeta } from "@/content/blogMeta"
 import { analytics } from "@/lib/analytics"
