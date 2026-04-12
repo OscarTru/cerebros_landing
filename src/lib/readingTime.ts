@@ -32,7 +32,7 @@ export function calcReadingTime(raw: string): number {
     .replace(/```[\s\S]*?```/g, "")   // fenced code blocks
     .replace(/`[^`]*`/g, "")          // inline code
     .replace(/!\[.*?\]\(.*?\)/g, "")  // images
-    .replace(/\[.*?\]\(.*?\)/g, "")   // links (keep text)
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")   // links — keep visible text, strip URL
     .replace(/#{1,6}\s/g, "")         // headings
     .replace(/[*_~>]/g, "")           // emphasis, blockquote
     .replace(/<[^>]+>/g, "")          // HTML tags
@@ -49,7 +49,7 @@ export function extractHeadings(raw: string): Heading[] {
   const lines = withoutFrontmatter.split("\n")
   const headings: Heading[] = []
   for (const line of lines) {
-    const h2 = line.match(/^##\s+(.+)$/)
+    const h2 = line.match(/^##(?!#)\s+(.+)$/)
     const h3 = line.match(/^###\s+(.+)$/)
     if (h3) {
       headings.push({ id: slugify(h3[1]), text: h3[1].trim(), level: 3 })
