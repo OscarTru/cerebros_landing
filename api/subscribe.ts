@@ -2,8 +2,8 @@
 // Saves email to Supabase and sends welcome email via Resend.
 //
 // Env vars required (set in Vercel → Project Settings → Environment Variables):
-//   RESEND_API_KEY          — API key from resend.com
-//   SUPABASE_URL            — Project URL from Supabase → Settings → API
+//   RESEND_API_KEY            — API key from resend.com
+//   SUPABASE_URL              — Project URL from Supabase → Settings → API
 //   SUPABASE_SERVICE_ROLE_KEY — Service role key from Supabase → Settings → API
 
 import { createClient } from "@supabase/supabase-js"
@@ -16,7 +16,6 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const resendKey = process.env.RESEND_API_KEY
-  const resendAudienceId = process.env.RESEND_AUDIENCE_ID
   const supabaseUrl = process.env.SUPABASE_URL
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
@@ -65,21 +64,17 @@ export default async function handler(req: Request): Promise<Response> {
     "Authorization": `Bearer ${resendKey}`,
   }
 
-  // Add contact to Resend audience for broadcasts
-  if (resendAudienceId) {
-    const contactRes = await fetch(`https://api.resend.com/audiences/${resendAudienceId}/contacts`, {
-      method: "POST",
-      headers: resendHeaders,
-      body: JSON.stringify({ email, unsubscribed: false }),
-    })
-    const contactText = await contactRes.text()
-    if (!contactRes.ok) {
-      console.error("Resend contact error:", contactRes.status, contactText)
-    } else {
-      console.log("Resend contact added:", contactText)
-    }
+  // Add contact to Resend (for broadcasts/marketing emails)
+  const contactRes = await fetch("https://api.resend.com/contacts", {
+    method: "POST",
+    headers: resendHeaders,
+    body: JSON.stringify({ email, unsubscribed: false }),
+  })
+  const contactText = await contactRes.text()
+  if (!contactRes.ok) {
+    console.error("Resend contact error:", contactRes.status, contactText)
   } else {
-    console.warn("RESEND_AUDIENCE_ID not set — skipping audience")
+    console.log("Resend contact added:", contactText)
   }
 
   // Send welcome email

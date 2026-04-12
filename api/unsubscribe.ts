@@ -12,13 +12,12 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const resendKey = process.env.RESEND_API_KEY
-  const resendAudienceId = process.env.RESEND_AUDIENCE_ID
   const supabaseUrl = process.env.SUPABASE_URL
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
   // Mark unsubscribed in Resend (best-effort)
-  if (resendKey && resendAudienceId) {
-    await fetch(`https://api.resend.com/audiences/${resendAudienceId}/contacts`, {
+  if (resendKey) {
+    await fetch("https://api.resend.com/contacts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
