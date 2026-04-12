@@ -8,14 +8,14 @@ export function EbookCTA() {
   return (
     <div className="not-prose my-10 rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface-2)] overflow-hidden">
       <div className="flex flex-col sm:flex-row">
-        {/* Cover image */}
-        <div className="sm:w-48 shrink-0 bg-[var(--c-surface)]">
+        {/* Cover image — contain so nothing is cropped */}
+        <div className="sm:w-48 shrink-0 flex items-center justify-center bg-[var(--c-surface)] p-4">
           <img
             src={cloudinaryUrl(EBOOK_IMAGE_ID, 400)}
             srcSet={cloudinarySrcSet(EBOOK_IMAGE_ID)}
-            sizes="(max-width: 640px) 100vw, 192px"
-            alt="100 ejercicios para mantener tu cerebro activo — ebook gratuito"
-            className="w-full h-48 sm:h-full object-cover"
+            sizes="192px"
+            alt="100 retos para activar tu cerebro — ebook"
+            className="w-full max-h-52 object-contain"
             loading="lazy"
             decoding="async"
           />
@@ -25,10 +25,10 @@ export function EbookCTA() {
         <div className="flex flex-col justify-center gap-4 p-6 sm:p-8">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--c-text-subtle)] mb-2">
-              Ebook gratuito
+              Ebook
             </p>
             <h3 className="font-serif text-xl text-[var(--c-text)] leading-snug">
-              100 ejercicios para mantener tu cerebro activo
+              100 retos para activar tu cerebro
             </h3>
             <p className="mt-2 text-sm text-[var(--c-text-muted)] leading-relaxed">
               Organizados por función cognitiva — memoria, atención, lenguaje, función ejecutiva y
@@ -40,9 +40,9 @@ export function EbookCTA() {
             href={DOWNLOAD_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 self-start rounded-full bg-[var(--c-text)] text-[var(--c-bg)] text-sm font-medium px-6 py-2.5 hover:opacity-90 active:scale-95 transition-all duration-150"
+            className="inline-flex items-center justify-center self-start rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-sm font-medium px-6 py-2.5 hover:opacity-80 active:scale-95 transition-all duration-150"
           >
-            Descargar gratis
+            Conseguir ebook
           </a>
         </div>
       </div>
