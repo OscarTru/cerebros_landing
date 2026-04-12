@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { ArrowRight } from "lucide-react"
 import { ThemeToggle } from "@/components/ThemeToggle"
@@ -21,8 +20,8 @@ function getAllPosts(): PostMeta[] {
       if (!m.frontmatter) return null
       return m.frontmatter
     })
-    .filter(Boolean)
-    .sort((a, b) => (a!.date < b!.date ? 1 : -1)) as PostMeta[]
+    .filter((p): p is PostMeta => p !== null)
+    .sort((a, b) => (a.date < b.date ? 1 : -1))
 }
 
 function formatDate(iso: string) {
@@ -61,6 +60,7 @@ function PostImage({
         alt={title}
         className={className}
         style={{ objectFit: "cover" }}
+        loading="lazy"
       />
     )
   }
@@ -73,22 +73,10 @@ function PostImage({
   )
 }
 
+const ALL_POSTS = getAllPosts()
+
 export function Blog() {
-  const [posts, setPosts] = useState<PostMeta[]>([])
-
-  useEffect(() => {
-    setPosts(getAllPosts())
-  }, [])
-
-  if (posts.length === 0) {
-    return (
-      <div className="min-h-screen bg-[var(--c-bg)] text-[var(--c-text)]">
-        <p className="text-[var(--c-text-subtle)] pt-40 text-center">Cargando artículos...</p>
-      </div>
-    )
-  }
-
-  const [featured, ...rest] = posts
+  const [featured, ...rest] = ALL_POSTS
 
   return (
     <div className="min-h-screen bg-[var(--c-bg)] text-[var(--c-text)]">
