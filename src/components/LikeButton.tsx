@@ -78,7 +78,7 @@ export function LikeButton({ slug }: LikeButtonProps) {
       <button
         onClick={handleLike}
         disabled={loading}
-        className="flex items-center gap-2 px-6 py-2.5 rounded-full border border-[var(--c-border)] bg-transparent text-sm text-[var(--c-text-muted)] hover:border-[var(--c-border-strong)] hover:text-[var(--c-text)] transition-all disabled:opacity-50 cursor-pointer"
+        className="flex items-center gap-2 px-6 py-2.5 rounded-full border border-[var(--c-border)] bg-transparent text-sm text-[var(--c-text-muted)] hover:border-[var(--c-border-strong)] hover:text-[var(--c-text)] transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         aria-label="Me gustó este artículo"
       >
         <svg
