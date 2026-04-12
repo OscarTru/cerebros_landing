@@ -1,12 +1,13 @@
 import { LazyMotion, domAnimation } from "framer-motion"
 import { Link } from "react-router-dom"
-import { ArrowLeft, ArrowUpRight, Mail, Play } from "lucide-react"
+import { ArrowLeft, ArrowUpRight, Mail, Play, Send, Loader2 } from "lucide-react"
 import { NoiseOverlay } from "@/components/NoiseOverlay"
 import { Footer } from "@/sections/Footer"
 import { FadeIn } from "@/components/FadeIn"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { dynamicContent, type IgTopReel } from "@/content/dynamic"
+import { useState } from "react"
 
 const CONTACT_EMAIL = "contacto@cerebrosesponjosos.com"
 const INSTAGRAM_PROFILE = "https://instagram.com/cerebrosesponjosos"
@@ -296,40 +297,42 @@ export function MediaKit() {
             </div>
           </section>
 
-          {/* CTA */}
+          {/* Contact form */}
           <section className="px-6 py-32 border-t border-[var(--c-border)]">
-            <div className="max-w-3xl mx-auto text-center">
-              <FadeIn>
+            <div className="max-w-3xl mx-auto">
+              <FadeIn className="mb-12 text-center">
                 <h2
-                  className="font-serif text-[var(--c-text)] leading-[1.05] tracking-[-0.02em] mb-6"
+                  className="font-serif text-[var(--c-text)] leading-[1.05] tracking-[-0.02em] mb-4"
                   style={{ fontSize: "clamp(2.25rem, 5vw, 4rem)" }}
                 >
                   ¿Hablamos?
                 </h2>
-              </FadeIn>
-              <FadeIn delay={0.1}>
-                <p className="text-lg text-[var(--c-text-muted)] mb-10">
+                <p className="text-lg text-[var(--c-text-muted)]">
                   Respondemos cada mensaje. Cuéntanos qué tienes en mente.
                 </p>
               </FadeIn>
-              <FadeIn delay={0.2}>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Button asChild size="lg" variant="primary">
-                    <a href={`mailto:${CONTACT_EMAIL}?subject=Colaboración`}>
-                      <Mail className="h-4 w-4" aria-hidden="true" />
-                      {CONTACT_EMAIL}
-                    </a>
-                  </Button>
-                  <Button asChild size="lg" variant="ghost">
-                    <a
-                      href={INSTAGRAM_PROFILE}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      DM en Instagram
-                      <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-                    </a>
-                  </Button>
+              <FadeIn delay={0.1}>
+                <ContactForm />
+              </FadeIn>
+              <FadeIn delay={0.15}>
+                <div className="flex items-center justify-center gap-6 mt-8">
+                  <a
+                    href={`mailto:${CONTACT_EMAIL}`}
+                    className="flex items-center gap-2 text-sm text-[var(--c-text-muted)] hover:text-[var(--c-text)] transition-colors"
+                  >
+                    <Mail className="h-4 w-4" aria-hidden="true" />
+                    {CONTACT_EMAIL}
+                  </a>
+                  <span className="text-[var(--c-border-strong)]" aria-hidden="true">·</span>
+                  <a
+                    href={INSTAGRAM_PROFILE}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-[var(--c-text-muted)] hover:text-[var(--c-text)] transition-colors"
+                  >
+                    DM en Instagram
+                    <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                  </a>
                 </div>
               </FadeIn>
             </div>
@@ -385,6 +388,130 @@ function PackageCard({ pkg }: { pkg: Package }) {
         </a>
       </Button>
     </div>
+  )
+}
+
+type ContactStatus = "idle" | "loading" | "success" | "error"
+
+function ContactForm() {
+  const [status, setStatus] = useState<ContactStatus>("idle")
+  const [error, setError] = useState("")
+  const [form, setForm] = useState({ name: "", email: "", brand: "", package: "", message: "", website: "" })
+
+  const set = (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+    setForm((f) => ({ ...f, [field]: e.target.value }))
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setStatus("loading")
+    setError("")
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      })
+      const data = await res.json() as { ok?: boolean; error?: string }
+      if (!res.ok || !data.ok) {
+        setError(data.error ?? "Error al enviar. Inténtalo de nuevo.")
+        setStatus("error")
+      } else {
+        setStatus("success")
+      }
+    } catch {
+      setError("Error de conexión. Inténtalo de nuevo.")
+      setStatus("error")
+    }
+  }
+
+  const inputClass = "w-full rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] px-4 py-3 text-sm text-[var(--c-text)] placeholder:text-[var(--c-text-faint)] focus:outline-none focus:border-[var(--c-border-strong)] transition-colors"
+
+  if (status === "success") {
+    return (
+      <div className="rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-10 text-center">
+        <p className="font-serif text-2xl text-[var(--c-text)] mb-3">Mensaje recibido ✓</p>
+        <p className="text-[var(--c-text-muted)] text-sm">Te respondemos en menos de 48 horas hábiles.</p>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-8 flex flex-col gap-5" noValidate>
+      {/* Honeypot */}
+      <input type="text" name="website" value={form.website} onChange={set("website")} className="hidden" tabIndex={-1} aria-hidden="true" />
+
+      <div className="grid sm:grid-cols-2 gap-5">
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="contact-name" className="text-xs font-mono uppercase tracking-[0.15em] text-[var(--c-text-subtle)]">
+            Nombre *
+          </label>
+          <input id="contact-name" type="text" required placeholder="Tu nombre" value={form.name} onChange={set("name")} className={inputClass} />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="contact-email" className="text-xs font-mono uppercase tracking-[0.15em] text-[var(--c-text-subtle)]">
+            Email *
+          </label>
+          <input id="contact-email" type="email" required placeholder="tu@correo.com" value={form.email} onChange={set("email")} className={inputClass} />
+        </div>
+      </div>
+
+      <div className="grid sm:grid-cols-2 gap-5">
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="contact-brand" className="text-xs font-mono uppercase tracking-[0.15em] text-[var(--c-text-subtle)]">
+            Marca / empresa
+          </label>
+          <input id="contact-brand" type="text" placeholder="Nombre de tu empresa (opcional)" value={form.brand} onChange={set("brand")} className={inputClass} />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="contact-package" className="text-xs font-mono uppercase tracking-[0.15em] text-[var(--c-text-subtle)]">
+            Paquete de interés
+          </label>
+          <select id="contact-package" value={form.package} onChange={set("package")} className={inputClass}>
+            <option value="">Selecciona uno (opcional)</option>
+            <option value="Mención (Básico)">Mención — Básico</option>
+            <option value="Integración (Estándar)">Integración — Estándar</option>
+            <option value="Serie (Premium)">Serie — Premium</option>
+            <option value="Arquitectura Completa (Custom)">Arquitectura Completa — Custom</option>
+            <option value="Otro">Otro / No sé aún</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="contact-message" className="text-xs font-mono uppercase tracking-[0.15em] text-[var(--c-text-subtle)]">
+          Mensaje *
+        </label>
+        <textarea
+          id="contact-message"
+          required
+          rows={5}
+          placeholder="Cuéntanos sobre tu marca, el producto o servicio, y qué tipo de colaboración tienes en mente..."
+          value={form.message}
+          onChange={set("message")}
+          className={`${inputClass} resize-none`}
+        />
+      </div>
+
+      {error && (
+        <p className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3" role="alert">
+          {error}
+        </p>
+      )}
+
+      <Button type="submit" size="lg" variant="primary" disabled={status === "loading"} className="self-start">
+        {status === "loading" ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            <span>Enviando…</span>
+          </>
+        ) : (
+          <>
+            <Send className="h-4 w-4" aria-hidden="true" />
+            Enviar mensaje
+          </>
+        )}
+      </Button>
+    </form>
   )
 }
 

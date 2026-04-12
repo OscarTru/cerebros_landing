@@ -18,6 +18,7 @@ const Disclaimer = lazy(() => import("./pages/Disclaimer.tsx").then((m) => ({ de
 const SuscripcionConfirma = lazy(() => import("./pages/SuscripcionConfirma.tsx").then((m) => ({ default: m.SuscripcionConfirma })))
 const SuscripcionBienvenida = lazy(() => import("./pages/SuscripcionBienvenida.tsx").then((m) => ({ default: m.SuscripcionBienvenida })))
 const Baja = lazy(() => import("./pages/Baja.tsx").then((m) => ({ default: m.Baja })))
+const Speaker = lazy(() => import("./pages/Speaker.tsx").then((m) => ({ default: m.Speaker })))
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -38,6 +39,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/suscripcion/confirma" element={<SuscripcionConfirma />} />
           <Route path="/suscripcion/bienvenida" element={<SuscripcionBienvenida />} />
           <Route path="/baja" element={<Baja />} />
+          <Route path="/speaker" element={<Speaker />} />
         </Routes>
       </Suspense>
     </BrowserRouter>

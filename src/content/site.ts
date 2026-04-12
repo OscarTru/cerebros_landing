@@ -97,6 +97,7 @@ export const footer = {
           href: "mailto:contacto@cerebrosesponjosos.com",
         },
         { label: "Media Kit", href: "/media-kit" },
+        { label: "Speakers", href: "/speaker" },
       ],
     },
   ],
