@@ -73,9 +73,16 @@ function ShareBar({ title, slug }: { title: string; slug: string }) {
         </a>
 
         {/* Compartir / copiar enlace */}
-        <button onClick={copyLink} aria-label={copied ? "Enlace copiado" : "Copiar enlace"} className={iconClass}>
-          <Link2 className="h-4 w-4" aria-hidden="true" />
-        </button>
+        <div className="relative">
+          <button onClick={copyLink} aria-label={copied ? "Enlace copiado" : "Copiar enlace"} className={iconClass}>
+            <Link2 className="h-4 w-4" aria-hidden="true" />
+          </button>
+          {copied && (
+            <span className="absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] font-mono tracking-wide text-[var(--c-text)] bg-[var(--c-surface-2)] border border-[var(--c-border)] px-2 py-0.5 rounded-full whitespace-nowrap pointer-events-none">
+              copiado
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Like — right */}
