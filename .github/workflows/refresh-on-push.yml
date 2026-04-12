@@ -2,7 +2,7 @@ name: Refresh content on push
 
 on:
   push:
-    branches: [main]
+    branches: [dev]
     paths-ignore:
       - "public/data/content.json"
       - "**/*.md"
