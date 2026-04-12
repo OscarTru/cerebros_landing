@@ -150,7 +150,16 @@ export function BlogLayout({
         <main className="relative z-10 px-6 pt-20 pb-32">
           {/* Outer container: wider to accommodate sidebar */}
           <div className="max-w-5xl mx-auto">
-            <div className={showTOC ? "lg:grid lg:grid-cols-[1fr_220px] lg:gap-16 lg:items-start" : ""}>
+            <div className={showTOC ? "lg:grid lg:grid-cols-[200px_1fr] lg:gap-16 lg:items-start" : ""}>
+              {/* ── Sidebar (desktop only) — LEFT column ── */}
+              {showTOC && (
+                <aside className="hidden lg:block">
+                  <div className="sticky top-32 pt-2">
+                    <TableOfContents headings={headings} />
+                  </div>
+                </aside>
+              )}
+
               {/* ── Main prose column ── */}
               <article className="min-w-0">
                 <FadeIn>
@@ -272,15 +281,6 @@ export function BlogLayout({
                   </div>
                 </FadeIn>
               </article>
-
-              {/* ── Sidebar (desktop only) ── */}
-              {showTOC && (
-                <aside className="hidden lg:block">
-                  <div className="sticky top-24">
-                    <TableOfContents headings={headings} />
-                  </div>
-                </aside>
-              )}
             </div>
           </div>
         </main>
