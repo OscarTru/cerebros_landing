@@ -1,9 +1,10 @@
-import { ArrowUpRight, Play, BookOpen } from "lucide-react"
+import { Play } from "lucide-react"
 import { Link } from "react-router-dom"
 import { motion } from "framer-motion"
 import { FadeIn } from "@/components/FadeIn"
 import { dynamicContent, type IgPost } from "@/content/dynamic"
 import { easeOut, viewportOnce } from "@/lib/motion"
+import { isCloudinaryId, cloudinaryUrl, cloudinarySrcSet } from "@/lib/cloudinary"
 
 interface PostMeta {
   slug: string
@@ -11,20 +12,38 @@ interface PostMeta {
   date: string
   description: string
   author: string
+  image?: string
 }
 
 const blogModules = import.meta.glob("../content/blog/*.mdx", { eager: true })
 
-function getLatestPost(): PostMeta | null {
-  const posts = Object.values(blogModules)
+function getLatestPosts(n: number): PostMeta[] {
+  return Object.values(blogModules)
     .map((m) => (m as { frontmatter?: PostMeta }).frontmatter)
-    .filter(Boolean)
-    .sort((a, b) => (a!.date < b!.date ? 1 : -1)) as PostMeta[]
-  return posts[0] ?? null
+    .filter((p): p is PostMeta => Boolean(p))
+    .sort((a, b) => (a.date < b.date ? 1 : -1))
+    .slice(0, n)
 }
+
+function formatDate(iso: string) {
+  const [y, mo, d] = iso.split("-").map(Number)
+  return new Date(y, mo - 1, d).toLocaleDateString("es-ES", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  })
+}
+
+const cardAnim = (delay: number) => ({
+  initial: { opacity: 0, y: 28, scale: 0.97 },
+  whileInView: { opacity: 1, y: 0, scale: 1 },
+  viewport: viewportOnce,
+  transition: { duration: 0.65, delay, ease: easeOut },
+})
 
 export function Content() {
   const { latestVideo, instagramPosts } = dynamicContent
+  const latestPosts = getLatestPosts(2)
 
   return (
     <section
@@ -44,43 +63,28 @@ export function Content() {
           </h2>
         </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-          {/* Reels — 2 últimos, tall 9:16 */}
+        {/* Row 1: 2 IG reels + YouTube video */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
           {instagramPosts.slice(0, 2).map((p, i) => (
-            <motion.div
-              key={p.id}
-              className="md:col-span-4"
-              initial={{ opacity: 0, y: 32, scale: 0.97 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={viewportOnce}
-              transition={{ duration: 0.7, delay: i * 0.08, ease: easeOut }}
-            >
+            <motion.div key={p.id} {...cardAnim(i * 0.08)}>
               <ReelCard post={p} />
             </motion.div>
           ))}
-
-          {/* YouTube short — tall 9:16 */}
-          <motion.div
-            className="md:col-span-4"
-            initial={{ opacity: 0, y: 32, scale: 0.97 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={viewportOnce}
-            transition={{ duration: 0.7, delay: 0.16, ease: easeOut }}
-          >
-            <YouTubeShortCard video={latestVideo} />
-          </motion.div>
-
-          {/* Blog — full width */}
-          <motion.div
-            className="md:col-span-12"
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={viewportOnce}
-            transition={{ duration: 0.7, delay: 0.24, ease: easeOut }}
-          >
-            <BlogCard />
+          <motion.div {...cardAnim(0.16)}>
+            <YouTubeCard video={latestVideo} />
           </motion.div>
         </div>
+
+        {/* Row 2: Latest blog posts */}
+        {latestPosts.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {latestPosts.map((post, i) => (
+              <motion.div key={post.slug} {...cardAnim(0.24 + i * 0.08)}>
+                <BlogPostCard post={post} index={i} />
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )
@@ -89,42 +93,40 @@ export function Content() {
 function ReelCard({ post }: { post: IgPost }) {
   const thumb = post.thumbnailUrl ?? post.mediaUrl
   const alt = post.caption ? post.caption.slice(0, 100) : "Instagram reel"
+
   return (
     <a
       href={post.permalink}
       target="_blank"
       rel="noopener noreferrer"
-      className="group block h-full rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] overflow-hidden hover:border-[var(--c-border-strong)] transition-all"
+      className="group block rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] overflow-hidden hover:border-[var(--c-border-strong)] transition-all"
     >
-      <div className="relative aspect-[9/16] overflow-hidden">
+      <div className="relative aspect-video overflow-hidden">
         <img
           src={thumb}
           alt={alt}
           loading="lazy"
-          className="absolute inset-0 h-full w-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-700"
+          className="absolute inset-0 h-full w-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-[1.03] transition-all duration-700"
         />
         <div
           className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.1) 55%, transparent)",
-          }}
+          style={{ background: "linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0.05) 60%, transparent)" }}
         />
-        <div className="absolute top-5 left-5 text-[10px] font-mono uppercase tracking-[0.2em] text-white/85">
+        <div className="absolute top-4 left-4 text-[9px] font-mono uppercase tracking-[0.2em] text-white/80">
           Instagram · Reel
         </div>
-        <div className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white text-black flex items-center justify-center group-hover:scale-110 transition-transform">
-          <Play className="h-4 w-4 fill-black" aria-hidden="true" />
+        <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/90 text-black flex items-center justify-center group-hover:scale-110 transition-transform">
+          <Play className="h-3.5 w-3.5 fill-black" aria-hidden="true" />
         </div>
-        <div className="absolute bottom-0 left-0 right-0 p-5">
-          <p className="text-sm text-white/90 line-clamp-2">{alt}</p>
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <p className="text-xs text-white/90 line-clamp-2 leading-snug">{alt}</p>
         </div>
       </div>
     </a>
   )
 }
 
-function YouTubeShortCard({ video }: { video: typeof dynamicContent.latestVideo }) {
+function YouTubeCard({ video }: { video: typeof dynamicContent.latestVideo }) {
   const href = video?.url ?? "#"
   const title = video?.title ?? "Próximamente"
   const thumb = video ? `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg` : null
@@ -134,40 +136,34 @@ function YouTubeShortCard({ video }: { video: typeof dynamicContent.latestVideo 
       href={href}
       target={video ? "_blank" : undefined}
       rel={video ? "noopener noreferrer" : undefined}
-      className="group block h-full rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] overflow-hidden hover:border-[var(--c-border-strong)] transition-all"
+      className="group block rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] overflow-hidden hover:border-[var(--c-border-strong)] transition-all"
     >
-      <div className="relative aspect-[9/16] overflow-hidden">
+      <div className="relative aspect-video overflow-hidden">
         {thumb ? (
           <img
             src={thumb}
             alt={title}
             loading="eager"
-            className="absolute inset-0 h-full w-full object-cover scale-[1.8] opacity-85 group-hover:opacity-100 group-hover:scale-[1.85] transition-all duration-700"
+            className="absolute inset-0 h-full w-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-[1.03] transition-all duration-700"
           />
         ) : (
-          <div
-            className="absolute inset-0 bg-[var(--c-surface-2)]"
-            aria-hidden="true"
-          />
+          <div className="absolute inset-0 bg-[var(--c-surface-2)]" aria-hidden="true" />
         )}
         <div
           className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.1) 55%, transparent)",
-          }}
+          style={{ background: "linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.05) 60%, transparent)" }}
         />
-        <div className="absolute top-5 left-5 text-[10px] font-mono uppercase tracking-[0.2em] text-white/85">
-          YouTube · Short
+        <div className="absolute top-4 left-4 text-[9px] font-mono uppercase tracking-[0.2em] text-white/80">
+          YouTube
         </div>
-        <div className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white text-black flex items-center justify-center group-hover:scale-110 transition-transform">
-          <Play className="h-4 w-4 fill-black" aria-hidden="true" />
+        <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/90 text-black flex items-center justify-center group-hover:scale-110 transition-transform">
+          <Play className="h-3.5 w-3.5 fill-black" aria-hidden="true" />
         </div>
-        <div className="absolute bottom-0 left-0 right-0 p-5">
-          <p className="text-xs font-mono uppercase tracking-[0.2em] text-white/70 mb-2">
-            Último episodio
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <p className="text-[9px] font-mono uppercase tracking-[0.2em] text-white/60 mb-1">
+            Último video
           </p>
-          <h3 className="font-serif text-white leading-tight text-lg line-clamp-2">
+          <h3 className="font-serif text-white leading-tight text-sm line-clamp-2">
             {title}
           </h3>
         </div>
@@ -176,35 +172,70 @@ function YouTubeShortCard({ video }: { video: typeof dynamicContent.latestVideo 
   )
 }
 
-function BlogCard() {
-  const post = getLatestPost()
-  if (!post) return null
+const PLACEHOLDER_GRADIENTS = [
+  "linear-gradient(135deg, #1e1b2e, #2d1f3d)",
+  "linear-gradient(135deg, #0f1a12, #1a2e1f)",
+  "linear-gradient(135deg, #1a1200, #2e2200)",
+]
+
+function BlogPostCard({ post, index }: { post: PostMeta; index: number }) {
+  const gradient = PLACEHOLDER_GRADIENTS[index % PLACEHOLDER_GRADIENTS.length]
 
   return (
     <Link
       to={`/blog/${post.slug}`}
-      className="group flex items-center justify-between gap-6 rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-7 hover:border-[var(--c-border-strong)] hover:-translate-y-0.5 transition-all"
+      className="group block rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] overflow-hidden hover:border-[var(--c-border-strong)] transition-all"
     >
-      <div className="flex items-center gap-6">
-        <div className="p-3 rounded-xl bg-[var(--c-surface-2)] border border-[var(--c-border)] group-hover:bg-[var(--c-invert)] group-hover:text-[var(--c-invert-fg)] transition-colors shrink-0">
-          <BookOpen className="h-5 w-5" aria-hidden="true" />
-        </div>
-        <div>
-          <p className="text-xs font-mono uppercase tracking-[0.2em] text-[var(--c-text-subtle)] mb-2">
-            Blog · Último artículo
-          </p>
-          <h3 className="font-serif text-xl text-[var(--c-text)] leading-snug mb-1">
-            {post.title}
-          </h3>
-          <p className="text-sm text-[var(--c-text-subtle)]">
-            por {post.author}
-          </p>
+      {/* Cover image */}
+      <div className="relative aspect-video overflow-hidden">
+        {post.image ? (
+          isCloudinaryId(post.image) ? (
+            <img
+              src={cloudinaryUrl(post.image, 800)}
+              srcSet={cloudinarySrcSet(post.image)}
+              sizes="(max-width: 640px) 100vw, 50vw"
+              alt={post.title}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-[1.03] transition-all duration-700"
+            />
+          ) : (
+            <img
+              src={post.image}
+              alt={post.title}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-[1.03] transition-all duration-700"
+            />
+          )
+        ) : (
+          <div
+            className="absolute inset-0"
+            style={{ background: gradient }}
+            aria-hidden="true"
+          />
+        )}
+        <div
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(to top, rgba(0,0,0,0.55), transparent 70%)" }}
+        />
+        <div className="absolute top-4 left-4 text-[9px] font-mono uppercase tracking-[0.2em] text-white/80">
+          Blog
         </div>
       </div>
-      <ArrowUpRight
-        className="h-5 w-5 text-[var(--c-text-subtle)] group-hover:text-[var(--c-text)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0"
-        aria-hidden="true"
-      />
+
+      {/* Text */}
+      <div className="p-5">
+        <time className="text-[10px] font-mono text-[var(--c-text-subtle)] uppercase tracking-[0.15em] block mb-2">
+          {formatDate(post.date)}
+        </time>
+        <h3 className="font-serif text-base text-[var(--c-text)] leading-snug mb-2 line-clamp-2">
+          {post.title}
+        </h3>
+        <p className="text-xs text-[var(--c-text-muted)] leading-relaxed line-clamp-2">
+          {post.description}
+        </p>
+      </div>
     </Link>
   )
 }
