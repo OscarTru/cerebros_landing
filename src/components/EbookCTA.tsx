@@ -8,14 +8,14 @@ export function EbookCTA() {
   return (
     <div className="not-prose my-10 rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface-2)] overflow-hidden">
       <div className="flex flex-col sm:flex-row">
-        {/* Cover image — full bleed, no padding */}
-        <div className="sm:w-44 shrink-0 overflow-hidden">
+        {/* Cover image — natural aspect ratio, no cropping */}
+        <div className="sm:w-44 shrink-0 self-stretch flex items-center overflow-hidden bg-[var(--c-surface)]">
           <img
             src={cloudinaryUrl(EBOOK_IMAGE_ID, 400)}
             srcSet={cloudinarySrcSet(EBOOK_IMAGE_ID)}
             sizes="176px"
             alt="100 retos para activar tu cerebro — ebook"
-            className="w-full h-full object-cover object-center"
+            className="w-full h-auto object-contain"
             loading="lazy"
             decoding="async"
           />
