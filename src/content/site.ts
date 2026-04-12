@@ -59,8 +59,8 @@ export const founders: Founder[] = [
 
 export const newsletter = {
   eyebrow: "Esponjosos",
-  titleA: "La gente no solo aprende.",
-  titleB: "Se queda por cómo lo contamos.",
+  titleA: "Hay cosas que tu cerebro hace",
+  titleB: "que nadie te había contado.",
   subcopy:
     "Aprende algo una vez por semana que no sabías que tu cerebro necesitaba.",
   placeholder: "hola@tucorreo.com",
