@@ -205,3 +205,13 @@ body {
   border-top: 1px solid var(--c-border);
   margin: 3rem 0;
 }
+
+/* Escape hatch — components inside prose that opt out of prose styles */
+.prose-blog .not-prose,
+.prose-blog .not-prose * {
+  font-size: revert;
+  line-height: revert;
+  color: revert;
+  text-decoration: none;
+  max-width: none;
+}
