@@ -60,17 +60,21 @@ export default async function handler(req: Request): Promise<Response> {
 
   console.log(`Subscribed: ${email}`)
 
-  // Add contact to Resend for broadcasts
-  const contactRes = await fetch("https://api.resend.com/contacts", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${resendKey}`,
-    },
-    body: JSON.stringify({ email, unsubscribed: false, ...(resendAudienceId ? { audience_id: resendAudienceId } : {}) }),
-  })
-  if (!contactRes.ok) {
-    console.error("Resend contact error:", contactRes.status, await contactRes.text())
+  // Add contact to Resend audience for broadcasts
+  if (resendAudienceId) {
+    const contactRes = await fetch(`https://api.resend.com/audiences/${resendAudienceId}/contacts`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${resendKey}`,
+      },
+      body: JSON.stringify({ email, unsubscribed: false }),
+    })
+    if (!contactRes.ok) {
+      console.error("Resend contact error:", contactRes.status, await contactRes.text())
+    }
+  } else {
+    console.warn("RESEND_AUDIENCE_ID not set — contact not added to audience")
   }
 
   // Send welcome email via Resend
