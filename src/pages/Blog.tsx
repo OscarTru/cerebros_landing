@@ -78,6 +78,14 @@ const ALL_POSTS = getAllPosts()
 export function Blog() {
   const [featured, ...rest] = ALL_POSTS
 
+  if (!featured) {
+    return (
+      <div className="min-h-screen bg-[var(--c-bg)] text-[var(--c-text)] flex items-center justify-center">
+        <p className="text-[var(--c-text-subtle)]">No hay artículos aún.</p>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-[var(--c-bg)] text-[var(--c-text)]">
       {/* Nav */}
