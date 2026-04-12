@@ -2,28 +2,7 @@ import { Link } from "react-router-dom"
 import { ArrowRight } from "lucide-react"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { isCloudinaryId, cloudinaryUrl, cloudinarySrcSet } from "@/lib/cloudinary"
-
-interface PostMeta {
-  slug: string
-  title: string
-  date: string
-  description: string
-  author: string
-  image?: string
-}
-
-const modules = import.meta.glob("../content/blog/*.mdx", { eager: true })
-
-function getAllPosts(): PostMeta[] {
-  return Object.entries(modules)
-    .map(([, mod]) => {
-      const m = mod as { frontmatter?: PostMeta }
-      if (!m.frontmatter) return null
-      return m.frontmatter
-    })
-    .filter((p): p is PostMeta => p !== null)
-    .sort((a, b) => (a.date < b.date ? 1 : -1))
-}
+import { ALL_POSTS } from "@/content/blogMeta"
 
 function formatDate(iso: string) {
   const [y, m, d] = iso.split("-").map(Number)
@@ -94,8 +73,6 @@ function PostImage({
     />
   )
 }
-
-const ALL_POSTS = getAllPosts()
 
 export function Blog() {
   const [featured, ...rest] = ALL_POSTS

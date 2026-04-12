@@ -50,7 +50,7 @@ export function Ebook() {
             transition={{ duration: 0.8, delay: 0.1, ease: easeOut }}
           >
             <img
-              src="/assets/ebook-gratis.png"
+              src="/assets/ebook-gratis.webp"
               alt="Ebook: 7 días para activar tu cerebro"
               className="w-full rounded-xl shadow-2xl group-hover:scale-[1.03] transition-transform duration-500"
             />

@@ -9,6 +9,7 @@
 
 import { createClient } from "@supabase/supabase-js"
 import { signToken } from "./_hmac"
+import { subscribeRatelimit, getIP } from "./_ratelimit"
 
 export const config = { runtime: "edge" }
 
@@ -36,6 +37,15 @@ export default async function handler(req: Request): Promise<Response> {
   // Honeypot: bots fill hidden fields, humans don't
   if (body.website) {
     return json({ ok: true })
+  }
+
+  // Rate limit: 3 subscription attempts per IP per 10 minutes
+  const rl = subscribeRatelimit()
+  if (rl) {
+    const { success } = await rl.limit(getIP(req))
+    if (!success) {
+      return json({ error: "Demasiados intentos. Espera unos minutos." }, 429)
+    }
   }
 
   const email = typeof body.email === "string" ? body.email.trim() : ""
