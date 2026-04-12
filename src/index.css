@@ -207,11 +207,19 @@ body {
 }
 
 /* Escape hatch — components inside prose that opt out of prose styles */
-.prose-blog .not-prose,
-.prose-blog .not-prose * {
-  font-size: revert;
-  line-height: revert;
-  color: revert;
-  text-decoration: none;
+.prose-blog .not-prose {
   max-width: none;
+  color: var(--c-text);
+  text-decoration: none;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.prose-blog .not-prose * {
+  text-decoration: none;
+}
+.prose-blog .not-prose p {
+  color: var(--c-text-muted);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  margin-bottom: 0;
 }
