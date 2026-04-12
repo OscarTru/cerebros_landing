@@ -7,6 +7,7 @@ import { Footer } from "@/sections/Footer"
 import { FadeIn } from "@/components/FadeIn"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { LikeButton } from "@/components/LikeButton"
+import { isCloudinaryId, cloudinaryUrl, cloudinarySrcSet } from "@/lib/cloudinary"
 
 interface BlogLayoutProps {
   title: string
@@ -14,6 +15,7 @@ interface BlogLayoutProps {
   author: string
   description: string
   slug: string
+  image?: string
   children: ReactNode
 }
 
@@ -82,7 +84,7 @@ function ShareBar({ title, slug }: { title: string; slug: string }) {
   )
 }
 
-export function BlogLayout({ title, date, author, description, slug, children }: BlogLayoutProps) {
+export function BlogLayout({ title, date, author, description, slug, image, children }: BlogLayoutProps) {
   return (
     <LazyMotion features={domAnimation}>
       <div className="relative min-h-screen bg-[var(--c-bg)] text-[var(--c-text)] overflow-x-hidden font-sans">
@@ -126,6 +128,32 @@ export function BlogLayout({ title, date, author, description, slug, children }:
                 Por {author}
               </p>
             </FadeIn>
+            {image && (
+              <FadeIn delay={0.09}>
+                <div className="mb-12 rounded-xl overflow-hidden">
+                  {isCloudinaryId(image) ? (
+                    <img
+                      src={cloudinaryUrl(image, 800)}
+                      srcSet={cloudinarySrcSet(image)}
+                      sizes="(max-width: 640px) 100vw, 800px"
+                      alt={title}
+                      className="w-full max-h-[480px] object-cover"
+                      loading="eager"
+                      decoding="sync"
+                    />
+                  ) : (
+                    <img
+                      src={image}
+                      alt={title}
+                      className="w-full max-h-[480px] object-cover"
+                      loading="eager"
+                      decoding="sync"
+                    />
+                  )}
+                </div>
+              </FadeIn>
+            )}
+
             <FadeIn delay={0.1}>
               <div className="prose-blog">
                 {children}

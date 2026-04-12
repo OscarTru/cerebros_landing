@@ -8,6 +8,7 @@ type Frontmatter = {
   slug: string
   description: string
   author: string
+  image?: string
 }
 
 type MDXModule = {
@@ -49,6 +50,7 @@ export function BlogPost() {
       author={frontmatter.author}
       description={frontmatter.description}
       slug={frontmatter.slug}
+      image={frontmatter.image}
     >
       <Suspense fallback={<div className="min-h-[40vh]" />}>
         <Article />
