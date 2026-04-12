@@ -9,6 +9,7 @@ interface PostMeta {
   date: string
   description: string
   author: string
+  image?: string
 }
 
 const modules = import.meta.glob("../content/blog/*.mdx", { eager: true })
@@ -33,12 +34,61 @@ function formatDate(iso: string) {
   })
 }
 
+const PLACEHOLDER_GRADIENTS = [
+  "linear-gradient(135deg, #1e1b2e, #2d1f3d)",
+  "linear-gradient(135deg, #0f1a12, #1a2e1f)",
+  "linear-gradient(135deg, #1a1200, #2e2200)",
+  "linear-gradient(135deg, #001a1a, #002e2e)",
+  "linear-gradient(135deg, #1a000f, #2e0018)",
+]
+
+function PostImage({
+  image,
+  title,
+  index,
+  className,
+}: {
+  image?: string
+  title: string
+  index: number
+  className?: string
+}) {
+  const gradient = PLACEHOLDER_GRADIENTS[index % PLACEHOLDER_GRADIENTS.length]
+  if (image) {
+    return (
+      <img
+        src={image}
+        alt={title}
+        className={className}
+        style={{ objectFit: "cover" }}
+      />
+    )
+  }
+  return (
+    <div
+      className={className}
+      style={{ background: gradient }}
+      aria-hidden="true"
+    />
+  )
+}
+
 export function Blog() {
   const [posts, setPosts] = useState<PostMeta[]>([])
 
   useEffect(() => {
     setPosts(getAllPosts())
   }, [])
+
+  if (posts.length === 0) {
+    return (
+      <div className="min-h-screen bg-[var(--c-bg)] text-[var(--c-text)]">
+        <p className="text-[var(--c-text-subtle)] pt-40 text-center">Cargando artículos...</p>
+      </div>
+    )
+  }
+
+  const [featured, ...rest] = posts
 
   return (
     <div className="min-h-screen bg-[var(--c-bg)] text-[var(--c-text)]">
@@ -55,7 +105,7 @@ export function Blog() {
         </div>
       </header>
 
-      <main className="pt-32 pb-24 px-6 max-w-4xl mx-auto">
+      <main className="pt-32 pb-24 px-6 max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-16">
           <div className="inline-block px-4 py-1 border border-[var(--c-border)] rounded-full text-[11px] font-mono tracking-[0.25em] uppercase text-[var(--c-text-subtle)] mb-8">
@@ -73,40 +123,67 @@ export function Blog() {
           </p>
         </div>
 
-        {/* Posts grid */}
-        {posts.length === 0 ? (
-          <p className="text-[var(--c-text-subtle)]">Cargando artículos...</p>
-        ) : (
-          <div className="grid gap-px bg-[var(--c-border)]">
-            {posts.map((post) => (
+        {/* Featured post */}
+        <Link
+          to={`/blog/${featured.slug}`}
+          className="group block mb-16 border border-[var(--c-border)] rounded-xl overflow-hidden hover:border-[var(--c-border-strong)] transition-colors"
+        >
+          <PostImage
+            image={featured.image}
+            title={featured.title}
+            index={0}
+            className="w-full h-64 sm:h-80 md:h-96"
+          />
+          <div className="p-6 sm:p-8">
+            <time className="text-xs font-mono text-[var(--c-text-subtle)] uppercase tracking-[0.15em] block mb-3">
+              {formatDate(featured.date)}
+            </time>
+            <h2
+              className="font-serif text-[var(--c-text)] leading-[1.1] tracking-[-0.02em] mb-3 group-hover:text-[var(--c-text)] transition-colors"
+              style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)" }}
+            >
+              {featured.title}
+            </h2>
+            <p className="text-sm text-[var(--c-text-muted)] leading-relaxed mb-4 max-w-2xl">
+              {featured.description}
+            </p>
+            <div className="flex items-center gap-2 text-xs text-[var(--c-text-subtle)]">
+              <span>por {featured.author}</span>
+              <span>·</span>
+              <span className="flex items-center gap-1 group-hover:text-[var(--c-text)] transition-colors">
+                Leer artículo
+                <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
+              </span>
+            </div>
+          </div>
+        </Link>
+
+        {/* Secondary posts grid */}
+        {rest.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {rest.map((post, i) => (
               <Link
                 key={post.slug}
                 to={`/blog/${post.slug}`}
-                className="group relative bg-[var(--c-bg)] px-0 py-8 flex flex-col sm:flex-row sm:items-start gap-6 hover:bg-[var(--c-surface)] transition-colors"
+                className="group border border-[var(--c-border)] rounded-xl overflow-hidden hover:border-[var(--c-border-strong)] transition-colors"
               >
-                {/* Date */}
-                <div className="sm:w-36 shrink-0">
-                  <time className="text-xs font-mono text-[var(--c-text-subtle)] uppercase tracking-[0.15em]">
+                <PostImage
+                  image={post.image}
+                  title={post.title}
+                  index={i + 1}
+                  className="w-full h-40"
+                />
+                <div className="p-5">
+                  <time className="text-xs font-mono text-[var(--c-text-subtle)] uppercase tracking-[0.15em] block mb-2">
                     {formatDate(post.date)}
                   </time>
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <h2 className="font-serif text-xl text-[var(--c-text)] leading-snug mb-2 group-hover:text-[var(--c-text)] transition-colors">
+                  <h2 className="font-serif text-base text-[var(--c-text)] leading-snug mb-2 group-hover:text-[var(--c-text)] transition-colors">
                     {post.title}
                   </h2>
-                  <p className="text-sm text-[var(--c-text-muted)] leading-relaxed line-clamp-2 mb-3">
+                  <p className="text-xs text-[var(--c-text-muted)] leading-relaxed line-clamp-2 mb-3">
                     {post.description}
                   </p>
-                  <span className="text-xs text-[var(--c-text-subtle)]">
-                    por {post.author}
-                  </span>
-                </div>
-
-                {/* Arrow */}
-                <div className="hidden sm:flex items-center self-center">
-                  <ArrowRight className="h-4 w-4 text-[var(--c-text-subtle)] group-hover:text-[var(--c-text)] group-hover:translate-x-1 transition-all" />
+                  <span className="text-xs text-[var(--c-text-subtle)]">por {post.author}</span>
                 </div>
               </Link>
             ))}
