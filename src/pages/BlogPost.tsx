@@ -1,6 +1,7 @@
 import { Suspense, lazy, useState, useEffect, useMemo } from "react"
 import { useParams, Navigate } from "react-router-dom"
 import { BlogLayout } from "@/layouts/BlogLayout"
+import { EbookCTA } from "@/components/EbookCTA"
 
 type Frontmatter = {
   title: string
@@ -11,8 +12,10 @@ type Frontmatter = {
   image?: string
 }
 
+type MDXComponents = Record<string, React.ComponentType>
+
 type MDXModule = {
-  default: React.ComponentType
+  default: React.ComponentType<{ components?: MDXComponents }>
   frontmatter: Frontmatter
 }
 
@@ -53,7 +56,7 @@ export function BlogPost() {
       image={frontmatter.image}
     >
       <Suspense fallback={<div className="min-h-[40vh]" />}>
-        <Article />
+        <Article components={{ EbookCTA }} />
       </Suspense>
     </BlogLayout>
   )
