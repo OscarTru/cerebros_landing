@@ -1,6 +1,6 @@
 import { Suspense, lazy, useState, useEffect, useMemo } from "react"
 import { useParams, Navigate } from "react-router-dom"
-import { BlogLayout } from "@/layouts/BlogLayout"
+import { BlogLayout, headingComponents } from "@/layouts/BlogLayout"
 import { EbookCTA } from "@/components/EbookCTA"
 import { getAdjacentPosts, type PostMeta } from "@/content/blogMeta"
 import { analytics } from "@/lib/analytics"
@@ -52,11 +52,20 @@ export function BlogPost() {
       description={frontmatter.description}
       slug={frontmatter.slug}
       image={frontmatter.image}
+      readingTime={frontmatter.readingTime}
+      headings={frontmatter.headings}
       prevPost={prevPost}
       nextPost={nextPost}
     >
       <Suspense fallback={<div className="min-h-[40vh]" />}>
-        <Article components={{ EbookCTA: (props: Record<string, unknown>) => <EbookCTA slug={slug ?? "unknown"} {...props} /> }} />
+        <Article
+          components={{
+            ...headingComponents,
+            EbookCTA: (props: Record<string, unknown>) => (
+              <EbookCTA slug={slug ?? "unknown"} {...props} />
+            ),
+          }}
+        />
       </Suspense>
     </BlogLayout>
   )
