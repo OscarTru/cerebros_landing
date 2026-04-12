@@ -29,7 +29,7 @@ function formatDate(dateStr: string): string {
   })
 }
 
-const iconClass = "h-9 w-9 flex items-center justify-center rounded-full border border-[var(--c-border)] text-[var(--c-text-muted)] hover:border-[var(--c-border-strong)] hover:text-[var(--c-text)] transition-all"
+const iconClass = "h-9 w-9 flex items-center justify-center rounded-full border border-[var(--c-border)] text-[var(--c-text-muted)] hover:border-[var(--c-border-strong)] hover:text-[var(--c-text)] hover:scale-110 active:scale-95 transition-all duration-150 cursor-pointer"
 
 function ShareBar({ title, slug }: { title: string; slug: string }) {
   const [copied, setCopied] = useState(false)
