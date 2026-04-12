@@ -12,6 +12,7 @@
     "prebuild": "tsx scripts/fetch-content.ts || echo 'fetch failed, using cached content'"
   },
   "dependencies": {
+    "@fingerprintjs/fingerprintjs": "^5.2.0",
     "@hookform/resolvers": "^5.2.2",
     "@mdx-js/react": "^3.1.1",
     "@mdx-js/rollup": "^3.1.1",
