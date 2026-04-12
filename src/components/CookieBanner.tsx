@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Link } from "react-router-dom"
 import { X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { loadGA } from "@/lib/analytics"
 
 type CookieConsent = {
   necessary: true
@@ -25,18 +26,18 @@ function storeConsent(consent: CookieConsent) {
 }
 
 export function CookieBanner() {
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(() => {
+    const stored = getStoredConsent()
+    if (stored?.analytics) loadGA()
+    return stored === null
+  })
   const [showDetails, setShowDetails] = useState(false)
   const [analytics, setAnalytics] = useState(false)
   const [marketing, setMarketing] = useState(false)
 
-  useEffect(() => {
-    const stored = getStoredConsent()
-    if (!stored) setVisible(true)
-  }, [])
-
   const accept = () => {
     storeConsent({ necessary: true, analytics: true, marketing: true })
+    loadGA()
     setVisible(false)
   }
 
@@ -47,6 +48,7 @@ export function CookieBanner() {
 
   const saveCustom = () => {
     storeConsent({ necessary: true, analytics, marketing })
+    if (analytics) loadGA()
     setVisible(false)
   }
 
@@ -116,7 +118,7 @@ export function CookieBanner() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-xs font-medium text-[var(--c-text)]">Analíticas</p>
-                        <p className="text-[11px] text-[var(--c-text-subtle)]">Entender cómo se usa el sitio (anónimo)</p>
+                        <p className="text-[11px] text-[var(--c-text-subtle)]">Google Analytics — entender cómo se usa el sitio (anónimo)</p>
                       </div>
                       <button
                         role="switch"

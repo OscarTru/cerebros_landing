@@ -1,6 +1,6 @@
 import { LazyMotion, domAnimation } from "framer-motion"
 import { Link } from "react-router-dom"
-import { ArrowLeft, Link2 } from "lucide-react"
+import { ArrowLeft, ArrowRight, Link2 } from "lucide-react"
 import { useState, type ReactNode } from "react"
 import { NoiseOverlay } from "@/components/NoiseOverlay"
 import { Footer } from "@/sections/Footer"
@@ -9,6 +9,11 @@ import { ThemeToggle } from "@/components/ThemeToggle"
 import { LikeButton } from "@/components/LikeButton"
 import { isCloudinaryId, cloudinaryUrl, cloudinarySrcSet } from "@/lib/cloudinary"
 
+interface PostNav {
+  slug: string
+  title: string
+}
+
 interface BlogLayoutProps {
   title: string
   date: string
@@ -16,6 +21,8 @@ interface BlogLayoutProps {
   description: string
   slug: string
   image?: string
+  prevPost?: PostNav
+  nextPost?: PostNav
   children: ReactNode
 }
 
@@ -91,7 +98,7 @@ function ShareBar({ title, slug }: { title: string; slug: string }) {
   )
 }
 
-export function BlogLayout({ title, date, author, description, slug, image, children }: BlogLayoutProps) {
+export function BlogLayout({ title, date, author, description, slug, image, prevPost, nextPost, children }: BlogLayoutProps) {
   return (
     <LazyMotion features={domAnimation}>
       <div className="relative min-h-screen bg-[var(--c-bg)] text-[var(--c-text)] overflow-x-hidden font-sans">
@@ -100,12 +107,12 @@ export function BlogLayout({ title, date, author, description, slug, image, chil
         <nav className="relative z-20 px-6 py-6 border-b border-[var(--c-border)]">
           <div className="max-w-4xl mx-auto flex items-center justify-between">
             <Link
-              to="/"
+              to="/blog"
               className="flex items-center gap-2 text-sm text-[var(--c-text-muted)] hover:text-[var(--c-text)] transition-colors"
             >
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               <span className="font-serif text-base text-[var(--c-text)]">
-                Cerebros Esponjosos
+                Blog
               </span>
             </Link>
             <ThemeToggle />
@@ -174,16 +181,50 @@ export function BlogLayout({ title, date, author, description, slug, image, chil
               </div>
             </FadeIn>
 
-            {/* Back to home */}
+            {/* Blog navigation */}
             <FadeIn delay={0.12}>
-              <div className="mt-10">
+              <div className="mt-10 flex flex-col gap-6">
                 <Link
-                  to="/"
+                  to="/blog"
                   className="inline-flex items-center gap-2 text-sm text-[var(--c-text-muted)] hover:text-[var(--c-text)] transition-colors"
                 >
                   <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-                  Volver al inicio
+                  Todos los artículos
                 </Link>
+
+                {(prevPost || nextPost) && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[var(--c-border)]">
+                    {prevPost ? (
+                      <Link
+                        to={`/blog/${prevPost.slug}`}
+                        className="group flex flex-col gap-1 p-4 rounded-xl border border-[var(--c-border)] hover:border-[var(--c-border-strong)] transition-colors"
+                      >
+                        <span className="flex items-center gap-1 text-xs text-[var(--c-text-subtle)] uppercase tracking-[0.15em]">
+                          <ArrowLeft className="h-3 w-3" aria-hidden="true" />
+                          Anterior
+                        </span>
+                        <span className="font-serif text-sm text-[var(--c-text)] leading-snug group-hover:text-[var(--c-text)] line-clamp-2">
+                          {prevPost.title}
+                        </span>
+                      </Link>
+                    ) : <div />}
+
+                    {nextPost ? (
+                      <Link
+                        to={`/blog/${nextPost.slug}`}
+                        className="group flex flex-col gap-1 p-4 rounded-xl border border-[var(--c-border)] hover:border-[var(--c-border-strong)] transition-colors sm:items-end sm:text-right"
+                      >
+                        <span className="flex items-center gap-1 text-xs text-[var(--c-text-subtle)] uppercase tracking-[0.15em]">
+                          Siguiente
+                          <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                        </span>
+                        <span className="font-serif text-sm text-[var(--c-text)] leading-snug group-hover:text-[var(--c-text)] line-clamp-2">
+                          {nextPost.title}
+                        </span>
+                      </Link>
+                    ) : <div />}
+                  </div>
+                )}
               </div>
             </FadeIn>
           </div>
