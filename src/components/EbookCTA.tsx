@@ -8,14 +8,14 @@ export function EbookCTA() {
   return (
     <div className="not-prose my-10 rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface-2)] overflow-hidden">
       <div className="flex flex-col sm:flex-row">
-        {/* Cover image — contain so nothing is cropped */}
-        <div className="sm:w-48 shrink-0 flex items-center justify-center bg-[var(--c-surface)] p-4">
+        {/* Cover image — full bleed, no padding */}
+        <div className="sm:w-44 shrink-0 overflow-hidden">
           <img
             src={cloudinaryUrl(EBOOK_IMAGE_ID, 400)}
             srcSet={cloudinarySrcSet(EBOOK_IMAGE_ID)}
-            sizes="192px"
+            sizes="176px"
             alt="100 retos para activar tu cerebro — ebook"
-            className="w-full max-h-52 object-contain"
+            className="w-full h-full object-cover object-center"
             loading="lazy"
             decoding="async"
           />
@@ -40,7 +40,8 @@ export function EbookCTA() {
             href={DOWNLOAD_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center self-start rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-sm font-medium px-6 py-2.5 hover:opacity-80 active:scale-95 transition-all duration-150"
+            className="inline-flex items-center justify-center self-start rounded-full text-sm font-medium px-6 py-2.5 hover:opacity-80 active:scale-95 transition-all duration-150"
+            style={{ background: "var(--c-invert)", color: "var(--c-invert-fg)" }}
           >
             Conseguir ebook
           </a>
