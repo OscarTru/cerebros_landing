@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { dynamicContent, type IgTopReel } from "@/content/dynamic"
 import { useState } from "react"
+import { analytics } from "@/lib/analytics"
 
 const CONTACT_EMAIL = "contacto@cerebrosesponjosos.com"
 const INSTAGRAM_PROFILE = "https://instagram.com/cerebrosesponjosos"
@@ -416,6 +417,7 @@ function ContactForm() {
         setError(data.error ?? "Error al enviar. Inténtalo de nuevo.")
         setStatus("error")
       } else {
+        analytics.sponsorContactSubmit(form.package)
         setStatus("success")
       }
     } catch {

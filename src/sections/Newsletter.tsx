@@ -6,6 +6,7 @@ import { z } from "zod"
 import { Loader2, ArrowRight } from "lucide-react"
 import { FadeIn } from "@/components/FadeIn"
 import { newsletter } from "@/content/site"
+import { analytics } from "@/lib/analytics"
 
 const schema = z.object({
   email: z.string().email("Introduce un email válido."),
@@ -43,6 +44,7 @@ export function Newsletter() {
         setStatus("error")
         return
       }
+      analytics.newsletterSignup("homepage")
       navigate("/suscripcion/confirma")
     } catch {
       setErrorMsg("Error de red. Intenta de nuevo.")
