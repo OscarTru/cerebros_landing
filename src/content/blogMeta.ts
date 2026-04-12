@@ -5,7 +5,7 @@
 // headings are extracted via a separate ?raw import at the BlogPost render level,
 // or passed as an empty array fallback — BlogLayout handles both cases.
 
-import { extractHeadings, type Heading } from "@/lib/readingTime"
+import type { Heading } from "@/lib/readingTime"
 
 export interface PostMeta {
   slug: string
@@ -18,25 +18,27 @@ export interface PostMeta {
   headings: Heading[]
 }
 
-type FrontmatterRaw = Omit<PostMeta, "headings"> & { readingTime?: number }
+// readingTime and headings are pre-computed and stored in each post's frontmatter.
+// This avoids the Vite MDX plugin intercepting ?raw imports (it transforms .mdx
+// before the raw loader runs, returning a compiled component instead of a string).
+type FrontmatterRaw = Omit<PostMeta, "readingTime" | "headings"> & {
+  readingTime?: number
+  headings?: Heading[]
+}
 
 const metaModules = import.meta.glob<{ frontmatter: FrontmatterRaw }>(
   "./blog/*.mdx",
   { eager: true }
 )
 
-// Raw source for headings extraction — using `as: "raw"` so Vite skips the MDX transform
-const rawModules = import.meta.glob<string>("./blog/*.mdx", { eager: true, as: "raw" })
-
-export const ALL_POSTS: PostMeta[] = Object.entries(metaModules)
-  .map(([path, m]) => {
-    const frontmatter = m.frontmatter
-    if (!frontmatter?.slug) return null
-    const raw = rawModules[path]
+export const ALL_POSTS: PostMeta[] = Object.values(metaModules)
+  .map((m) => {
+    const f = m.frontmatter
+    if (!f?.slug) return null
     return {
-      ...frontmatter,
-      readingTime: frontmatter.readingTime ?? 1,
-      headings: typeof raw === "string" ? extractHeadings(raw) : [],
+      ...f,
+      readingTime: f.readingTime ?? 1,
+      headings: f.headings ?? [],
     } satisfies PostMeta
   })
   .filter((f): f is PostMeta => f !== null)
