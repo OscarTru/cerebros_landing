@@ -46,18 +46,22 @@ export default async function handler(req: Request): Promise<Response> {
     const url = new URL(req.url)
     const slug = url.searchParams.get("slug")
     if (!slug) return json({ error: "Missing slug" }, 400)
+    if (slug.length > 200) return json({ error: "Invalid slug" }, 400)
 
-    const { count } = await supabase
-      .from("post_likes")
-      .select("*", { count: "exact", head: true })
-      .eq("slug", slug)
+    const [{ count, error: countError }, { data: existing, error: existsError }] =
+      await Promise.all([
+        supabase.from("post_likes").select("*", { count: "exact", head: true }).eq("slug", slug),
+        supabase.from("post_likes").select("id").eq("slug", slug).eq("fingerprint", fp).maybeSingle(),
+      ])
 
-    const { data: existing } = await supabase
-      .from("post_likes")
-      .select("id")
-      .eq("slug", slug)
-      .eq("fingerprint", fp)
-      .maybeSingle()
+    if (countError) {
+      console.error("Supabase count error:", countError)
+      return json({ error: "Could not fetch likes" }, 500)
+    }
+    if (existsError) {
+      console.error("Supabase fingerprint check error:", existsError)
+      return json({ error: "Could not fetch likes" }, 500)
+    }
 
     return json({ count: count ?? 0, liked: existing !== null })
   }
@@ -73,6 +77,7 @@ export default async function handler(req: Request): Promise<Response> {
 
     const slug = typeof body.slug === "string" ? body.slug.trim() : ""
     if (!slug) return json({ error: "Missing slug" }, 400)
+    if (slug.length > 200) return json({ error: "Invalid slug" }, 400)
 
     const { error: insertError } = await supabase
       .from("post_likes")
