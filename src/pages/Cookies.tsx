@@ -1,262 +1,158 @@
 import { LegalLayout } from "./LegalLayout"
 
-const CONTACT = "contacto@cerebrosesponjosos.com"
+const CONTACT = "hola@cerebrosesponjosos.com"
 
 export function Cookies() {
   return (
-    <LegalLayout title="Política de Cookies" updated="9 de abril de 2026">
-      <Section title="1. ¿Qué son las Cookies?">
+    <LegalLayout title="Política de Cookies" updated="12 de abril de 2026">
+      <Section title="1. ¿Qué son las cookies?">
         <p>
-          Las <b>cookies</b> son pequeños archivos de texto que se guardan en
-          tu navegador cuando visitas un sitio web. Permiten que el sitio
-          recuerde información sobre ti (preferencias, login, comportamiento)
-          en futuras visitas.
+          Las <b>cookies</b> son pequeños archivos de texto que se guardan en tu navegador cuando visitas un sitio web. Permiten que el sitio recuerde información sobre ti (preferencias, comportamiento) en futuras visitas.
         </p>
-        <p>Tipos de cookies:</p>
+        <p>
+          Este sitio también utiliza <b>almacenamiento local</b> (<i>localStorage</i>), que funciona de manera similar a las cookies pero se queda exclusivamente en tu dispositivo y no se envía al servidor en cada solicitud.
+        </p>
+      </Section>
+
+      <Section title="2. Almacenamiento técnico necesario (sin consentimiento)">
+        <p>
+          Usamos <i>localStorage</i> para recordar tus preferencias de navegación. Estos datos nunca se envían a terceros y son estrictamente necesarios para que el sitio funcione correctamente.
+        </p>
         <Table
-          headers={["Tipo", "Duración", "Propósito", "Requiere consentimiento"]}
+          headers={["Clave", "Propósito", "Duración", "Origen"]}
           rows={[
-            ["Sesión", "Hasta cerrar navegador", "Mantener login, carrito", "No (técnicamente necesarias)"],
-            ["Persistentes", "Días/meses/años", "Recordar preferencias", "Depende del propósito"],
-            ["Primera parte", "Variable", "Creadas por el sitio", "No si son técnicas"],
-            ["Terceros", "Variable", "Analytics, publicidad", "Sí (RGPD)"],
-          ]}
-        />
-      </Section>
-
-      <Section title="2. Cookies Usadas en Cerebros Esponjosos">
-        <SubSection title="2.1 Cookies Técnicas (NECESARIAS — sin consentimiento)">
-          <p>Estas permiten que el sitio funcione:</p>
-          <Table
-            headers={["Cookie", "Propósito", "Duración", "Origen"]}
-            rows={[
-              ["session_id", "Mantener tu sesión activa", "1 hora", "Cerebros Esponjosos"],
-              ["language_preference", "Recordar tu idioma (ES/EN)", "1 año", "Cerebros Esponjosos"],
-              ["theme_mode", "Recordar tema (claro/oscuro)", "1 año", "Cerebros Esponjosos"],
-              ["csrf_token", "Protección contra ataques", "1 sesión", "Cerebros Esponjosos"],
-            ]}
-          />
-          <p>
-            <b>Base legal:</b> RGPD Art. 6(1)(f) — interés legítimo en
-            seguridad y funcionalidad.
-            <br />
-            <b>Ubicación:</b> Almacenadas en tu navegador (no enviadas a
-            terceros).
-          </p>
-        </SubSection>
-
-        <SubSection title="2.2 Cookies Analíticas (OPCIONAL — requiere consentimiento RGPD)">
-          <p>Utilizadas para entender cómo interactúas con el sitio:</p>
-          <Table
-            headers={["Cookie", "Propósito", "Duración", "Tercero"]}
-            rows={[
-              ["_ga", "Identificar usuario único en Google Analytics", "2 años", "Google LLC (EE.UU.)"],
-              ["_ga_XXXXXXXXXX", "Rastrear sesión en GA", "2 años", "Google LLC (EE.UU.)"],
-              ["_gid", "Identificar sesión diaria en GA", "24 horas", "Google LLC (EE.UU.)"],
-              ["_gat", "Regular frecuencia de solicitudes a GA", "1 minuto", "Google LLC (EE.UU.)"],
-            ]}
-          />
-          <p>
-            <b>Datos compartidos:</b>
-          </p>
-          <ul>
-            <li>Páginas visitadas</li>
-            <li>Tiempo en página</li>
-            <li>Dispositivo (móvil/desktop)</li>
-            <li>Ubicación aproximada (país/ciudad)</li>
-            <li>Fuente de tráfico (Google/Instagram/directo)</li>
-            <li>Eventos (clicks, scroll depth)</li>
-          </ul>
-          <p>
-            <b>Base legal:</b> RGPD Art. 6(1)(a) — consentimiento explícito.
-            <br />
-            <b>Política de Google:</b>{" "}
-            <a
-              href="https://policies.google.com/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              policies.google.com/privacy
-            </a>
-          </p>
-        </SubSection>
-
-        <SubSection title="2.3 Cookies de Email Marketing (OPCIONAL)">
-          <p>Si te suscribes a nuestro newsletter:</p>
-          <Table
-            headers={["Cookie", "Propósito", "Duración", "Tercero"]}
-            rows={[
-              ["email_consent", "Recordar que aceptaste newsletter", "2 años", "Cerebros Esponjosos"],
-              ["mailchimp_id / convertkit_id", "Vincular email a tu perfil", "2 años", "Mailchimp / ConvertKit (EE.UU.)"],
-              ["Email tracking pixel", "Saber si abriste/clickeaste email", "1 sesión", "Mailchimp / ConvertKit"],
-            ]}
-          />
-          <p>
-            <b>Nota:</b> El "pixel de rastreo" es una imagen invisible en
-            emails que detecta si los abriste. Puedes desactivar esto en tu
-            navegador.
-          </p>
-          <p>
-            <b>Base legal:</b> RGPD Art. 6(1)(a) — consentimiento al
-            suscribirse.
-          </p>
-        </SubSection>
-      </Section>
-
-      <Section title="3. Cookies de Terceros (Redes Sociales)">
-        <p>
-          Si interactúas con contenido de <b>Instagram</b> o <b>TikTok</b>{" "}
-          (comentarios, likes, shares):
-        </p>
-        <ul>
-          <li>Instagram/TikTok colocan sus propias cookies</li>
-          <li>Nosotros no controlamos esas cookies</li>
-          <li>
-            Lee la política de Instagram:{" "}
-            <a
-              href="https://help.instagram.com/519522125107165"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              help.instagram.com/519522125107165
-            </a>
-          </li>
-          <li>
-            Lee la política de TikTok:{" "}
-            <a
-              href="https://www.tiktok.com/legal/page/global/privacy-policy"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              tiktok.com/legal/page/global/privacy-policy
-            </a>
-          </li>
-        </ul>
-      </Section>
-
-      <Section title="4. Banner de Consentimiento RGPD">
-        <p>Al entrar al sitio, ves un banner que permite:</p>
-        <ul>
-          <li>
-            <b>Aceptar todas</b> — Habilitas cookies técnicas + analíticas +
-            email
-          </li>
-          <li>
-            <b>Personalizar</b> — Escoges qué tipos aceptas
-          </li>
-          <li>
-            <b>Rechazar</b> — Solo cookies técnicas (necesarias), nada más
-          </li>
-        </ul>
-        <p>
-          <b>Cómo funciona:</b>
-        </p>
-        <ol>
-          <li>Tu elección se guarda en una cookie de consentimiento</li>
-          <li>No vuelves a ver el banner (a menos que borres cookies)</li>
-          <li>Puedes cambiar tu elección en cualquier momento (ver abajo)</li>
-        </ol>
-      </Section>
-
-      <Section title="5. Cómo Gestionar Tus Cookies">
-        <SubSection title="5.1 En Nuestro Sitio">
-          <ol>
-            <li>
-              Ve a <b>Configuración de Privacidad</b> (pie de página o
-              ajustes)
-            </li>
-            <li>Selecciona qué cookies deseas</li>
-            <li>
-              Haz clic en <b>"Guardar preferencias"</b>
-            </li>
-          </ol>
-          <p>Tu elección se respeta inmediatamente.</p>
-        </SubSection>
-
-        <SubSection title="5.2 En Tu Navegador">
-          <ul>
-            <li>
-              <b>Google Chrome:</b> Menú → Configuración → Privacidad →
-              Cookies. Puedes ver, buscar y borrar cookies específicas.
-            </li>
-            <li>
-              <b>Firefox:</b> Menú → Preferencias → Privacidad → Cookies.
-              Opción: "Eliminar cookies al cerrar Firefox".
-            </li>
-            <li>
-              <b>Safari (Mac):</b> Preferencias → Privacidad → Administrar
-              datos del sitio web.
-            </li>
-            <li>
-              <b>Edge:</b> Configuración → Privacidad → Borrar datos de
-              exploración.
-            </li>
-          </ul>
-        </SubSection>
-
-        <SubSection title="5.3 Optar por No Participar en Google Analytics">
-          <p>
-            Instala la extensión de Google:{" "}
-            <b>Google Analytics Opt-out Browser Add-on</b>
-            <br />
-            <a
-              href="https://tools.google.com/dlpage/gaoptout"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              tools.google.com/dlpage/gaoptout
-            </a>
-          </p>
-          <p>
-            Esto impide que Google Analytics recopile tus datos en cualquier
-            sitio.
-          </p>
-        </SubSection>
-      </Section>
-
-      <Section title="6. ¿Qué Pasa si Rechazas las Cookies?">
-        <ul>
-          <li>El sitio funcionará normalmente</li>
-          <li>
-            Puedes navegar, rellenar formularios, suscribirte a newsletter
-          </li>
-          <li>
-            No usaremos Google Analytics (no veremos qué páginas visitas)
-          </li>
-          <li>Algunas recomendaciones personalizadas serán limitadas</li>
-        </ul>
-        <p>
-          <b>No penalizamos el rechazo.</b> Los usuarios que rechazan
-          analytics tienen exactamente la misma experiencia.
-        </p>
-      </Section>
-
-      <Section title="7. Cookies Persistentes vs. De Sesión">
-        <Table
-          headers={["Sesión", "Persistente"]}
-          rows={[
-            ["Se borran al cerrar navegador", "Se guardan después de cerrar"],
-            ["Duran 30 min - 1 hora", "Duran días, meses o años"],
-            ["Menos privado", "Más cómodo (no reingresas)"],
-            ["Ejemplos: login, carrito", "Ejemplos: tema oscuro, idioma"],
+            ["theme", "Recordar si prefieres modo claro u oscuro", "Indefinida (hasta que borres datos)", "Cerebros Esponjosos"],
+            ["ce_cookie_consent", "Guardar tus preferencias de consentimiento de cookies", "Indefinida (hasta que borres datos)", "Cerebros Esponjosos"],
           ]}
         />
         <p>
-          <b>Nuestra práctica:</b> Usamos cookies persistentes solo para
-          comodidad (idioma, tema) y análisis (si aceptas).
+          <b>Base legal:</b> RGPD Art. 6(1)(f) — interés legítimo en funcionalidad básica del sitio.
         </p>
       </Section>
 
-      <Section title="8. Cambios en Esta Política">
+      <Section title="3. Cookies analíticas (requieren consentimiento)">
         <p>
-          Si Google Analytics, Mailchimp, o ConvertKit cambian sus políticas,
-          actualizaremos aquí. Cambios importantes se comunicarán vía email a
-          suscriptores.
+          Si aceptas las cookies analíticas, cargamos <b>Google Analytics 4</b> (ID: G-2FGB8YCMLX), un servicio de Google LLC (EE.UU.). Este servicio coloca las siguientes cookies:
+        </p>
+        <Table
+          headers={["Cookie", "Propósito", "Duración", "Tercero"]}
+          rows={[
+            ["_ga", "Distinguir usuarios únicos", "2 años", "Google LLC (EE.UU.)"],
+            ["_ga_2FGB8YCMLX", "Mantener el estado de sesión en GA4", "2 años", "Google LLC (EE.UU.)"],
+          ]}
+        />
+        <p>
+          <b>Datos recopilados por Google Analytics:</b>
+        </p>
+        <ul>
+          <li>Páginas visitadas y tiempo en cada página</li>
+          <li>Tipo de dispositivo y navegador</li>
+          <li>Ubicación aproximada (país/ciudad, nunca dirección exacta)</li>
+          <li>Fuente de tráfico (búsqueda, redes sociales, acceso directo)</li>
+        </ul>
+        <p>
+          Los datos se procesan en servidores de Google en EE.UU. bajo el marco EU-U.S. Data Privacy Framework.
+        </p>
+        <p>
+          <b>Base legal:</b> RGPD Art. 6(1)(a) — consentimiento explícito.
+          <br />
+          <b>Política de privacidad de Google:</b>{" "}
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">
+            policies.google.com/privacy
+          </a>
+          <br />
+          <b>Opt-out global de Google Analytics:</b>{" "}
+          <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">
+            tools.google.com/dlpage/gaoptout
+          </a>
+        </p>
+        <p>
+          Google Analytics <b>solo se carga si aceptas</b> las cookies analíticas en el banner de consentimiento. Si rechazas o cierras el banner, ningún script de Google se ejecuta en tu navegador.
+        </p>
+      </Section>
+
+      <Section title="4. Newsletter — Resend y Supabase">
+        <p>
+          Si te suscribes a nuestro newsletter, tu dirección de email se almacena de la siguiente manera:
+        </p>
+        <Table
+          headers={["Servicio", "Propósito", "Datos almacenados", "Ubicación"]}
+          rows={[
+            ["Supabase", "Base de datos de suscriptores", "Email, fecha de suscripción", "Servidores en EE.UU. (AWS us-east-1)"],
+            ["Resend", "Envío de emails transaccionales y newsletter", "Email, estado de suscripción", "Servidores en EE.UU."],
+          ]}
+        />
+        <p>
+          <b>Importante:</b> La suscripción al newsletter <b>no utiliza cookies</b>. Tu email se guarda directamente en nuestra base de datos cuando completas el formulario y das tu consentimiento explícito.
+        </p>
+        <p>
+          Los emails pueden incluir un <b>pixel de seguimiento</b> (imagen invisible) que nos permite saber si el email fue abierto. Puedes desactivar la carga automática de imágenes en tu cliente de email para evitar esto.
+        </p>
+        <p>
+          <b>Base legal:</b> RGPD Art. 6(1)(a) — consentimiento al suscribirse.
+          <br />
+          Puedes darte de baja en cualquier momento usando el enlace al final de cada email o escribiéndonos a{" "}
+          <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
+        </p>
+        <p>
+          <b>Política de Resend:</b>{" "}
+          <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">
+            resend.com/legal/privacy-policy
+          </a>
+          <br />
+          <b>Política de Supabase:</b>{" "}
+          <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer">
+            supabase.com/privacy
+          </a>
+        </p>
+      </Section>
+
+      <Section title="5. Contenido de terceros (Instagram)">
+        <p>
+          Mostramos enlaces a contenido de <b>Instagram</b>. El sitio no incrusta iframes de Instagram — solo enlazamos a publicaciones externas, por lo que Instagram no coloca cookies en tu navegador al visitar esta página.
+        </p>
+        <p>
+          Si haces clic en un enlace y visitas Instagram, se aplica la política de cookies de Meta:{" "}
+          <a href="https://help.instagram.com/519522125107165" target="_blank" rel="noopener noreferrer">
+            help.instagram.com/519522125107165
+          </a>
+        </p>
+      </Section>
+
+      <Section title="6. Tu consentimiento y cómo gestionarlo">
+        <p>
+          Al entrar al sitio por primera vez, aparece un banner que te permite:
+        </p>
+        <ul>
+          <li><b>Aceptar todas</b> — Habilitas almacenamiento técnico y Google Analytics</li>
+          <li><b>Personalizar</b> — Eliges qué categorías aceptas</li>
+          <li><b>Rechazar</b> — Solo almacenamiento técnico necesario (tema y preferencias de cookies)</li>
+        </ul>
+        <p>
+          Tu elección se guarda en <i>localStorage</i> bajo la clave <code>ce_cookie_consent</code>. Para cambiar tu elección, borra los datos del sitio en tu navegador:
+        </p>
+        <ul>
+          <li><b>Chrome:</b> Configuración → Privacidad → Configuración del sitio → cerebrosesponjosos.com → Borrar datos</li>
+          <li><b>Firefox:</b> Preferencias → Privacidad → Cookies y datos del sitio → Gestionar datos</li>
+          <li><b>Safari:</b> Preferencias → Privacidad → Gestionar datos del sitio web</li>
+          <li><b>Edge:</b> Configuración → Privacidad → Cookies → Ver todas las cookies</li>
+        </ul>
+        <p>Al borrar los datos, el banner de consentimiento aparecerá de nuevo.</p>
+      </Section>
+
+      <Section title="7. ¿Qué pasa si rechazas las cookies?">
+        <p>El sitio funciona con total normalidad. Puedes leer artículos, suscribirte al newsletter y usar todas las funciones. La única diferencia es que no recopilamos datos de Google Analytics sobre tu visita.</p>
+        <p><b>No penalizamos el rechazo.</b></p>
+      </Section>
+
+      <Section title="8. Cambios en esta política">
+        <p>
+          Si cambiamos los servicios que usamos o la forma en que procesamos datos, actualizaremos esta página. Cambios significativos se comunicarán por email a los suscriptores.
         </p>
       </Section>
 
       <Section title="9. Contacto">
-        <p>Preguntas sobre cookies:</p>
+        <p>Para cualquier pregunta sobre cookies o privacidad:</p>
         <ul>
           <li>
             <b>Email:</b>{" "}
@@ -270,8 +166,8 @@ export function Cookies() {
 
       <div className="mt-16 pt-8 border-t border-[var(--c-border)] text-sm text-[var(--c-text-faint)]">
         <p>
-          <b>Versión:</b> 1.0 · <b>Efectiva desde:</b> 9 de abril de 2026 ·{" "}
-          <b>Próxima revisión:</b> 9 de octubre de 2026
+          <b>Versión:</b> 2.0 · <b>Efectiva desde:</b> 12 de abril de 2026 ·{" "}
+          <b>Próxima revisión:</b> 12 de octubre de 2026
         </p>
       </div>
     </LegalLayout>
@@ -289,14 +185,6 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   )
 }
 
-function SubSection({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="mt-5">
-      <h3 className="text-base font-medium text-[var(--c-text)] mb-2">{title}</h3>
-      <div className="space-y-3">{children}</div>
-    </div>
-  )
-}
 
 function Table({ headers, rows }: { headers: string[]; rows: string[][] }) {
   return (

@@ -7,7 +7,7 @@ import { ScrollToTop } from "./components/ScrollToTop.tsx"
 import { CookieBanner } from "./components/CookieBanner.tsx"
 import { Blog } from "./pages/Blog.tsx"
 import { Podcast } from "./pages/Podcast.tsx"
-import { BlogPost } from "./pages/BlogPost.tsx"
+import { BlogPostRoute } from "./pages/BlogPostRoute.tsx"
 import { MediaKit } from "./pages/MediaKit.tsx"
 import { Terminos } from "./pages/Terminos.tsx"
 import { Privacidad } from "./pages/Privacidad.tsx"
@@ -26,7 +26,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/" element={<App />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/podcast" element={<Podcast />} />
-        <Route path="/blog/:slug" element={<BlogPost />} />
+        <Route path="/blog/:slug" element={<BlogPostRoute />} />
         <Route path="/media-kit" element={<MediaKit />} />
         <Route path="/terminos" element={<Terminos />} />
         <Route path="/privacidad" element={<Privacidad />} />
