@@ -1,4 +1,4 @@
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { FadeIn } from "@/components/FadeIn"
 import { founders } from "@/content/site"
 import { easeOut, viewportOnce } from "@/lib/motion"
@@ -35,7 +35,7 @@ export function Founders() {
                 }`}
               >
                 {/* Photo — scale + fade */}
-                <motion.div
+                <m.div
                   className="md:col-span-5"
                   initial={{ opacity: 0, scale: 0.96, y: 20 }}
                   whileInView={{ opacity: 1, scale: 1, y: 0 }}
@@ -50,10 +50,10 @@ export function Founders() {
                       className="w-full h-full object-cover transition-transform duration-700 hover:scale-[1.03]"
                     />
                   </div>
-                </motion.div>
+                </m.div>
 
                 {/* Text — fade up with slight delay */}
-                <motion.div
+                <m.div
                   className="md:col-span-7"
                   initial={{ opacity: 0, y: 28 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -78,7 +78,7 @@ export function Founders() {
                   >
                     {f.bio}
                   </p>
-                </motion.div>
+                </m.div>
               </div>
             )
           })}

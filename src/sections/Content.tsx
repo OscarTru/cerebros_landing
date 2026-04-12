@@ -1,6 +1,6 @@
 import { Play } from "lucide-react"
 import { Link } from "react-router-dom"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { FadeIn } from "@/components/FadeIn"
 import { dynamicContent, type IgPost } from "@/content/dynamic"
 import { easeOut, viewportOnce } from "@/lib/motion"
@@ -52,22 +52,22 @@ export function Content() {
         {/* Row 1: 2 IG reels + YouTube video */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
           {instagramPosts.slice(0, 2).map((p, i) => (
-            <motion.div key={p.id} {...cardAnim(i * 0.08)}>
+            <m.div key={p.id} {...cardAnim(i * 0.08)}>
               <ReelCard post={p} />
-            </motion.div>
+            </m.div>
           ))}
-          <motion.div {...cardAnim(0.16)}>
+          <m.div {...cardAnim(0.16)}>
             <YouTubeCard video={latestVideo} />
-          </motion.div>
+          </m.div>
         </div>
 
         {/* Row 2: Latest blog posts */}
         {latestPosts.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {latestPosts.map((post, i) => (
-              <motion.div key={post.slug} {...cardAnim(0.24 + i * 0.08)}>
+              <m.div key={post.slug} {...cardAnim(0.24 + i * 0.08)}>
                 <BlogPostCard post={post} index={i} />
-              </motion.div>
+              </m.div>
             ))}
           </div>
         )}
@@ -129,7 +129,7 @@ function YouTubeCard({ video }: { video: typeof dynamicContent.latestVideo }) {
           <img
             src={thumb}
             alt={title}
-            loading="eager"
+            loading="lazy"
             className="absolute inset-0 h-full w-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-[1.03] transition-all duration-700"
           />
         ) : (
