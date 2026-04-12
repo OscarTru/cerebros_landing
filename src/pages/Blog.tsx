@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, Clock } from "lucide-react"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { isCloudinaryId, cloudinaryUrl, cloudinarySrcSet } from "@/lib/cloudinary"
 import { ALL_POSTS } from "@/content/blogMeta"
@@ -146,6 +146,11 @@ export function Blog() {
             <div className="flex items-center gap-2 text-xs text-[var(--c-text-subtle)]">
               <span>por {featured.author}</span>
               <span>·</span>
+              <span className="flex items-center gap-1">
+                <Clock className="h-3 w-3" aria-hidden="true" />
+                {featured.readingTime} min
+              </span>
+              <span>·</span>
               <span className="flex items-center gap-1 group-hover:text-[var(--c-text)] transition-colors">
                 Leer artículo
                 <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
@@ -179,7 +184,14 @@ export function Blog() {
                   <p className="text-xs text-[var(--c-text-muted)] leading-relaxed line-clamp-2 mb-3">
                     {post.description}
                   </p>
-                  <span className="text-xs text-[var(--c-text-subtle)]">por {post.author}</span>
+                  <div className="flex items-center gap-2 text-xs text-[var(--c-text-subtle)]">
+                    <span>por {post.author}</span>
+                    <span>·</span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" aria-hidden="true" />
+                      {post.readingTime} min
+                    </span>
+                  </div>
                 </div>
               </Link>
             ))}
