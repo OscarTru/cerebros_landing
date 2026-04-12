@@ -1,6 +1,8 @@
 // Vercel Edge Function — GET /api/unsubscribe?e=EMAIL
 // Marks the contact as unsubscribed in Resend and deletes from Supabase subscribers table.
 
+import { Resend } from "resend"
+
 export const config = { runtime: "edge" }
 
 export default async function handler(req: Request): Promise<Response> {
@@ -18,13 +20,11 @@ export default async function handler(req: Request): Promise<Response> {
 
   // Mark unsubscribed in Resend (best-effort)
   if (resendKey && resendAudienceId) {
-    await fetch(`https://api.resend.com/audiences/${resendAudienceId}/contacts`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${resendKey}`,
-      },
-      body: JSON.stringify({ email, unsubscribed: true }),
+    const resend = new Resend(resendKey)
+    await resend.contacts.update({
+      audienceId: resendAudienceId,
+      email,
+      unsubscribed: true,
     }).catch(() => {})
   }
 
