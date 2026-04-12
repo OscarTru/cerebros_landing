@@ -153,10 +153,8 @@ export function BlogLayout({
             <div className={showTOC ? "lg:grid lg:grid-cols-[200px_1fr] lg:gap-16 lg:items-start" : ""}>
               {/* ── Sidebar (desktop only) — LEFT column ── */}
               {showTOC && (
-                <aside className="hidden lg:block">
-                  <div className="sticky top-32 pt-2">
-                    <TableOfContents headings={headings} />
-                  </div>
+                <aside className="hidden lg:block sticky top-32 self-start pt-2">
+                  <TableOfContents headings={headings} />
                 </aside>
               )}
 
