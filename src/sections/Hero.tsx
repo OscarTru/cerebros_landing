@@ -1,4 +1,4 @@
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { Link } from "react-router-dom"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -16,7 +16,7 @@ export function Hero() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 flex items-center justify-center"
       >
-        <motion.div
+        <m.div
           className="w-[900px] h-[900px] rounded-full"
           style={{
             background:

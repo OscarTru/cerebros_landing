@@ -1,4 +1,4 @@
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { cn } from "@/lib/utils"
 
 export function AnimatedText({
@@ -11,17 +11,17 @@ export function AnimatedText({
   as?: "h1" | "h2" | "h3" | "p" | "span"
 }) {
   const words = text.split(" ")
-  const MotionTag = motion[Tag]
+  const MTag = m[Tag]
 
   return (
-    <MotionTag
+    <MTag
       className={cn("flex flex-wrap", className)}
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-10%" }}
     >
       {words.map((word, i) => (
-        <motion.span
+        <m.span
           key={i}
           className="mr-[0.25em] inline-block"
           variants={{
@@ -35,8 +35,8 @@ export function AnimatedText({
           }}
         >
           {word}
-        </motion.span>
+        </m.span>
       ))}
-    </MotionTag>
+    </MTag>
   )
 }

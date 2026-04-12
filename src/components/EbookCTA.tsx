@@ -1,4 +1,4 @@
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
 import { cloudinaryFitUrl, cloudinaryFitSrcSet } from "@/lib/cloudinary"
 import { easeOut, viewportOnce } from "@/lib/motion"
@@ -9,7 +9,7 @@ const DOWNLOAD_URL =
 
 export function EbookCTA() {
   return (
-    <motion.a
+    <m.a
       href={DOWNLOAD_URL}
       target="_blank"
       rel="noopener noreferrer"
@@ -29,7 +29,7 @@ export function EbookCTA() {
       />
 
       {/* Book cover */}
-      <motion.div
+      <m.div
         className="relative shrink-0 w-40 sm:w-48"
         initial={{ opacity: 0, x: -16 }}
         whileInView={{ opacity: 1, x: 0 }}
@@ -45,7 +45,7 @@ export function EbookCTA() {
           loading="lazy"
           decoding="async"
         />
-      </motion.div>
+      </m.div>
 
       {/* Text */}
       <div className="relative flex-1 min-w-0 text-center sm:text-left">
@@ -69,6 +69,6 @@ export function EbookCTA() {
           <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
         </span>
       </div>
-    </motion.a>
+    </m.a>
   )
 }
