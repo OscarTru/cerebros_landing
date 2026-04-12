@@ -38,6 +38,20 @@ export function cloudinaryUrl(publicId: string, width: number): string {
   return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${transforms}/${publicId}`
 }
 
+/** Like cloudinaryUrl but uses c_fit — preserves full image without any cropping. Use for book covers and portrait images. */
+export function cloudinaryFitUrl(publicId: string, width: number): string {
+  if (!CLOUD_NAME) return ""
+  const transforms = `w_${width},f_auto,q_auto,c_fit`
+  return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${transforms}/${publicId}`
+}
+
+export function cloudinaryFitSrcSet(publicId: string): string {
+  if (!CLOUD_NAME) return ""
+  return [400, 800]
+    .map((w) => `${cloudinaryFitUrl(publicId, w)} ${w}w`)
+    .join(", ")
+}
+
 /**
  * Build a srcSet string for responsive images.
  * Generates 400w, 800w, and 1200w variants automatically.

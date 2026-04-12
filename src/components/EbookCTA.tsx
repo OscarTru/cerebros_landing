@@ -1,6 +1,6 @@
 import { motion } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
-import { cloudinaryUrl, cloudinarySrcSet } from "@/lib/cloudinary"
+import { cloudinaryFitUrl, cloudinaryFitSrcSet } from "@/lib/cloudinary"
 import { easeOut, viewportOnce } from "@/lib/motion"
 
 const EBOOK_IMAGE_ID = "100_retos_eBook_c43arl"
@@ -37,8 +37,8 @@ export function EbookCTA() {
         transition={{ duration: 0.8, delay: 0.1, ease: easeOut }}
       >
         <img
-          src={cloudinaryUrl(EBOOK_IMAGE_ID, 400)}
-          srcSet={cloudinarySrcSet(EBOOK_IMAGE_ID)}
+          src={cloudinaryFitUrl(EBOOK_IMAGE_ID, 400)}
+          srcSet={cloudinaryFitSrcSet(EBOOK_IMAGE_ID)}
           sizes="(max-width: 640px) 160px, 192px"
           alt="100 retos para activar tu cerebro — ebook"
           className="w-full rounded-xl shadow-2xl group-hover:scale-[1.03] transition-transform duration-500"
