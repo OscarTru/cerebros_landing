@@ -59,6 +59,19 @@ export default async function handler(req: Request): Promise<Response> {
 
   console.log(`Subscribed: ${email}`)
 
+  // Add contact to Resend for broadcasts
+  const contactRes = await fetch("https://api.resend.com/contacts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${resendKey}`,
+    },
+    body: JSON.stringify({ email, unsubscribed: false }),
+  })
+  if (!contactRes.ok) {
+    console.error("Resend contact error:", contactRes.status, await contactRes.text())
+  }
+
   // Send welcome email via Resend
   const sendEmail = (subject: string, html: string) =>
     fetch("https://api.resend.com/emails", {
