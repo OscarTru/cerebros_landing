@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import { ArrowRight } from "lucide-react"
 import { ThemeToggle } from "@/components/ThemeToggle"
+import { isCloudinaryId, cloudinaryUrl, cloudinarySrcSet } from "@/lib/cloudinary"
 
 interface PostMeta {
   slug: string
@@ -46,24 +47,45 @@ function PostImage({
   title,
   index,
   className,
+  eager,
 }: {
   image?: string
   title: string
   index: number
   className?: string
+  eager?: boolean
 }) {
   const gradient = PLACEHOLDER_GRADIENTS[index % PLACEHOLDER_GRADIENTS.length]
+
   if (image) {
+    // Cloudinary public_id (e.g. "sueno-cerebro" or "blog/sueno-cerebro")
+    if (isCloudinaryId(image)) {
+      return (
+        <img
+          src={cloudinaryUrl(image, 800)}
+          srcSet={cloudinarySrcSet(image)}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 800px"
+          alt={title}
+          className={className}
+          style={{ objectFit: "cover" }}
+          loading={eager ? "eager" : "lazy"}
+          decoding={eager ? "sync" : "async"}
+        />
+      )
+    }
+    // Absolute URL or local /public path — use as-is
     return (
       <img
         src={image}
         alt={title}
         className={className}
         style={{ objectFit: "cover" }}
-        loading="lazy"
+        loading={eager ? "eager" : "lazy"}
+        decoding={eager ? "sync" : "async"}
       />
     )
   }
+
   return (
     <div
       className={className}
@@ -129,6 +151,7 @@ export function Blog() {
             title={featured.title}
             index={0}
             className="w-full h-64 sm:h-80 md:h-96"
+            eager
           />
           <div className="p-6 sm:p-8">
             <time className="text-xs font-mono text-[var(--c-text-subtle)] uppercase tracking-[0.15em] block mb-3">
