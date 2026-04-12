@@ -7,7 +7,6 @@
 //   SUPABASE_SERVICE_ROLE_KEY — Service role key from Supabase → Settings → API
 
 import { createClient } from "@supabase/supabase-js"
-import { Resend } from "resend"
 
 export const config = { runtime: "edge" }
 
@@ -61,46 +60,58 @@ export default async function handler(req: Request): Promise<Response> {
 
   console.log(`Subscribed: ${email}`)
 
-  const resend = new Resend(resendKey)
+  const resendHeaders = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${resendKey}`,
+  }
 
   // Add contact to Resend audience for broadcasts
   if (resendAudienceId) {
-    const { error: contactError } = await resend.contacts.create({
-      audienceId: resendAudienceId,
-      email,
-      unsubscribed: false,
+    const contactRes = await fetch(`https://api.resend.com/audiences/${resendAudienceId}/contacts`, {
+      method: "POST",
+      headers: resendHeaders,
+      body: JSON.stringify({ email, unsubscribed: false }),
     })
-    if (contactError) {
-      console.error("Resend contact error:", contactError)
+    const contactText = await contactRes.text()
+    if (!contactRes.ok) {
+      console.error("Resend contact error:", contactRes.status, contactText)
     } else {
-      console.log(`Resend contact added to audience ${resendAudienceId}`)
+      console.log("Resend contact added:", contactText)
     }
   } else {
-    console.warn("RESEND_AUDIENCE_ID not set — contact not added to audience")
+    console.warn("RESEND_AUDIENCE_ID not set — skipping audience")
   }
 
   // Send welcome email
-  const { error: welcomeError } = await resend.emails.send({
-    from: "Cerebros Esponjosos <hola@cerebrosesponjosos.com>",
-    to: email,
-    subject: "Bienvenido a Esponjosos — Cerebros Esponjosos",
-    html: welcomeHtml(email),
+  const welcomeRes = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: resendHeaders,
+    body: JSON.stringify({
+      from: "Cerebros Esponjosos <hola@cerebrosesponjosos.com>",
+      to: email,
+      subject: "Bienvenido a Esponjosos — Cerebros Esponjosos",
+      html: welcomeHtml(email),
+    }),
   })
-  if (welcomeError) {
-    console.error("Resend welcome error:", welcomeError)
+  if (!welcomeRes.ok) {
+    console.error("Resend welcome error:", welcomeRes.status, await welcomeRes.text())
   }
 
   // Schedule first newsletter edition 5 minutes after signup
   const sendAt = new Date(Date.now() + 5 * 60_000).toISOString()
-  const { error: editionError } = await resend.emails.send({
-    from: "Cerebros Esponjosos <hola@cerebrosesponjosos.com>",
-    to: email,
-    subject: "Tu cerebro no descansa cuando duermes — Esponjosos #1",
-    html: firstEditionHtml(email),
-    scheduledAt: sendAt,
+  const editionRes = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: resendHeaders,
+    body: JSON.stringify({
+      from: "Cerebros Esponjosos <hola@cerebrosesponjosos.com>",
+      to: email,
+      subject: "Tu cerebro no descansa cuando duermes — Esponjosos #1",
+      html: firstEditionHtml(email),
+      scheduled_at: sendAt,
+    }),
   })
-  if (editionError) {
-    console.error("Resend edition error:", editionError)
+  if (!editionRes.ok) {
+    console.error("Resend edition error:", editionRes.status, await editionRes.text())
   }
 
   return json({ ok: true })
