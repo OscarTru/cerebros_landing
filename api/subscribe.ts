@@ -50,14 +50,14 @@ export default async function handler(req: Request): Promise<Response> {
   if (dbError) {
     if (dbError.code === "23505") {
       // Unique violation — already subscribed, treat as success
-      console.log(`Already subscribed: ${email}`)
+      console.log("Already subscribed — returning success")
       return json({ ok: true })
     }
     console.error("Supabase insert error:", dbError)
     return json({ error: "No pudimos guardar tu suscripción" }, 500)
   }
 
-  console.log(`Subscribed: ${email}`)
+  console.log("New subscription recorded")
 
   const resendHeaders = {
     "Content-Type": "application/json",
@@ -74,7 +74,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (!contactRes.ok) {
     console.error("Resend contact error:", contactRes.status, contactText)
   } else {
-    console.log("Resend contact added:", contactText)
+    console.log("Resend contact added")
   }
 
   // Send welcome email
