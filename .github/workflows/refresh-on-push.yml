@@ -53,7 +53,7 @@ jobs:
           for i in 1 2 3; do
             if git push; then exit 0; fi
             echo "Push failed, rebasing and retrying ($i/3)…"
-            git pull --rebase origin main
+            git pull --rebase origin dev
           done
           echo "Push failed after 3 retries"
           exit 1
