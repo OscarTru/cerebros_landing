@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from "node:fs"
 import { resolve, dirname } from "node:path"
 import { XMLParser } from "fast-xml-parser"

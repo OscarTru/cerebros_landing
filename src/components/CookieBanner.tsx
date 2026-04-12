@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Link } from "react-router-dom"
 import { X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -25,15 +25,10 @@ function storeConsent(consent: CookieConsent) {
 }
 
 export function CookieBanner() {
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(() => getStoredConsent() === null)
   const [showDetails, setShowDetails] = useState(false)
   const [analytics, setAnalytics] = useState(false)
   const [marketing, setMarketing] = useState(false)
-
-  useEffect(() => {
-    const stored = getStoredConsent()
-    if (!stored) setVisible(true)
-  }, [])
 
   const accept = () => {
     storeConsent({ necessary: true, analytics: true, marketing: true })

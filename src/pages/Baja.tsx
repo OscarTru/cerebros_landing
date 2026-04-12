@@ -19,9 +19,9 @@ export function Baja() {
     if (!status && email) {
       fetch(`/api/unsubscribe?e=${encodeURIComponent(email)}`)
         .catch(() => {})
-        .finally(() => setProcessed(true))
+        .finally(() => { setProcessed(true) })
     } else {
-      setProcessed(true)
+      setTimeout(() => { setProcessed(true) }, 0)
     }
   }, [status, email])
 
