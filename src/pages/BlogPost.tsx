@@ -48,6 +48,7 @@ export function BlogPost() {
       date={frontmatter.date}
       author={frontmatter.author}
       description={frontmatter.description}
+      slug={frontmatter.slug}
     >
       <Suspense fallback={<div className="min-h-[40vh]" />}>
         <Article />

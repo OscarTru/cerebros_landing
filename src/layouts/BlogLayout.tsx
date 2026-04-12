@@ -6,12 +6,14 @@ import { NoiseOverlay } from "@/components/NoiseOverlay"
 import { Footer } from "@/sections/Footer"
 import { FadeIn } from "@/components/FadeIn"
 import { ThemeToggle } from "@/components/ThemeToggle"
+import { LikeButton } from "@/components/LikeButton"
 
 interface BlogLayoutProps {
   title: string
   date: string
   author: string
   description: string
+  slug: string
   children: ReactNode
 }
 
@@ -83,7 +85,7 @@ function ShareButtons({ title }: { title: string }) {
   )
 }
 
-export function BlogLayout({ title, date, author, description, children }: BlogLayoutProps) {
+export function BlogLayout({ title, date, author, description, slug, children }: BlogLayoutProps) {
   return (
     <LazyMotion features={domAnimation}>
       <div className="relative min-h-screen bg-[var(--c-bg)] text-[var(--c-text)] overflow-x-hidden font-sans">
@@ -133,9 +135,16 @@ export function BlogLayout({ title, date, author, description, children }: BlogL
               </div>
             </FadeIn>
 
+            {/* Like button — before share */}
+            <FadeIn delay={0.1}>
+              <div className="mt-16 pt-10 border-t border-[var(--c-border)] flex flex-col items-center">
+                <LikeButton slug={slug} />
+              </div>
+            </FadeIn>
+
             {/* Share buttons — after article */}
             <FadeIn delay={0.1}>
-              <div className="mt-16 pt-10 border-t border-[var(--c-border)]">
+              <div className="mt-10 pt-10 border-t border-[var(--c-border)]">
                 <p className="text-xs uppercase tracking-[0.2em] text-[var(--c-text-subtle)] mb-4">
                   Compartir
                 </p>
