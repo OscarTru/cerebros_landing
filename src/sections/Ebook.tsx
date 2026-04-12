@@ -2,6 +2,7 @@ import { m } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
 import { FadeIn } from "@/components/FadeIn"
 import { easeOut, viewportOnce } from "@/lib/motion"
+import { analytics } from "@/lib/analytics"
 
 const EBOOK_URL = "https://shop.beacons.ai/cerebros.esponjosos/5ceae34c-eccf-438a-8369-b7fdf3d2b2cd"
 
@@ -26,6 +27,7 @@ export function Ebook() {
           href={EBOOK_URL}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => analytics.ebookFreeClick("homepage")}
           initial={{ opacity: 0, y: 28, scale: 0.98 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={viewportOnce}

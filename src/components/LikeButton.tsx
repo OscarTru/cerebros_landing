@@ -1,6 +1,7 @@
 // src/components/LikeButton.tsx
 import { useState, useEffect } from "react"
 import { getFingerprint } from "@/lib/fingerprint"
+import { analytics } from "@/lib/analytics"
 
 interface LikeButtonProps {
   slug: string
@@ -39,6 +40,7 @@ export function LikeButton({ slug }: LikeButtonProps) {
       if (data.ok) {
         setCount(data.count)
         setLiked(true)
+        analytics.blogPostLike(slug)
       }
     } finally {
       setLoading(false)

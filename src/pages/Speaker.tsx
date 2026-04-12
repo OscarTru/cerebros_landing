@@ -9,6 +9,7 @@ import { ThemeToggle } from "@/components/ThemeToggle"
 import { founders } from "@/content/site"
 import { m } from "framer-motion"
 import { easeOut, viewportOnce } from "@/lib/motion"
+import { analytics } from "@/lib/analytics"
 
 const CONTACT_EMAIL = "contacto@cerebrosesponjosos.com"
 
@@ -41,7 +42,7 @@ export function Speaker() {
             <div className="flex items-center gap-3">
               <ThemeToggle />
               <Button asChild size="sm" variant="primary">
-                <a href={`mailto:${CONTACT_EMAIL}?subject=Invitación como speakers`}>
+                <a href={`mailto:${CONTACT_EMAIL}?subject=Invitación como speakers`} onClick={() => analytics.speakerInquiry()}>
                   <Mail className="h-4 w-4" aria-hidden="true" />
                   Invítanos
                 </a>
@@ -181,7 +182,7 @@ export function Speaker() {
               <FadeIn delay={0.2}>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                   <Button asChild size="lg" variant="primary">
-                    <a href={`mailto:${CONTACT_EMAIL}?subject=Invitación como speakers`}>
+                    <a href={`mailto:${CONTACT_EMAIL}?subject=Invitación como speakers`} onClick={() => analytics.speakerInquiry()}>
                       <Mail className="h-4 w-4" aria-hidden="true" />
                       {CONTACT_EMAIL}
                     </a>

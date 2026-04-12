@@ -2,17 +2,23 @@ import { m } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
 import { cloudinaryFitUrl, cloudinaryFitSrcSet } from "@/lib/cloudinary"
 import { easeOut, viewportOnce } from "@/lib/motion"
+import { analytics } from "@/lib/analytics"
 
 const EBOOK_IMAGE_ID = "100_retos_eBook_c43arl"
 const DOWNLOAD_URL =
   "https://shop.beacons.ai/cerebros.esponjosos/c9df420e-8074-48c1-a036-a5436f9f0cf1?pageViewSource=lib_view&referrer=https%3A%2F%2Fbeacons.ai%2Fcerebros.esponjosos&show_back_button=true"
 
-export function EbookCTA() {
+interface EbookCTAProps {
+  slug?: string
+}
+
+export function EbookCTA({ slug = "unknown" }: EbookCTAProps) {
   return (
     <m.a
       href={DOWNLOAD_URL}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => analytics.ebookPaidClick(slug)}
       initial={{ opacity: 0, y: 28, scale: 0.98 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={viewportOnce}

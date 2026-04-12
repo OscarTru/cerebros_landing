@@ -3,6 +3,7 @@ import { useParams, Navigate } from "react-router-dom"
 import { BlogLayout } from "@/layouts/BlogLayout"
 import { EbookCTA } from "@/components/EbookCTA"
 import { getAdjacentPosts, type PostMeta } from "@/content/blogMeta"
+import { analytics } from "@/lib/analytics"
 
 type MDXComponents = Record<string, React.ComponentType>
 
@@ -26,7 +27,10 @@ export function BlogPost() {
       setNotFound(true)
       return
     }
-    loader().then((mod) => setFrontmatter(mod.frontmatter))
+    loader().then((mod) => {
+      setFrontmatter(mod.frontmatter)
+      analytics.blogPostView(mod.frontmatter.slug)
+    })
   }, [loader])
 
   const Article = useMemo(
@@ -52,7 +56,7 @@ export function BlogPost() {
       nextPost={nextPost}
     >
       <Suspense fallback={<div className="min-h-[40vh]" />}>
-        <Article components={{ EbookCTA }} />
+        <Article components={{ EbookCTA: (props: Record<string, unknown>) => <EbookCTA slug={slug ?? "unknown"} {...props} /> }} />
       </Suspense>
     </BlogLayout>
   )
