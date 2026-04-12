@@ -5,24 +5,10 @@ import { FadeIn } from "@/components/FadeIn"
 import { dynamicContent, type IgPost } from "@/content/dynamic"
 import { easeOut, viewportOnce } from "@/lib/motion"
 import { isCloudinaryId, cloudinaryUrl, cloudinarySrcSet } from "@/lib/cloudinary"
-
-interface PostMeta {
-  slug: string
-  title: string
-  date: string
-  description: string
-  author: string
-  image?: string
-}
-
-const blogModules = import.meta.glob("../content/blog/*.mdx", { eager: true })
+import { ALL_POSTS, type PostMeta } from "@/content/blogMeta"
 
 function getLatestPosts(n: number): PostMeta[] {
-  return Object.values(blogModules)
-    .map((m) => (m as { frontmatter?: PostMeta }).frontmatter)
-    .filter((p): p is PostMeta => Boolean(p))
-    .sort((a, b) => (a.date < b.date ? 1 : -1))
-    .slice(0, n)
+  return ALL_POSTS.slice(0, n)
 }
 
 function formatDate(iso: string) {
