@@ -130,7 +130,7 @@ export function BlogLayout({
 
   return (
     <LazyMotion features={domAnimation}>
-      <div className="relative min-h-screen bg-[var(--c-bg)] text-[var(--c-text)] overflow-x-hidden font-sans">
+      <div className="relative min-h-screen bg-[var(--c-bg)] text-[var(--c-text)] font-sans">
         <ReadingProgressBar />
         <NoiseOverlay />
 
