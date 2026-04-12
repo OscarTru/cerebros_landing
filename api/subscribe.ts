@@ -92,7 +92,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   const welcomeRes = await sendEmail(
     "Bienvenido a Esponjosos — Cerebros Esponjosos",
-    welcomeHtml(),
+    welcomeHtml(email),
   )
   if (!welcomeRes.ok) {
     console.error("Resend welcome error:", welcomeRes.status, await welcomeRes.text())
@@ -110,7 +110,7 @@ export default async function handler(req: Request): Promise<Response> {
       from: "Cerebros Esponjosos <hola@cerebrosesponjosos.com>",
       to: email,
       subject: "Tu cerebro no descansa cuando duermes — Esponjosos #1",
-      html: firstEditionHtml(),
+      html: firstEditionHtml(email),
       scheduled_at: sendAt,
       ...(resendAudienceId ? { audience_id: resendAudienceId } : {}),
     }),
@@ -122,7 +122,11 @@ export default async function handler(req: Request): Promise<Response> {
   return json({ ok: true })
 }
 
-function welcomeHtml(): string {
+function unsubscribeUrl(email: string): string {
+  return `https://cerebrosesponjosos.com/baja?e=${encodeURIComponent(email)}`
+}
+
+function welcomeHtml(email: string): string {
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -321,7 +325,7 @@ function welcomeHtml(): string {
           <p style="font-family:'Inter',sans-serif; font-size:11px; font-weight:300; color:#a1a1aa; line-height:1.7;">
             Recibiste este email porque te suscribiste a Esponjosos.<br/>
             &copy; Cerebros Esponjosos &nbsp;&middot;&nbsp;
-            <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#71717a; text-decoration:underline;">Cancelar suscripción</a>
+            <a href="${unsubscribeUrl(email)}" style="color:#71717a; text-decoration:underline;">Cancelar suscripción</a>
           </p>
         </td></tr>
 
@@ -336,7 +340,7 @@ function welcomeHtml(): string {
 </html>`
 }
 
-function firstEditionHtml(): string {
+function firstEditionHtml(email: string): string {
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -522,7 +526,7 @@ function firstEditionHtml(): string {
           <p style="font-family:'Inter',sans-serif; font-size:11px; font-weight:300; color:#a1a1aa; line-height:1.7;">
             Recibiste este email porque te suscribiste a Esponjosos.<br/>
             &copy; Cerebros Esponjosos &nbsp;&middot;&nbsp;
-            <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#71717a; text-decoration:underline;">Cancelar suscripción</a>
+            <a href="${unsubscribeUrl(email)}" style="color:#71717a; text-decoration:underline;">Cancelar suscripción</a>
           </p>
         </td></tr>
 

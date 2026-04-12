@@ -14,6 +14,7 @@ import { Cookies } from "./pages/Cookies.tsx"
 import { Disclaimer } from "./pages/Disclaimer.tsx"
 import { SuscripcionConfirma } from "./pages/SuscripcionConfirma.tsx"
 import { SuscripcionBienvenida } from "./pages/SuscripcionBienvenida.tsx"
+import { Baja } from "./pages/Baja.tsx"
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -38,6 +39,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/disclaimer" element={<Disclaimer />} />
         <Route path="/suscripcion/confirma" element={<SuscripcionConfirma />} />
         <Route path="/suscripcion/bienvenida" element={<SuscripcionBienvenida />} />
+        <Route path="/baja" element={<Baja />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
