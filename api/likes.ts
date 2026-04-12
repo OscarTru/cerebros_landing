@@ -6,6 +6,7 @@
 //   SUPABASE_SERVICE_ROLE_KEY
 
 import { createClient } from "@supabase/supabase-js"
+import { likesRatelimit, getIP } from "./_ratelimit"
 
 export const config = { runtime: "edge" }
 
@@ -68,6 +69,13 @@ export default async function handler(req: Request): Promise<Response> {
 
   // POST /api/likes { slug }
   if (req.method === "POST") {
+    // Rate limit: 10 like actions per IP per minute
+    const rl = likesRatelimit()
+    if (rl) {
+      const { success } = await rl.limit(getIP(req))
+      if (!success) return json({ error: "Too many requests" }, 429)
+    }
+
     let body: { slug?: unknown }
     try {
       body = await req.json()
