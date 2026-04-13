@@ -112,7 +112,7 @@ export default async function handler(req: Request): Promise<Response> {
       Authorization: `Bearer ${resendKey}`,
     },
     body: JSON.stringify({
-      from: "Cerebros Esponjosos <noreply@cerebrosesponjosos.com>",
+      from: "Cerebros Esponjosos <hola@cerebrosesponjosos.com>",
       to: ["contacto@cerebrosesponjosos.com"],
       reply_to: email,
       subject,
