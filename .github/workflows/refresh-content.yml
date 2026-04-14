@@ -42,19 +42,24 @@ jobs:
         run: |
           if git diff --quiet public/data/content.json; then
             echo "No content changes."
-            exit 0
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add public/data/content.json
+            git commit -m "chore: refresh dynamic content"
+            # Retry with rebase if remote moved while we were running
+            for i in 1 2 3; do
+              if git push origin HEAD:dev; then
+                break
+              fi
+              echo "Push failed, rebasing and retrying ($i/3)…"
+              git pull --rebase origin dev
+            done
           fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/data/content.json
-          git commit -m "chore: refresh dynamic content"
-          # Retry with rebase if remote moved while we were running
-          for i in 1 2 3; do
-            if git push origin HEAD:dev; then
-              exit 0
-            fi
-            echo "Push failed, rebasing and retrying ($i/3)…"
-            git pull --rebase origin dev
-          done
-          echo "Push failed after 3 retries"
-          exit 1
+
+      - name: Merge dev into main
+        run: |
+          git fetch origin main
+          git checkout main
+          git merge --ff-only origin/dev
+          git push origin main
