@@ -36,7 +36,7 @@ export function Manifesto() {
     <section
       id="manifiesto"
       ref={ref}
-      className="relative py-40 px-6 z-10"
+      className="relative py-40 px-6 z-10 overflow-hidden"
     >
       <div
         aria-hidden="true"
