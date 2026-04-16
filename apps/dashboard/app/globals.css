@@ -1,0 +1,61 @@
+@import "tailwindcss";
+@source "../../../packages/ui/src";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-full: 9999px;
+}
+
+:root {
+  --c-bg: #fafaf9;
+  --c-surface: #f4f4f5;
+  --c-surface-2: rgba(0, 0, 0, 0.04);
+  --c-surface-3: rgba(255, 255, 255, 0.6);
+  --c-border: rgba(0, 0, 0, 0.08);
+  --c-border-strong: rgba(0, 0, 0, 0.18);
+  --c-text: #18181b;
+  --c-text-muted: #52525b;
+  --c-text-subtle: #71717a;
+  --c-text-faint: #a1a1aa;
+  --c-invert: #18181b;
+  --c-invert-fg: #ffffff;
+}
+
+.dark {
+  --c-bg: #0a0a0b;
+  --c-surface: #111113;
+  --c-surface-2: rgba(255, 255, 255, 0.05);
+  --c-surface-3: rgba(0, 0, 0, 0.4);
+  --c-border: rgba(255, 255, 255, 0.08);
+  --c-border-strong: rgba(255, 255, 255, 0.18);
+  --c-text: #fafaf9;
+  --c-text-muted: #a1a1aa;
+  --c-text-subtle: #71717a;
+  --c-text-faint: #3f3f46;
+  --c-invert: #fafaf9;
+  --c-invert-fg: #0a0a0b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
