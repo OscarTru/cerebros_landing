@@ -6,8 +6,5 @@
       "destination": "https://www.cerebrosesponjosos.com/$1",
       "permanent": false
     }
-  ],
-  "rewrites": [
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
