@@ -1,29 +1,23 @@
 import { Suspense, lazy, useState, useEffect, useMemo } from "react"
 import { useParams, Navigate } from "react-router-dom"
 import { BlogLayout } from "@/layouts/BlogLayout"
+import { headingComponents } from "@/lib/headingComponents"
 import { EbookCTA } from "@/components/EbookCTA"
-
-type Frontmatter = {
-  title: string
-  date: string
-  slug: string
-  description: string
-  author: string
-  image?: string
-}
+import { getAdjacentPosts, type PostMeta } from "@/content/blogMeta"
+import { analytics } from "@/lib/analytics"
 
 type MDXComponents = Record<string, React.ComponentType>
 
 type MDXModule = {
   default: React.ComponentType<{ components?: MDXComponents }>
-  frontmatter: Frontmatter
+  frontmatter: PostMeta
 }
 
 const modules = import.meta.glob<MDXModule>("../content/blog/*.mdx")
 
 export function BlogPost() {
   const { slug } = useParams<{ slug: string }>()
-  const [frontmatter, setFrontmatter] = useState<Frontmatter | null>(null)
+  const [frontmatter, setFrontmatter] = useState<PostMeta | null>(null)
   const [notFound, setNotFound] = useState(false)
 
   const path = slug ? `../content/blog/${slug}.mdx` : null
@@ -34,7 +28,10 @@ export function BlogPost() {
       setNotFound(true)
       return
     }
-    loader().then((mod) => setFrontmatter(mod.frontmatter))
+    loader().then((mod) => {
+      setFrontmatter(mod.frontmatter)
+      analytics.blogPostView(mod.frontmatter.slug)
+    })
   }, [loader])
 
   const Article = useMemo(
@@ -42,6 +39,8 @@ export function BlogPost() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [path]
   )
+
+  const { prevPost, nextPost } = slug ? getAdjacentPosts(slug) : {}
 
   if (notFound) return <Navigate to="/" replace />
   if (!frontmatter || !Article) return <div className="min-h-screen bg-[var(--c-bg)]" />
@@ -54,9 +53,20 @@ export function BlogPost() {
       description={frontmatter.description}
       slug={frontmatter.slug}
       image={frontmatter.image}
+      readingTime={frontmatter.readingTime}
+      headings={frontmatter.headings}
+      prevPost={prevPost}
+      nextPost={nextPost}
     >
       <Suspense fallback={<div className="min-h-[40vh]" />}>
-        <Article components={{ EbookCTA }} />
+        <Article
+          components={{
+            ...headingComponents,
+            EbookCTA: (props: Record<string, unknown>) => (
+              <EbookCTA slug={slug ?? "unknown"} {...props} />
+            ),
+          }}
+        />
       </Suspense>
     </BlogLayout>
   )

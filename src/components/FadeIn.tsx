@@ -1,4 +1,4 @@
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import type { ReactNode } from "react"
 import { fadeUp, viewportOnce } from "@/lib/motion"
 
@@ -12,7 +12,7 @@ export function FadeIn({
   delay?: number
 }) {
   return (
-    <motion.div
+    <m.div
       className={className}
       variants={fadeUp}
       initial="hidden"
@@ -21,6 +21,6 @@ export function FadeIn({
       transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
     >
       {children}
-    </motion.div>
+    </m.div>
   )
 }

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { motion, useScroll, useTransform } from "framer-motion"
+import { m, useScroll, useTransform } from "framer-motion"
 import { Menu } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet"
@@ -12,13 +12,13 @@ export function Nav() {
   const [open, setOpen] = useState(false)
 
   return (
-    <motion.header
+    <m.header
       className="fixed top-0 left-0 right-0 z-40 backdrop-blur-xl bg-[var(--c-bg)]/70"
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
     >
-      <motion.div
+      <m.div
         className="absolute inset-x-0 bottom-0 h-px bg-[var(--c-border)]"
         style={{ opacity: borderOpacity }}
         aria-hidden="true"
@@ -85,11 +85,11 @@ export function Nav() {
         </div>
       </nav>
 
-      <motion.div
+      <m.div
         className="h-px bg-[var(--c-text)] origin-left"
         style={{ scaleX: scrollYProgress }}
         aria-hidden="true"
       />
-    </motion.header>
+    </m.header>
   )
 }

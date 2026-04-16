@@ -1,7 +1,8 @@
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
 import { FadeIn } from "@/components/FadeIn"
 import { easeOut, viewportOnce } from "@/lib/motion"
+import { analytics } from "@/lib/analytics"
 
 const EBOOK_URL = "https://shop.beacons.ai/cerebros.esponjosos/5ceae34c-eccf-438a-8369-b7fdf3d2b2cd"
 
@@ -22,10 +23,11 @@ export function Ebook() {
           </h2>
         </FadeIn>
 
-        <motion.a
+        <m.a
           href={EBOOK_URL}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => analytics.ebookFreeClick("homepage")}
           initial={{ opacity: 0, y: 28, scale: 0.98 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={viewportOnce}
@@ -42,7 +44,7 @@ export function Ebook() {
           />
 
           {/* Book cover */}
-          <motion.div
+          <m.div
             className="relative shrink-0 w-40 sm:w-48"
             initial={{ opacity: 0, x: -16 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -50,11 +52,11 @@ export function Ebook() {
             transition={{ duration: 0.8, delay: 0.1, ease: easeOut }}
           >
             <img
-              src="/assets/ebook-gratis.png"
+              src="/assets/ebook-gratis.webp"
               alt="Ebook: 7 días para activar tu cerebro"
               className="w-full rounded-xl shadow-2xl group-hover:scale-[1.03] transition-transform duration-500"
             />
-          </motion.div>
+          </m.div>
 
           {/* Text */}
           <div className="relative flex-1 min-w-0 text-center sm:text-left">
@@ -75,7 +77,7 @@ export function Ebook() {
               <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
             </span>
           </div>
-        </motion.a>
+        </m.a>
       </div>
     </section>
   )

@@ -5,8 +5,11 @@
 //   RESEND_API_KEY            — API key from resend.com
 //   SUPABASE_URL              — Project URL from Supabase → Settings → API
 //   SUPABASE_SERVICE_ROLE_KEY — Service role key from Supabase → Settings → API
+//   UNSUBSCRIBE_SECRET        — Random secret for signing unsubscribe tokens
 
 import { createClient } from "@supabase/supabase-js"
+import { signToken } from "./_hmac"
+import { subscribeRatelimit, getIP } from "./_ratelimit"
 
 export const config = { runtime: "edge" }
 
@@ -24,11 +27,25 @@ export default async function handler(req: Request): Promise<Response> {
     return json({ error: "Newsletter not configured" }, 500)
   }
 
-  let body: { email?: unknown; consent?: unknown }
+  let body: { email?: unknown; consent?: unknown; website?: unknown }
   try {
     body = await req.json()
   } catch {
     return json({ error: "Invalid JSON" }, 400)
+  }
+
+  // Honeypot: bots fill hidden fields, humans don't
+  if (body.website) {
+    return json({ ok: true })
+  }
+
+  // Rate limit: 3 subscription attempts per IP per 10 minutes
+  const rl = subscribeRatelimit()
+  if (rl) {
+    const { success } = await rl.limit(getIP(req))
+    if (!success) {
+      return json({ error: "Demasiados intentos. Espera unos minutos." }, 429)
+    }
   }
 
   const email = typeof body.email === "string" ? body.email.trim() : ""
@@ -50,14 +67,14 @@ export default async function handler(req: Request): Promise<Response> {
   if (dbError) {
     if (dbError.code === "23505") {
       // Unique violation — already subscribed, treat as success
-      console.log(`Already subscribed: ${email}`)
+      console.log("Already subscribed — returning success")
       return json({ ok: true })
     }
     console.error("Supabase insert error:", dbError)
     return json({ error: "No pudimos guardar tu suscripción" }, 500)
   }
 
-  console.log(`Subscribed: ${email}`)
+  console.log("New subscription recorded")
 
   const resendHeaders = {
     "Content-Type": "application/json",
@@ -74,8 +91,10 @@ export default async function handler(req: Request): Promise<Response> {
   if (!contactRes.ok) {
     console.error("Resend contact error:", contactRes.status, contactText)
   } else {
-    console.log("Resend contact added:", contactText)
+    console.log("Resend contact added")
   }
+
+  const unsubUrl = await unsubscribeUrl(email)
 
   // Send welcome email
   const welcomeRes = await fetch("https://api.resend.com/emails", {
@@ -85,7 +104,7 @@ export default async function handler(req: Request): Promise<Response> {
       from: "Cerebros Esponjosos <hola@cerebrosesponjosos.com>",
       to: email,
       subject: "Bienvenido a Esponjosos — Cerebros Esponjosos",
-      html: welcomeHtml(email),
+      html: welcomeHtml(email, unsubUrl),
     }),
   })
   if (!welcomeRes.ok) {
@@ -101,7 +120,7 @@ export default async function handler(req: Request): Promise<Response> {
       from: "Cerebros Esponjosos <hola@cerebrosesponjosos.com>",
       to: email,
       subject: "Tu cerebro no descansa cuando duermes — Esponjosos #1",
-      html: firstEditionHtml(email),
+      html: firstEditionHtml(email, unsubUrl),
       scheduled_at: sendAt,
     }),
   })
@@ -112,11 +131,17 @@ export default async function handler(req: Request): Promise<Response> {
   return json({ ok: true })
 }
 
-function unsubscribeUrl(email: string): string {
-  return `https://cerebrosesponjosos.com/baja?e=${encodeURIComponent(email)}`
+async function unsubscribeUrl(email: string): Promise<string> {
+  const secret = process.env.UNSUBSCRIBE_SECRET
+  if (!secret) {
+    // Fallback: plain email (less secure, but won't break emails)
+    return `https://cerebrosesponjosos.com/baja?e=${encodeURIComponent(email)}`
+  }
+  const token = await signToken(email, secret)
+  return `https://cerebrosesponjosos.com/baja?e=${encodeURIComponent(email)}&token=${token}`
 }
 
-function welcomeHtml(email: string): string {
+function welcomeHtml(email: string, unsubUrl: string): string {
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -315,7 +340,7 @@ function welcomeHtml(email: string): string {
           <p style="font-family:'Inter',sans-serif; font-size:11px; font-weight:300; color:#a1a1aa; line-height:1.7;">
             Recibiste este email porque te suscribiste a Esponjosos.<br/>
             &copy; Cerebros Esponjosos &nbsp;&middot;&nbsp;
-            <a href="${unsubscribeUrl(email)}" style="color:#71717a; text-decoration:underline;">Cancelar suscripción</a>
+            <a href="${unsubUrl}" style="color:#71717a; text-decoration:underline;">Cancelar suscripción</a>
           </p>
         </td></tr>
 
@@ -330,7 +355,7 @@ function welcomeHtml(email: string): string {
 </html>`
 }
 
-function firstEditionHtml(email: string): string {
+function firstEditionHtml(email: string, unsubUrl: string): string {
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -516,7 +541,7 @@ function firstEditionHtml(email: string): string {
           <p style="font-family:'Inter',sans-serif; font-size:11px; font-weight:300; color:#a1a1aa; line-height:1.7;">
             Recibiste este email porque te suscribiste a Esponjosos.<br/>
             &copy; Cerebros Esponjosos &nbsp;&middot;&nbsp;
-            <a href="${unsubscribeUrl(email)}" style="color:#71717a; text-decoration:underline;">Cancelar suscripción</a>
+            <a href="${unsubUrl}" style="color:#71717a; text-decoration:underline;">Cancelar suscripción</a>
           </p>
         </td></tr>
 

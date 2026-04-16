@@ -1,5 +1,7 @@
 // src/components/LikeButton.tsx
 import { useState, useEffect } from "react"
+import { getFingerprint } from "@/lib/fingerprint"
+import { analytics } from "@/lib/analytics"
 
 interface LikeButtonProps {
   slug: string
@@ -11,28 +13,34 @@ export function LikeButton({ slug }: LikeButtonProps) {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    fetch(`/api/likes?slug=${encodeURIComponent(slug)}`)
-      .then((r) => r.json())
-      .then((data: { count: number; liked: boolean }) => {
-        setCount(data.count)
-        setLiked(data.liked)
-      })
-      .catch(() => setCount(0))
+    getFingerprint().then((fp) => {
+      const qs = new URLSearchParams({ slug })
+      if (fp) qs.set("fp", fp)
+      fetch(`/api/likes?${qs.toString()}`)
+        .then((r) => r.json())
+        .then((data: { count: number; liked: boolean }) => {
+          setCount(data.count)
+          setLiked(data.liked)
+        })
+        .catch(() => setCount(0))
+    })
   }, [slug])
 
   async function handleLike() {
     if (liked || loading) return
     setLoading(true)
     try {
+      const fp = await getFingerprint()
       const res = await fetch("/api/likes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug }),
+        body: JSON.stringify({ slug, fp }),
       })
       const data = (await res.json()) as { ok: boolean; count: number }
       if (data.ok) {
         setCount(data.count)
         setLiked(true)
+        analytics.blogPostLike(slug)
       }
     } finally {
       setLoading(false)

@@ -1,29 +1,8 @@
 import { Link } from "react-router-dom"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, Clock } from "lucide-react"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { isCloudinaryId, cloudinaryUrl, cloudinarySrcSet } from "@/lib/cloudinary"
-
-interface PostMeta {
-  slug: string
-  title: string
-  date: string
-  description: string
-  author: string
-  image?: string
-}
-
-const modules = import.meta.glob("../content/blog/*.mdx", { eager: true })
-
-function getAllPosts(): PostMeta[] {
-  return Object.entries(modules)
-    .map(([, mod]) => {
-      const m = mod as { frontmatter?: PostMeta }
-      if (!m.frontmatter) return null
-      return m.frontmatter
-    })
-    .filter((p): p is PostMeta => p !== null)
-    .sort((a, b) => (a.date < b.date ? 1 : -1))
-}
+import { ALL_POSTS } from "@/content/blogMeta"
 
 function formatDate(iso: string) {
   const [y, m, d] = iso.split("-").map(Number)
@@ -94,8 +73,6 @@ function PostImage({
     />
   )
 }
-
-const ALL_POSTS = getAllPosts()
 
 export function Blog() {
   const [featured, ...rest] = ALL_POSTS
@@ -169,6 +146,11 @@ export function Blog() {
             <div className="flex items-center gap-2 text-xs text-[var(--c-text-subtle)]">
               <span>por {featured.author}</span>
               <span>·</span>
+              <span className="flex items-center gap-1">
+                <Clock className="h-3 w-3" aria-hidden="true" />
+                {featured.readingTime} min
+              </span>
+              <span>·</span>
               <span className="flex items-center gap-1 group-hover:text-[var(--c-text)] transition-colors">
                 Leer artículo
                 <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
@@ -202,7 +184,14 @@ export function Blog() {
                   <p className="text-xs text-[var(--c-text-muted)] leading-relaxed line-clamp-2 mb-3">
                     {post.description}
                   </p>
-                  <span className="text-xs text-[var(--c-text-subtle)]">por {post.author}</span>
+                  <div className="flex items-center gap-2 text-xs text-[var(--c-text-subtle)]">
+                    <span>por {post.author}</span>
+                    <span>·</span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" aria-hidden="true" />
+                      {post.readingTime} min
+                    </span>
+                  </div>
                 </div>
               </Link>
             ))}

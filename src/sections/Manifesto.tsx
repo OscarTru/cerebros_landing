@@ -1,5 +1,5 @@
 import { useRef } from "react"
-import { motion, useScroll, useTransform } from "framer-motion"
+import { m, useScroll, useTransform } from "framer-motion"
 import type { MotionValue } from "framer-motion"
 import { manifestoSegments } from "@/content/site"
 
@@ -16,12 +16,12 @@ function Segment({
 }) {
   const opacity = useTransform(progress, range, [0.15, 1])
   return (
-    <motion.span
+    <m.span
       className={`mr-[0.3em] inline ${italic ? "italic text-[var(--c-text-muted)]" : "text-[var(--c-text)]"}`}
       style={{ opacity }}
     >
       {text}
-    </motion.span>
+    </m.span>
   )
 }
 
@@ -36,7 +36,7 @@ export function Manifesto() {
     <section
       id="manifiesto"
       ref={ref}
-      className="relative py-40 px-6 z-10"
+      className="relative py-40 px-6 z-10 overflow-hidden"
     >
       <div
         aria-hidden="true"

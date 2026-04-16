@@ -6,6 +6,7 @@
 //   SUPABASE_SERVICE_ROLE_KEY
 
 import { createClient } from "@supabase/supabase-js"
+import { likesRatelimit, getIP } from "./_ratelimit"
 
 export const config = { runtime: "edge" }
 
@@ -16,7 +17,9 @@ function json(data: unknown, status = 200) {
   })
 }
 
-function fingerprint(req: Request): string {
+// Server-side fallback fingerprint using IP + User-Agent hash.
+// Used when the client doesn't provide a FingerprintJS visitorId.
+function serverFingerprint(req: Request): string {
   const ua = req.headers.get("user-agent") ?? ""
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
@@ -30,6 +33,12 @@ function fingerprint(req: Request): string {
   return Math.abs(hash).toString(36)
 }
 
+function resolveFingerprint(req: Request, clientFp?: string): string {
+  // Validate client fp: FingerprintJS visitorIds are 32-char hex strings
+  if (clientFp && /^[a-f0-9]{32}$/.test(clientFp)) return clientFp
+  return serverFingerprint(req)
+}
+
 export default async function handler(req: Request): Promise<Response> {
   const supabaseUrl = process.env.SUPABASE_URL
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -39,14 +48,14 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const supabase = createClient(supabaseUrl, supabaseKey)
-  const fp = fingerprint(req)
 
-  // GET /api/likes?slug=xxx
+  // GET /api/likes?slug=xxx&fp=FINGERPRINT
   if (req.method === "GET") {
     const url = new URL(req.url)
     const slug = url.searchParams.get("slug")
     if (!slug) return json({ error: "Missing slug" }, 400)
     if (slug.length > 200) return json({ error: "Invalid slug" }, 400)
+    const fp = resolveFingerprint(req, url.searchParams.get("fp") ?? undefined)
 
     const [{ count, error: countError }, { data: existing, error: existsError }] =
       await Promise.all([
@@ -68,7 +77,14 @@ export default async function handler(req: Request): Promise<Response> {
 
   // POST /api/likes { slug }
   if (req.method === "POST") {
-    let body: { slug?: unknown }
+    // Rate limit: 10 like actions per IP per minute
+    const rl = likesRatelimit()
+    if (rl) {
+      const { success } = await rl.limit(getIP(req))
+      if (!success) return json({ error: "Too many requests" }, 429)
+    }
+
+    let body: { slug?: unknown; fp?: unknown }
     try {
       body = await req.json()
     } catch {
@@ -78,6 +94,7 @@ export default async function handler(req: Request): Promise<Response> {
     const slug = typeof body.slug === "string" ? body.slug.trim() : ""
     if (!slug) return json({ error: "Missing slug" }, 400)
     if (slug.length > 200) return json({ error: "Invalid slug" }, 400)
+    const fp = resolveFingerprint(req, typeof body.fp === "string" ? body.fp : undefined)
 
     const { error: insertError } = await supabase
       .from("post_likes")

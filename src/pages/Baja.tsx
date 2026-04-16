@@ -12,18 +12,20 @@ export function Baja() {
   const [params] = useSearchParams()
   const status = params.get("status")
   const email = params.get("e")
-  const [processed, setProcessed] = useState(false)
+  const token = params.get("token")
+  // Already processed if we have a status param, or there's no email to act on
+  const [processed, setProcessed] = useState(() => Boolean(status || !email))
 
   // If arriving via direct link from email (no status yet), call the API
   useEffect(() => {
     if (!status && email) {
-      fetch(`/api/unsubscribe?e=${encodeURIComponent(email)}`)
+      const qs = new URLSearchParams({ e: email })
+      if (token) qs.set("token", token)
+      fetch(`/api/unsubscribe?${qs.toString()}`)
         .catch(() => {})
-        .finally(() => setProcessed(true))
-    } else {
-      setProcessed(true)
+        .finally(() => { setProcessed(true) })
     }
-  }, [status, email])
+  }, [status, email, token])
 
   const isOk = status === "ok" || (processed && !status && email)
   const isError = status === "error"

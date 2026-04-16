@@ -6,12 +6,14 @@ import { z } from "zod"
 import { Loader2, ArrowRight } from "lucide-react"
 import { FadeIn } from "@/components/FadeIn"
 import { newsletter } from "@/content/site"
+import { analytics } from "@/lib/analytics"
 
 const schema = z.object({
   email: z.string().email("Introduce un email válido."),
   consent: z.literal(true, {
     message: "Debes aceptar la política de privacidad.",
   }),
+  website: z.string().optional(), // honeypot — must be empty
 })
 type FormValues = z.infer<typeof schema>
 
@@ -34,7 +36,7 @@ export function Newsletter() {
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: values.email, consent: values.consent }),
+        body: JSON.stringify({ email: values.email, consent: values.consent, website: values.website ?? "" }),
       })
       if (!res.ok) {
         const data = (await res.json().catch(() => ({}))) as { error?: string }
@@ -42,6 +44,7 @@ export function Newsletter() {
         setStatus("error")
         return
       }
+      analytics.newsletterSignup("homepage")
       navigate("/suscripcion/confirma")
     } catch {
       setErrorMsg("Error de red. Intenta de nuevo.")
@@ -85,6 +88,15 @@ export function Newsletter() {
             className="mx-auto max-w-md"
             noValidate
           >
+            {/* Honeypot: hidden from humans, bots fill it in */}
+            <input
+              type="text"
+              aria-hidden="true"
+              tabIndex={-1}
+              autoComplete="off"
+              {...register("website")}
+              style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden" }}
+            />
             <div
               className={`relative h-14 rounded-full bg-[var(--c-surface-2)] ring-1 ${
                 errors.email || status === "error"
