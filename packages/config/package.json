@@ -1,0 +1,11 @@
+{
+  "name": "@cerebros/config",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./tailwind": "./tailwind.config.ts",
+    "./eslint": "./eslint.config.js",
+    "./tsconfig/base": "./tsconfig/base.json",
+    "./tsconfig/nextjs": "./tsconfig/nextjs.json"
+  }
+}

@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Next.js
+.next/
+out/
+*.tsbuildinfo
 # Environment files — never commit secrets
 .env
 .env.*

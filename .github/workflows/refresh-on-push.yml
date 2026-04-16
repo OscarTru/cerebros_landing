@@ -4,7 +4,7 @@ on:
   push:
     branches: [dev]
     paths-ignore:
-      - "public/data/content.json"
+      - "apps/web/public/data/content.json"
       - "**/*.md"
 
 permissions:
@@ -38,17 +38,17 @@ jobs:
       - name: Fetch content
         env:
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-        run: npm run fetch:content
+        run: npm run fetch:content --workspace=apps/web
 
       - name: Commit changes if any
         run: |
-          if git diff --quiet public/data/content.json; then
+          if git diff --quiet apps/web/public/data/content.json; then
             echo "No content changes."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/data/content.json
+          git add apps/web/public/data/content.json
           git commit -m "chore: refresh dynamic content [skip ci]"
           for i in 1 2 3; do
             if git push; then exit 0; fi
