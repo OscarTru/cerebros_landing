@@ -22,7 +22,7 @@ async function getAnalyticsData() {
     const raw = await readFile(contentPath, "utf-8")
     content = JSON.parse(raw)
   } catch {
-    // continue with empty data
+    // empty
   }
 
   const { data: likesData } = await getSupabase().from("post_likes").select("slug")
@@ -57,85 +57,63 @@ async function getAnalyticsData() {
   }
 }
 
-const sectionTitle: React.CSSProperties = {
-  fontSize: "15px",
-  fontWeight: 600,
-  color: "var(--c-text)",
-  letterSpacing: "-0.01em",
-  margin: 0,
-  marginBottom: "12px",
-}
-
-const gridTwo: React.CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "repeat(2, 1fr)",
-  gap: "16px",
-}
-
 export default async function AnalyticsPage() {
   const data = await getAnalyticsData()
 
   return (
-    <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+    <>
       <Header title="Analytics" />
-      <div style={{ padding: "32px", display: "flex", flexDirection: "column", gap: "32px" }}>
+      <div className="p-8 flex flex-col gap-8">
 
-        <div>
-          <h2 style={sectionTitle}>Instagram</h2>
-          <div style={gridTwo}>
+        <section>
+          <h2 className="text-[15px] font-semibold tracking-tight text-[var(--c-text)] mb-3">
+            Instagram
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <MetricCard label="Seguidores" value={data.igFollowers.toLocaleString("es-MX")} icon={Camera} />
-            <MetricCard label="Engagement promedio" value={data.igEngagement.toLocaleString("es-MX")} sublabel="likes + comments por post" icon={Camera} />
+            <MetricCard
+              label="Engagement promedio"
+              value={data.igEngagement.toLocaleString("es-MX")}
+              sublabel="likes + comments por post"
+              icon={Camera}
+            />
           </div>
-        </div>
+        </section>
 
-        <div>
-          <h2 style={sectionTitle}>YouTube</h2>
-          <div style={gridTwo}>
+        <section>
+          <h2 className="text-[15px] font-semibold tracking-tight text-[var(--c-text)] mb-3">
+            YouTube
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <MetricCard label="Vistas totales" value={data.ytTotalViews.toLocaleString("es-MX")} icon={CirclePlay} />
             <MetricCard label="Videos" value={data.ytVideosCount} icon={CirclePlay} />
           </div>
-        </div>
+        </section>
 
-        <div>
-          <h2 style={sectionTitle}>Blog</h2>
-          <div style={gridTwo}>
+        <section>
+          <h2 className="text-[15px] font-semibold tracking-tight text-[var(--c-text)] mb-3">
+            Blog
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <MetricCard label="Likes totales" value={data.totalBlogLikes.toLocaleString("es-MX")} icon={Heart} />
           </div>
 
           {data.topPosts.length > 0 && (
-            <div style={{
-              marginTop: "16px",
-              background: "var(--c-surface)",
-              border: "1px solid var(--c-border)",
-              borderRadius: "16px",
-              overflow: "hidden",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-            }}>
-              <div style={{
-                padding: "14px 20px",
-                borderBottom: "1px solid var(--c-border)",
-              }}>
-                <p style={{ fontSize: "13px", fontWeight: 500, color: "var(--c-text)", margin: 0 }}>
-                  Posts más populares
-                </p>
+            <div className="mt-4 rounded-2xl bg-[var(--c-surface)] border border-[var(--c-border)] overflow-hidden shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
+              <div className="px-5 py-3.5 border-b border-[var(--c-border)]">
+                <p className="text-[13px] font-medium text-[var(--c-text)]">Posts más populares</p>
               </div>
-              <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+              <ul>
                 {data.topPosts.map(({ slug, count }, i) => (
                   <li
                     key={slug}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "12px 20px",
-                      borderTop: i === 0 ? "none" : "1px solid var(--c-border)",
-                    }}
+                    className={`flex items-center justify-between px-5 py-3 ${i > 0 ? "border-t border-[var(--c-border)]" : ""}`}
                   >
-                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                      <span style={{ fontSize: "12px", color: "var(--c-text-faint)", width: "16px" }}>{i + 1}</span>
-                      <span style={{ fontSize: "13px", color: "var(--c-text)" }}>{slug}</span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs text-[var(--c-text-faint)] w-4">{i + 1}</span>
+                      <span className="text-[13px] text-[var(--c-text)]">{slug}</span>
                     </div>
-                    <span style={{ fontSize: "13px", fontWeight: 500, color: "var(--c-text-muted)" }}>
+                    <span className="text-[13px] font-medium text-[var(--c-text-muted)]">
                       {count} ❤️
                     </span>
                   </li>
@@ -143,9 +121,9 @@ export default async function AnalyticsPage() {
               </ul>
             </div>
           )}
-        </div>
+        </section>
 
       </div>
-    </div>
+    </>
   )
 }

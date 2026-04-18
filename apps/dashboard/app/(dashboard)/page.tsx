@@ -24,21 +24,19 @@ export default async function OverviewPage() {
   const data = await getOverviewData()
 
   return (
-    <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+    <>
       <Header title="Overview" />
-      <div style={{ padding: "32px", display: "flex", flexDirection: "column", gap: "32px" }}>
-        {/* Welcome */}
+      <div className="p-8 flex flex-col gap-8">
         <div>
-          <h2 style={{ fontSize: "20px", fontWeight: 600, color: "var(--c-text)", letterSpacing: "-0.02em", margin: 0 }}>
+          <h2 className="text-xl font-semibold tracking-[-0.02em] text-[var(--c-text)]">
             Bienvenido de vuelta
           </h2>
-          <p style={{ fontSize: "14px", color: "var(--c-text-muted)", marginTop: "4px" }}>
+          <p className="text-sm text-[var(--c-text-muted)] mt-1">
             Aquí tienes un resumen de tu contenido y audiencia.
           </p>
         </div>
 
-        {/* Metric cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <MetricCard
             label="Suscriptores newsletter"
             value={data.subscribers.toLocaleString("es-MX")}
@@ -57,6 +55,6 @@ export default async function OverviewPage() {
           />
         </div>
       </div>
-    </div>
+    </>
   )
 }

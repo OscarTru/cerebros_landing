@@ -8,9 +8,9 @@ export default async function EquipoPage() {
   if (role !== "owner") redirect("/")
 
   return (
-    <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+    <>
       <Header title="Equipo" />
-      <div style={{ padding: "32px" }}>
+      <div className="p-8">
         <OrganizationProfile
           appearance={{
             elements: {
@@ -26,6 +26,6 @@ export default async function EquipoPage() {
           }}
         />
       </div>
-    </div>
+    </>
   )
 }

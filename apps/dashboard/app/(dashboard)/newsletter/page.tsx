@@ -12,35 +12,27 @@ async function getSubscribers() {
     .limit(100)
 
   const confirmed = data?.filter((s) => s.confirmed).length ?? 0
-  return { subscribers: (data ?? []) as NewsletterSubscriber[], total: count ?? 0, confirmed }
+  return {
+    subscribers: (data ?? []) as NewsletterSubscriber[],
+    total: count ?? 0,
+    confirmed,
+  }
 }
 
-const thStyle: React.CSSProperties = {
-  padding: "12px 20px",
-  textAlign: "left",
-  fontSize: "11px",
-  fontWeight: 500,
-  color: "var(--c-text-muted)",
-  textTransform: "uppercase",
-  letterSpacing: "0.05em",
-  borderBottom: "1px solid var(--c-border)",
-}
+const thClass =
+  "px-5 py-3 text-left text-[11px] font-medium uppercase tracking-[0.05em] text-[var(--c-text-muted)] border-b border-[var(--c-border)]"
 
-const tdStyle: React.CSSProperties = {
-  padding: "14px 20px",
-  fontSize: "13px",
-  borderTop: "1px solid var(--c-border)",
-}
+const tdClass = "px-5 py-3.5 text-[13px] border-t border-[var(--c-border)]"
 
 export default async function NewsletterPage() {
   const { subscribers, total, confirmed } = await getSubscribers()
 
   return (
-    <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+    <>
       <Header title="Newsletter" />
-      <div style={{ padding: "32px", display: "flex", flexDirection: "column", gap: "24px" }}>
+      <div className="p-8 flex flex-col gap-6">
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <MetricCard
             label="Total suscriptores"
             value={total.toLocaleString("es-MX")}
@@ -54,59 +46,39 @@ export default async function NewsletterPage() {
           />
         </div>
 
-        <div style={{
-          background: "var(--c-surface)",
-          border: "1px solid var(--c-border)",
-          borderRadius: "16px",
-          overflow: "hidden",
-          boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-        }}>
-          <div style={{
-            padding: "14px 20px",
-            borderBottom: "1px solid var(--c-border)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}>
-            <p style={{ fontSize: "13px", fontWeight: 500, color: "var(--c-text)", margin: 0 }}>
-              Suscriptores recientes
-            </p>
-            <p style={{ fontSize: "12px", color: "var(--c-text-muted)", margin: 0 }}>
-              Últimos {subscribers.length}
-            </p>
+        <div className="rounded-2xl bg-[var(--c-surface)] border border-[var(--c-border)] overflow-hidden shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
+          <div className="px-5 py-3.5 border-b border-[var(--c-border)] flex items-center justify-between">
+            <p className="text-[13px] font-medium text-[var(--c-text)]">Suscriptores recientes</p>
+            <p className="text-xs text-[var(--c-text-muted)]">Últimos {subscribers.length}</p>
           </div>
 
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
               <thead>
                 <tr>
-                  <th style={thStyle}>Email</th>
-                  <th style={thStyle}>Nombre</th>
-                  <th style={thStyle}>Estado</th>
-                  <th style={thStyle}>Fecha</th>
+                  <th className={thClass}>Email</th>
+                  <th className={thClass}>Nombre</th>
+                  <th className={thClass}>Estado</th>
+                  <th className={thClass}>Fecha</th>
                 </tr>
               </thead>
               <tbody>
                 {subscribers.map((s) => (
                   <tr key={s.id}>
-                    <td style={{ ...tdStyle, color: "var(--c-text)" }}>{s.email}</td>
-                    <td style={{ ...tdStyle, color: "var(--c-text-muted)" }}>{s.nombre ?? "—"}</td>
-                    <td style={tdStyle}>
-                      <span style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        padding: "3px 10px",
-                        borderRadius: "999px",
-                        fontSize: "11px",
-                        fontWeight: 500,
-                        background: s.confirmed ? "rgba(16,185,129,0.12)" : "var(--c-surface-2)",
-                        color: s.confirmed ? "#10b981" : "var(--c-text-muted)",
-                        border: s.confirmed ? "1px solid rgba(16,185,129,0.25)" : "1px solid var(--c-border)",
-                      }}>
+                    <td className={`${tdClass} text-[var(--c-text)]`}>{s.email}</td>
+                    <td className={`${tdClass} text-[var(--c-text-muted)]`}>{s.nombre ?? "—"}</td>
+                    <td className={tdClass}>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${
+                          s.confirmed
+                            ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/25"
+                            : "bg-[var(--c-surface-2)] text-[var(--c-text-muted)] border-[var(--c-border)]"
+                        }`}
+                      >
                         {s.confirmed ? "Confirmado" : "Pendiente"}
                       </span>
                     </td>
-                    <td style={{ ...tdStyle, color: "var(--c-text-muted)" }}>
+                    <td className={`${tdClass} text-[var(--c-text-muted)]`}>
                       {new Date(s.created_at).toLocaleDateString("es-MX", {
                         day: "2-digit",
                         month: "short",
@@ -121,6 +93,6 @@ export default async function NewsletterPage() {
         </div>
 
       </div>
-    </div>
+    </>
   )
 }

@@ -1,3 +1,4 @@
+import { cn } from "@cerebros/lib"
 import type { LucideIcon } from "lucide-react"
 
 interface MetricCardProps {
@@ -19,93 +20,49 @@ export function MetricCard({
 }: MetricCardProps) {
   return (
     <div
-      className={className}
-      style={{
-        background: "var(--c-surface)",
-        border: "1px solid var(--c-border)",
-        borderRadius: "16px",
-        padding: "24px",
-        position: "relative",
-        overflow: "hidden",
-        boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-      }}
+      className={cn(
+        "relative overflow-hidden rounded-2xl p-6 bg-[var(--c-surface)] border border-[var(--c-border)] shadow-[0_1px_4px_rgba(0,0,0,0.06)]",
+        className
+      )}
     >
       {/* Ambient glow */}
       <div
         aria-hidden="true"
-        style={{
-          position: "absolute",
-          top: "-32px",
-          right: "-32px",
-          width: "120px",
-          height: "120px",
-          background: "radial-gradient(circle, var(--c-glow) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }}
+        className="pointer-events-none absolute -top-8 -right-8 w-[120px] h-[120px]"
+        style={{ background: "radial-gradient(circle, var(--c-glow) 0%, transparent 70%)" }}
       />
 
-      {/* Icon + label row */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "16px" }}>
-        <p style={{
-          fontSize: "11px",
-          fontWeight: 500,
-          textTransform: "uppercase",
-          letterSpacing: "0.08em",
-          color: "var(--c-text-subtle)",
-          margin: 0,
-        }}>
+      <div className="relative flex items-start justify-between mb-4">
+        <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--c-text-subtle)]">
           {label}
         </p>
         {Icon && (
-          <div style={{
-            width: "32px",
-            height: "32px",
-            borderRadius: "8px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "var(--c-surface-2)",
-            border: "1px solid var(--c-border)",
-            flexShrink: 0,
-          }}>
-            <Icon style={{ width: "14px", height: "14px", color: "var(--c-text-muted)" }} />
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-[var(--c-surface-2)] border border-[var(--c-border)]">
+            <Icon className="w-3.5 h-3.5 text-[var(--c-text-muted)]" />
           </div>
         )}
       </div>
 
-      {/* Value */}
-      <p style={{
-        fontSize: "36px",
-        fontWeight: 600,
-        color: "var(--c-text)",
-        letterSpacing: "-0.04em",
-        lineHeight: 1,
-        margin: 0,
-      }}>
+      <p className="relative text-[36px] font-semibold leading-none tracking-[-0.04em] text-[var(--c-text)]">
         {value}
       </p>
 
       {sublabel && (
-        <p style={{ fontSize: "12px", color: "var(--c-text-faint)", marginTop: "6px" }}>
-          {sublabel}
-        </p>
+        <p className="relative mt-1.5 text-xs text-[var(--c-text-faint)]">{sublabel}</p>
       )}
 
       {trend && (
-        <div style={{
-          marginTop: "16px",
-          paddingTop: "16px",
-          borderTop: "1px solid var(--c-border)",
-          display: "flex",
-          alignItems: "center",
-          gap: "6px",
-        }}>
-          <span style={{ fontSize: "12px", fontWeight: 500, color: trend.value >= 0 ? "#10b981" : "#ef4444" }}>
-            {trend.value >= 0 ? "+" : ""}{trend.value}%
+        <div className="relative mt-4 pt-4 flex items-center gap-1.5 border-t border-[var(--c-border)]">
+          <span
+            className={cn(
+              "text-xs font-medium",
+              trend.value >= 0 ? "text-emerald-500" : "text-red-500"
+            )}
+          >
+            {trend.value >= 0 ? "+" : ""}
+            {trend.value}%
           </span>
-          <span style={{ fontSize: "12px", color: "var(--c-text-subtle)" }}>
-            {trend.label}
-          </span>
+          <span className="text-xs text-[var(--c-text-subtle)]">{trend.label}</span>
         </div>
       )}
     </div>

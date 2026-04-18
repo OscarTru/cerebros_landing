@@ -17,53 +17,31 @@ export default async function ColaboracionesPage() {
   const colaboraciones = await getColaboraciones()
 
   return (
-    <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+    <>
       <Header title="Colaboraciones" />
-      <div style={{ padding: "32px", display: "flex", flexDirection: "column", gap: "24px" }}>
+      <div className="p-8 flex flex-col gap-6">
 
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div className="flex items-center justify-between">
           <div>
-            <h2 style={{
-              fontSize: "15px",
-              fontWeight: 600,
-              color: "var(--c-text)",
-              letterSpacing: "-0.01em",
-              margin: 0,
-            }}>
+            <h2 className="text-[15px] font-semibold tracking-tight text-[var(--c-text)]">
               Pipeline de marcas
             </h2>
-            <p style={{
-              fontSize: "13px",
-              color: "var(--c-text-muted)",
-              margin: 0,
-              marginTop: "4px",
-            }}>
+            <p className="text-[13px] text-[var(--c-text-muted)] mt-1">
               {colaboraciones.length} colaboraciones en total
             </p>
           </div>
           <Link
             href="/colaboraciones/new"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
-              padding: "8px 14px",
-              borderRadius: "10px",
-              fontSize: "13px",
-              fontWeight: 500,
-              background: "var(--c-invert)",
-              color: "var(--c-invert-fg)",
-              textDecoration: "none",
-              border: "1px solid var(--c-border)",
-            }}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[13px] font-medium bg-[var(--c-invert)] text-[var(--c-invert-fg)] border border-[var(--c-border)] hover:opacity-90 transition-opacity"
           >
-            <Plus style={{ width: 14, height: 14 }} />
+            <Plus className="w-3.5 h-3.5" />
             Nueva
           </Link>
         </div>
 
         <KanbanBoard initialColaboraciones={colaboraciones} />
+
       </div>
-    </div>
+    </>
   )
 }

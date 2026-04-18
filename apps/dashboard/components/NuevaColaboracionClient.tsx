@@ -2,25 +2,10 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
-const fieldStyle: React.CSSProperties = {
-  width: "100%",
-  background: "var(--c-surface)",
-  border: "1px solid var(--c-border)",
-  borderRadius: "10px",
-  padding: "10px 14px",
-  fontSize: "13px",
-  color: "var(--c-text)",
-  outline: "none",
-  fontFamily: "inherit",
-}
+const fieldClass =
+  "w-full px-3.5 py-2.5 rounded-xl text-[13px] bg-[var(--c-surface)] border border-[var(--c-border)] text-[var(--c-text)] placeholder:text-[var(--c-text-faint)] outline-none focus:border-[var(--c-border-strong)]"
 
-const labelStyle: React.CSSProperties = {
-  fontSize: "12px",
-  fontWeight: 500,
-  color: "var(--c-text)",
-  marginBottom: "6px",
-  display: "block",
-}
+const labelClass = "block text-xs font-medium text-[var(--c-text)] mb-1.5"
 
 export function NuevaColaboracionClient() {
   const router = useRouter()
@@ -59,100 +44,78 @@ export function NuevaColaboracionClient() {
   }
 
   return (
-    <div style={{ padding: "32px", maxWidth: "560px", width: "100%" }}>
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+    <div className="p-8 max-w-xl w-full">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         {error && (
-          <div style={{
-            background: "rgba(239,68,68,0.08)",
-            border: "1px solid rgba(239,68,68,0.25)",
-            color: "#ef4444",
-            borderRadius: "12px",
-            padding: "12px 16px",
-            fontSize: "13px",
-          }}>
+          <div className="px-4 py-3 rounded-xl text-[13px] bg-red-500/10 border border-red-500/25 text-red-500">
             {error}
           </div>
         )}
 
         <div>
-          <label style={labelStyle}>Marca *</label>
-          <input name="marca" required placeholder="Nombre de la marca" style={fieldStyle} />
+          <label className={labelClass}>Marca *</label>
+          <input name="marca" required placeholder="Nombre de la marca" className={fieldClass} />
         </div>
 
         <div>
-          <label style={labelStyle}>Tipo *</label>
-          <select name="tipo" required style={fieldStyle}>
-            {["reels", "stories", "post_estatico", "podcast", "newsletter", "paquete"].map(t => (
-              <option key={t} value={t}>{t.replace("_", " ")}</option>
+          <label className={labelClass}>Tipo *</label>
+          <select name="tipo" required className={fieldClass}>
+            {["reels", "stories", "post_estatico", "podcast", "newsletter", "paquete"].map((t) => (
+              <option key={t} value={t}>
+                {t.replace("_", " ")}
+              </option>
             ))}
           </select>
         </div>
 
         <div>
-          <label style={labelStyle}>Estado</label>
-          <select name="estado" defaultValue="prospecto" style={fieldStyle}>
-            {["prospecto", "en_negociacion", "confirmada", "cerrada"].map(e => (
-              <option key={e} value={e}>{e.replace("_", " ")}</option>
+          <label className={labelClass}>Estado</label>
+          <select name="estado" defaultValue="prospecto" className={fieldClass}>
+            {["prospecto", "en_negociacion", "confirmada", "cerrada"].map((e) => (
+              <option key={e} value={e}>
+                {e.replace("_", " ")}
+              </option>
             ))}
           </select>
         </div>
 
         <div>
-          <label style={labelStyle}>Valor (MXN)</label>
-          <input name="valor_mxn" type="number" placeholder="0.00" style={fieldStyle} />
+          <label className={labelClass}>Valor (MXN)</label>
+          <input name="valor_mxn" type="number" placeholder="0.00" className={fieldClass} />
         </div>
 
         <div>
-          <label style={labelStyle}>Nombre del contacto</label>
-          <input name="contacto_nombre" placeholder="Ana López" style={fieldStyle} />
+          <label className={labelClass}>Nombre del contacto</label>
+          <input name="contacto_nombre" placeholder="Ana López" className={fieldClass} />
         </div>
 
         <div>
-          <label style={labelStyle}>Email del contacto</label>
-          <input name="contacto_email" type="email" placeholder="ana@marca.com" style={fieldStyle} />
+          <label className={labelClass}>Email del contacto</label>
+          <input name="contacto_email" type="email" placeholder="ana@marca.com" className={fieldClass} />
         </div>
 
         <div>
-          <label style={labelStyle}>Notas</label>
+          <label className={labelClass}>Notas</label>
           <textarea
             name="notas"
             rows={3}
             placeholder="Propuesta, condiciones, detalles..."
-            style={{ ...fieldStyle, resize: "none" }}
+            className={`${fieldClass} resize-none`}
           />
         </div>
 
-        <div style={{ display: "flex", gap: "10px", paddingTop: "8px" }}>
+        <div className="flex gap-2.5 pt-2">
           <button
             type="submit"
             disabled={loading}
-            style={{
-              padding: "10px 18px",
-              fontSize: "13px",
-              fontWeight: 500,
-              borderRadius: "10px",
-              background: "var(--c-invert)",
-              color: "var(--c-invert-fg)",
-              border: "none",
-              cursor: loading ? "not-allowed" : "pointer",
-              opacity: loading ? 0.5 : 1,
-            }}
+            className="px-5 py-2.5 rounded-xl text-[13px] font-medium bg-[var(--c-invert)] text-[var(--c-invert-fg)] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Guardando..." : "Crear colaboración"}
           </button>
           <button
             type="button"
             onClick={() => router.back()}
-            style={{
-              padding: "10px 18px",
-              fontSize: "13px",
-              fontWeight: 500,
-              borderRadius: "10px",
-              background: "transparent",
-              color: "var(--c-text-muted)",
-              border: "1px solid var(--c-border)",
-              cursor: "pointer",
-            }}
+            className="px-5 py-2.5 rounded-xl text-[13px] font-medium text-[var(--c-text-muted)] border border-[var(--c-border)] hover:bg-[var(--c-surface-2)] hover:text-[var(--c-text)] transition-colors"
           >
             Cancelar
           </button>
