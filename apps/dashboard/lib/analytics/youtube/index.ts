@@ -135,7 +135,7 @@ export async function getYouTubeAnalytics(period: Period): Promise<YouTubeAnalyt
       ],
     }
   } catch (err) {
-    console.error("[analytics/youtube] fetch failed, falling back to mock:", err)
+    console.warn("[analytics/youtube] fetch failed, falling back to mock:", err)
     return mockYouTubeFallback(period)
   }
 }

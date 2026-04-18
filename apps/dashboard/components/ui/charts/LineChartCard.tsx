@@ -21,7 +21,7 @@ interface LineSpec {
 interface LineChartCardProps {
   title: string
   description?: string
-  data: Array<{ date: string } & Record<string, number>>
+  data: Array<Record<string, string | number>>
   lines: LineSpec[]
   height?: number
 }

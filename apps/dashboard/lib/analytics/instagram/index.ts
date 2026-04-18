@@ -105,7 +105,7 @@ export async function getInstagramAnalytics(period: Period): Promise<InstagramAn
   try {
     basic = await getBasicStats(accessToken, userId)
   } catch (err) {
-    console.error("[analytics/instagram] basic stats failed:", err)
+    console.warn("[analytics/instagram] basic stats failed:", err)
     return mockInstagramFallback(period)
   }
 
@@ -113,7 +113,7 @@ export async function getInstagramAnalytics(period: Period): Promise<InstagramAn
   try {
     media = await getRecentMedia(accessToken, userId, 25)
   } catch (err) {
-    console.error("[analytics/instagram] media fetch failed:", err)
+    console.warn("[analytics/instagram] media fetch failed:", err)
     mockFields.push("topPosts")
   }
 
@@ -121,7 +121,7 @@ export async function getInstagramAnalytics(period: Period): Promise<InstagramAn
   try {
     insights = await getProfileInsights(accessToken, userId)
   } catch (err) {
-    console.error("[analytics/instagram] profile insights failed:", err)
+    console.warn("[analytics/instagram] profile insights failed:", err)
     mockFields.push("reach30d", "impressions30d", "profileVisits30d", "websiteClicks30d")
   }
 
