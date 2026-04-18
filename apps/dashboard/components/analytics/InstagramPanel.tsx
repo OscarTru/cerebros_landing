@@ -52,9 +52,10 @@ export function InstagramPanel({ data }: InstagramPanelProps) {
       </div>
 
       <LineChartCard
-        title="Seguidores"
+        title="Alcance diario"
+        description="Cuentas únicas que vieron tu contenido cada día"
         data={data.followersSeries.map((p) => ({ date: p.date, value: p.value }))}
-        lines={[{ key: "value", label: "Seguidores", color: "#E1306C" }]}
+        lines={[{ key: "value", label: "Alcance", color: "#E1306C" }]}
         height={280}
       />
 

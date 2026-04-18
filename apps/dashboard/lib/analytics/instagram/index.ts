@@ -1,6 +1,16 @@
 import { cache } from "react"
 import type { InstagramAnalytics, Period, TimeSeriesPoint } from "../types"
-import { getBasicStats, getRecentMedia, getProfileInsights, getMediaInsights, getAudienceDemographics, type IGMedia } from "./client"
+import {
+  getBasicStats,
+  getRecentMedia,
+  getProfileInsights,
+  getMediaInsights,
+  getAudienceDemographics,
+  getBestPostingHoursFromMedia,
+  getActiveStoriesPerformance,
+  getDailyReachSeries,
+  type IGMedia,
+} from "./client"
 import {
   mockDemographicsAge,
   mockDemographicsGender,
@@ -164,13 +174,22 @@ export const getInstagramAnalytics = cache(async function getInstagramAnalytics(
     ? Math.round((avgEng / basic.followers) * 10000) / 100
     : 0
 
-  mockFields.push("followersSeries")
-  const followersSeries = approximateFollowersSeries(basic.followers, period)
+  // Use daily reach as audience activity indicator (Graph API doesn't expose
+  // daily follower count). Reach is actually more useful for creators —
+  // it shows how many accounts saw your content each day.
+  let followersSeries: TimeSeriesPoint[] = approximateFollowersSeries(basic.followers, period)
+  try {
+    const reachSeries = await getDailyReachSeries(accessToken, userId, periodToDays(period))
+    if (reachSeries && reachSeries.length > 0) {
+      followersSeries = reachSeries
+    } else {
+      mockFields.push("followersSeries")
+    }
+  } catch {
+    mockFields.push("followersSeries")
+  }
 
-  // bestPostingHours and storiesPerformance remain mock — those endpoints aren't exposed
-  mockFields.push("bestPostingHours", "storiesPerformance")
-
-  // Try to fetch real demographics + cities
+  // Try real demographics + cities
   let realDemographicsAge = mockDemographicsAge()
   let realDemographicsGender = mockDemographicsGender()
   let realTopCities = mockTopCities()
@@ -195,6 +214,39 @@ export const getInstagramAnalytics = cache(async function getInstagramAnalytics(
     mockFields.push("demographics", "topCities")
   }
 
+  // Try real best posting hours derived from historical post timestamps
+  let realBestHours = mockBestPostingHours()
+  try {
+    const hours = await getBestPostingHoursFromMedia(accessToken, userId, 50)
+    if (hours.length > 0 && hours.some((h) => h.score > 0)) {
+      realBestHours = hours
+    } else {
+      mockFields.push("bestPostingHours")
+    }
+  } catch {
+    mockFields.push("bestPostingHours")
+  }
+
+  // Try real stories performance. If no active stories, show zeros (not mock —
+  // the creator just hasn't published stories in the 24h window).
+  let realStoriesPerf = { avgViews: 0, completionRate: 0, replies: 0 }
+  try {
+    const storiesPerf = await getActiveStoriesPerformance(accessToken, userId)
+    realStoriesPerf = {
+      avgViews: storiesPerf.avgViews,
+      completionRate: 0, // not exposed by API
+      replies: storiesPerf.replies,
+    }
+    // Always mark completionRate as mock since API doesn't expose it
+    if (storiesPerf.count > 0) {
+      mockFields.push("storiesPerformance.completionRate")
+    }
+    // If no stories active, that's real data (0), not mock
+  } catch {
+    mockFields.push("storiesPerformance")
+    realStoriesPerf = mockStoriesPerformance()
+  }
+
   return {
     followers: basic.followers,
     following: basic.following,
@@ -207,9 +259,9 @@ export const getInstagramAnalytics = cache(async function getInstagramAnalytics(
     followersSeries,
     demographics: { age: realDemographicsAge, gender: realDemographicsGender },
     topCities: realTopCities,
-    bestPostingHours: mockBestPostingHours(),
+    bestPostingHours: realBestHours,
     topPosts: postsWithInsights,
-    storiesPerformance: mockStoriesPerformance(),
+    storiesPerformance: realStoriesPerf,
     mockFields,
   }
 })
