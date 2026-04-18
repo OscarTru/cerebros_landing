@@ -26,17 +26,22 @@ export default async function OverviewPage() {
   return (
     <>
       <Header title="Overview" />
-      <div className="p-6 space-y-6">
+      <div className="flex-1 p-8 space-y-8 max-w-5xl">
+        {/* Welcome */}
         <div>
-          <h2 className="text-lg font-semibold text-[var(--c-text)]">
+          <h2
+            className="text-xl font-semibold"
+            style={{ color: "var(--c-text)", letterSpacing: "-0.02em" }}
+          >
             Bienvenido de vuelta
           </h2>
-          <p className="text-sm text-[var(--c-text-muted)] mt-0.5">
+          <p className="text-sm mt-1" style={{ color: "var(--c-text-muted)" }}>
             Aquí tienes un resumen de tu contenido y audiencia.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Metric cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           <MetricCard
             label="Suscriptores newsletter"
             value={data.subscribers.toLocaleString("es-MX")}

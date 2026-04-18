@@ -20,7 +20,7 @@ export function MetricCard({
 }: MetricCardProps) {
   return (
     <div
-      className={cn("rounded-xl p-5 relative overflow-hidden card-elevated", className)}
+      className={cn("rounded-2xl p-6 relative overflow-hidden card-elevated", className)}
       style={{
         background: "var(--c-surface)",
         border: "1px solid var(--c-border)",
@@ -31,55 +31,57 @@ export function MetricCard({
         aria-hidden="true"
         style={{
           position: "absolute",
-          top: "-24px",
-          right: "-24px",
-          width: "100px",
-          height: "100px",
+          top: "-32px",
+          right: "-32px",
+          width: "120px",
+          height: "120px",
           background: "radial-gradient(circle, var(--c-glow) 0%, transparent 70%)",
           pointerEvents: "none",
         }}
       />
 
-      <div className="flex items-start justify-between relative">
-        <div>
-          <p
-            className="font-medium uppercase"
-            style={{
-              fontSize: "10px",
-              letterSpacing: "0.08em",
-              color: "var(--c-text-subtle)",
-            }}
-          >
-            {label}
-          </p>
-          <p
-            className="text-2xl font-semibold mt-1"
-            style={{ color: "var(--c-text)", letterSpacing: "-0.03em" }}
-          >
-            {value}
-          </p>
-          {sublabel && (
-            <p className="text-xs mt-0.5" style={{ color: "var(--c-text-faint)" }}>
-              {sublabel}
-            </p>
-          )}
+      {/* Icon */}
+      {Icon && (
+        <div
+          className="w-9 h-9 rounded-xl flex items-center justify-center mb-4"
+          style={{
+            background: "var(--c-surface-2)",
+            border: "1px solid var(--c-border)",
+          }}
+        >
+          <Icon className="w-4 h-4" style={{ color: "var(--c-text-muted)" }} />
         </div>
-        {Icon && (
-          <div
-            className="p-2 rounded-lg"
-            style={{
-              background: "var(--c-surface-2)",
-              border: "1px solid var(--c-border)",
-            }}
-          >
-            <Icon className="w-4 h-4" style={{ color: "var(--c-text-muted)" }} />
-          </div>
-        )}
-      </div>
+      )}
+
+      {/* Label */}
+      <p
+        className="font-medium uppercase mb-2"
+        style={{
+          fontSize: "10px",
+          letterSpacing: "0.1em",
+          color: "var(--c-text-subtle)",
+        }}
+      >
+        {label}
+      </p>
+
+      {/* Value */}
+      <p
+        className="text-3xl font-semibold"
+        style={{ color: "var(--c-text)", letterSpacing: "-0.04em", lineHeight: 1 }}
+      >
+        {value}
+      </p>
+
+      {sublabel && (
+        <p className="text-xs mt-2" style={{ color: "var(--c-text-faint)" }}>
+          {sublabel}
+        </p>
+      )}
 
       {trend && (
         <div
-          className="mt-3 pt-3 flex items-center gap-1"
+          className="mt-4 pt-4 flex items-center gap-1.5"
           style={{ borderTop: "1px solid var(--c-border)" }}
         >
           <span
