@@ -11,7 +11,6 @@ import {
   Users,
   LayoutDashboard,
 } from "lucide-react"
-import { cn } from "@cerebros/lib"
 
 const navItems = [
   { href: "/", label: "Overview", icon: LayoutDashboard },
@@ -27,59 +26,79 @@ export function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside
-      className="w-56 shrink-0 h-screen sticky top-0 flex flex-col card-elevated"
-      style={{
-        background: "var(--c-surface)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        borderRight: "1px solid var(--c-border)",
-        position: "relative",
-      }}
-    >
+    <aside style={{
+      width: "224px",
+      flexShrink: 0,
+      height: "100vh",
+      position: "sticky",
+      top: 0,
+      display: "flex",
+      flexDirection: "column",
+      background: "var(--c-surface)",
+      borderRight: "1px solid var(--c-border)",
+      boxShadow: "1px 0 0 var(--c-border)",
+    }}>
       {/* Ambient glow */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          top: "-60px",
-          left: "-40px",
-          width: "240px",
-          height: "240px",
-          background: "radial-gradient(circle, var(--c-glow) 0%, transparent 65%)",
-          pointerEvents: "none",
-          zIndex: 0,
-        }}
-      />
+      <div aria-hidden="true" style={{
+        position: "absolute",
+        top: "-60px",
+        left: "-40px",
+        width: "240px",
+        height: "240px",
+        background: "radial-gradient(circle, var(--c-glow) 0%, transparent 65%)",
+        pointerEvents: "none",
+        zIndex: 0,
+      }} />
 
-      <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", flex: 1 }}>
+      <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", flex: 1, overflow: "hidden" }}>
+
         {/* Branding */}
-        <div
-          className="px-4 py-5"
-          style={{ borderBottom: "1px solid var(--c-border)" }}
-        >
-          <div className="flex items-center gap-2.5">
-            <div
-              className="shrink-0 rounded-md"
-              style={{
-                width: 24,
-                height: 24,
-                background: "var(--c-invert)",
-              }}
-            />
-            <div>
-              <p className="text-xs font-semibold" style={{ color: "var(--c-text)", letterSpacing: "-0.01em" }}>
-                Cerebros Esponjosos
-              </p>
-              <p style={{ fontSize: "10px", color: "var(--c-text-subtle)", marginTop: 1 }}>
-                Dashboard
-              </p>
-            </div>
+        <div style={{
+          padding: "20px 16px",
+          borderBottom: "1px solid var(--c-border)",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+        }}>
+          <div style={{
+            width: 28,
+            height: 28,
+            borderRadius: "7px",
+            background: "var(--c-invert)",
+            flexShrink: 0,
+          }} />
+          <div>
+            <p style={{
+              fontSize: "12px",
+              fontWeight: 600,
+              color: "var(--c-text)",
+              letterSpacing: "-0.01em",
+              margin: 0,
+              lineHeight: 1.3,
+            }}>
+              Cerebros Esponjosos
+            </p>
+            <p style={{
+              fontSize: "10px",
+              color: "var(--c-text-subtle)",
+              margin: 0,
+              marginTop: "1px",
+              lineHeight: 1,
+            }}>
+              Dashboard
+            </p>
           </div>
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 px-2.5 py-3 flex flex-col gap-0.5">
+        <nav style={{
+          flex: 1,
+          padding: "12px 10px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "2px",
+          overflowY: "auto",
+        }}>
           {navItems.map(({ href, label, icon: Icon }) => {
             const active = pathname === href
             return (
@@ -87,24 +106,33 @@ export function Sidebar() {
                 key={href}
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className={cn(
-                  "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors",
-                  active
-                    ? "font-medium"
-                    : "hover:bg-[var(--c-surface-2)]"
-                )}
-                style={
-                  active
-                    ? {
-                        background: "var(--c-invert)",
-                        color: "var(--c-invert-fg)",
-                      }
-                    : {
-                        color: "var(--c-text-muted)",
-                      }
-                }
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  padding: "8px 12px",
+                  borderRadius: "8px",
+                  fontSize: "13px",
+                  fontWeight: active ? 500 : 400,
+                  color: active ? "var(--c-invert-fg)" : "var(--c-text-muted)",
+                  background: active ? "var(--c-invert)" : "transparent",
+                  textDecoration: "none",
+                  transition: "background 0.15s, color 0.15s",
+                }}
+                onMouseEnter={e => {
+                  if (!active) {
+                    (e.currentTarget as HTMLAnchorElement).style.background = "var(--c-surface-2)"
+                    ;(e.currentTarget as HTMLAnchorElement).style.color = "var(--c-text)"
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (!active) {
+                    (e.currentTarget as HTMLAnchorElement).style.background = "transparent"
+                    ;(e.currentTarget as HTMLAnchorElement).style.color = "var(--c-text-muted)"
+                  }
+                }}
               >
-                <Icon className="w-4 h-4 shrink-0" />
+                <Icon style={{ width: 15, height: 15, flexShrink: 0 }} />
                 {label}
               </Link>
             )
@@ -112,15 +140,14 @@ export function Sidebar() {
         </nav>
 
         {/* User */}
-        <div
-          className="px-4 py-3 flex items-center gap-2.5"
-          style={{ borderTop: "1px solid var(--c-border)" }}
-        >
-          <UserButton
-            appearance={{
-              elements: { avatarBox: "w-7 h-7" },
-            }}
-          />
+        <div style={{
+          padding: "12px 16px",
+          borderTop: "1px solid var(--c-border)",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+        }}>
+          <UserButton appearance={{ elements: { avatarBox: { width: 28, height: 28 } } }} />
         </div>
       </div>
     </aside>
