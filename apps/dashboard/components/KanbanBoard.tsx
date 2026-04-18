@@ -42,16 +42,40 @@ export function KanbanBoard({ initialColaboraciones }: KanbanBoardProps) {
       {COLUMNAS.map(({ id, label }) => {
         const items = colaboraciones.filter((c) => c.estado === id)
         return (
-          <div key={id} className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xs font-semibold text-[var(--c-text-muted)] uppercase tracking-wide">
+          <div
+            key={id}
+            className="rounded-xl p-3 flex flex-col gap-3"
+            style={{
+              background: "var(--c-surface-3)",
+              border: "1px solid var(--c-border)",
+            }}
+          >
+            {/* Column header */}
+            <div className="flex items-center justify-between px-1">
+              <h3
+                className="font-medium uppercase"
+                style={{
+                  fontSize: "10px",
+                  letterSpacing: "0.08em",
+                  color: "var(--c-text-subtle)",
+                }}
+              >
                 {label}
               </h3>
-              <span className="text-xs text-[var(--c-text-faint)] bg-[var(--c-surface-2)] px-2 py-0.5 rounded-full">
+              <span
+                className="px-2 py-0.5 rounded-full"
+                style={{
+                  color: "var(--c-text-faint)",
+                  background: "var(--c-surface-2)",
+                  fontSize: "10px",
+                }}
+              >
                 {items.length}
               </span>
             </div>
-            <div className="space-y-2 min-h-24">
+
+            {/* Cards */}
+            <div className="flex flex-col gap-2 min-h-24">
               {items.map((c) => (
                 <KanbanCard
                   key={c.id}
