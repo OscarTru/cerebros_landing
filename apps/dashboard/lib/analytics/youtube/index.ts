@@ -1,3 +1,4 @@
+import { cache } from "react"
 import type { YouTubeAnalytics, Period, TimeSeriesPoint } from "../types"
 import {
   getChannelStats,
@@ -76,7 +77,7 @@ function mockYouTubeFallback(period: Period): YouTubeAnalytics {
   }
 }
 
-export async function getYouTubeAnalytics(period: Period): Promise<YouTubeAnalytics> {
+export const getYouTubeAnalytics = cache(async function getYouTubeAnalytics(period: Period): Promise<YouTubeAnalytics> {
   const apiKey = process.env.YOUTUBE_API_KEY
   const channelId = process.env.YOUTUBE_CHANNEL_ID
 
@@ -138,4 +139,4 @@ export async function getYouTubeAnalytics(period: Period): Promise<YouTubeAnalyt
     console.warn("[analytics/youtube] fetch failed, falling back to mock:", err)
     return mockYouTubeFallback(period)
   }
-}
+})

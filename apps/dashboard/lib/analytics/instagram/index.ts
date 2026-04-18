@@ -1,3 +1,4 @@
+import { cache } from "react"
 import type { InstagramAnalytics, Period, TimeSeriesPoint } from "../types"
 import { getBasicStats, getRecentMedia, getProfileInsights, getMediaInsights, type IGMedia } from "./client"
 import {
@@ -91,7 +92,7 @@ function approximateFollowersSeries(
   return series
 }
 
-export async function getInstagramAnalytics(period: Period): Promise<InstagramAnalytics> {
+export const getInstagramAnalytics = cache(async function getInstagramAnalytics(period: Period): Promise<InstagramAnalytics> {
   const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN
   const userId = process.env.INSTAGRAM_USER_ID
 
@@ -120,8 +121,9 @@ export async function getInstagramAnalytics(period: Period): Promise<InstagramAn
   let insights: { reach?: number; impressions?: number; profileVisits?: number; websiteClicks?: number } = {}
   try {
     insights = await getProfileInsights(accessToken, userId)
-  } catch (err) {
-    console.warn("[analytics/instagram] profile insights failed:", err)
+  } catch {
+    // Profile insights endpoint requires extended permissions (Business tier).
+    // Silently fall back to mock — expected for many Creator accounts.
     mockFields.push("reach30d", "impressions30d", "profileVisits30d", "websiteClicks30d")
   }
 
@@ -172,4 +174,4 @@ export async function getInstagramAnalytics(period: Period): Promise<InstagramAn
     storiesPerformance: mockStoriesPerformance(),
     mockFields,
   }
-}
+})
