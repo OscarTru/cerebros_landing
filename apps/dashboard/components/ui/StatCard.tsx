@@ -1,50 +1,54 @@
 import { cn } from "@cerebros/lib"
 import type { LucideIcon } from "lucide-react"
+import { AnimatedNumber } from "./animate/AnimatedNumber"
 
-interface MetricCardProps {
+interface StatCardProps {
   label: string
-  value: string | number
+  value: number | string
   sublabel?: string
   icon?: LucideIcon
   trend?: { value: number; label: string }
+  animate?: boolean
   className?: string
 }
 
-export function MetricCard({
+export function StatCard({
   label,
   value,
   sublabel,
   icon: Icon,
   trend,
+  animate = true,
   className,
-}: MetricCardProps) {
+}: StatCardProps) {
+  const isNumeric = typeof value === "number"
+
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-2xl p-6 bg-[var(--c-surface)] border border-[var(--c-border)] shadow-[0_1px_4px_rgba(0,0,0,0.06)]",
+        "relative overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-6 shadow-[0_1px_4px_rgba(0,0,0,0.06)]",
         className
       )}
     >
-      {/* Ambient glow */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-8 -right-8 w-[120px] h-[120px]"
+        className="pointer-events-none absolute -right-8 -top-8 h-[120px] w-[120px]"
         style={{ background: "radial-gradient(circle, var(--c-glow) 0%, transparent 70%)" }}
       />
 
-      <div className="relative flex items-start justify-between mb-4">
+      <div className="relative mb-4 flex items-start justify-between">
         <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--c-text-subtle)]">
           {label}
         </p>
         {Icon && (
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-[var(--c-surface-2)] border border-[var(--c-border)]">
-            <Icon className="w-3.5 h-3.5 text-[var(--c-text-muted)]" />
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--c-border)] bg-[var(--c-surface-2)]">
+            <Icon className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />
           </div>
         )}
       </div>
 
       <p className="relative text-[36px] font-semibold leading-none tracking-[-0.04em] text-[var(--c-text)]">
-        {value}
+        {isNumeric && animate ? <AnimatedNumber value={value} /> : value}
       </p>
 
       {sublabel && (
@@ -52,7 +56,7 @@ export function MetricCard({
       )}
 
       {trend && (
-        <div className="relative mt-4 pt-4 flex items-center gap-1.5 border-t border-[var(--c-border)]">
+        <div className="relative mt-4 flex items-center gap-1.5 border-t border-[var(--c-border)] pt-4">
           <span
             className={cn(
               "text-xs font-medium",

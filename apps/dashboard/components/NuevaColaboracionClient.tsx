@@ -1,11 +1,16 @@
 "use client"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { Input, Textarea, Select, SelectItem, Button } from "@heroui/react"
+import { InfoCard } from "./ui/InfoCard"
+import { StaggerList } from "./ui/effects/StaggerList"
 
-const fieldClass =
-  "w-full px-3.5 py-2.5 rounded-xl text-[13px] bg-[var(--c-surface)] border border-[var(--c-border)] text-[var(--c-text)] placeholder:text-[var(--c-text-faint)] outline-none focus:border-[var(--c-border-strong)]"
-
-const labelClass = "block text-xs font-medium text-[var(--c-text)] mb-1.5"
+const inputClassNames = {
+  inputWrapper:
+    "bg-[var(--c-surface-2)] border border-[var(--c-border)] shadow-none data-[hover=true]:border-[var(--c-border-strong)] group-data-[focus=true]:border-[var(--c-border-strong)]",
+  input: "text-[13px]",
+  label: "text-xs text-[var(--c-text-muted)]",
+}
 
 export function NuevaColaboracionClient() {
   const router = useRouter()
@@ -44,83 +49,119 @@ export function NuevaColaboracionClient() {
   }
 
   return (
-    <div className="p-8 max-w-xl w-full">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        {error && (
-          <div className="px-4 py-3 rounded-xl text-[13px] bg-red-500/10 border border-red-500/25 text-red-500">
-            {error}
+    <form onSubmit={handleSubmit} className="mx-auto flex max-w-2xl flex-col gap-5">
+      {error && (
+        <div className="rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-[13px] text-red-500">
+          {error}
+        </div>
+      )}
+
+      <StaggerList staggerDelay={0.08} className="flex flex-col gap-5">
+        <InfoCard title="Información básica">
+          <div className="flex flex-col gap-4">
+            <Input
+              name="marca"
+              label="Marca"
+              placeholder="Nombre de la marca"
+              isRequired
+              classNames={inputClassNames}
+              labelPlacement="outside"
+            />
+            <Select
+              name="tipo"
+              label="Tipo"
+              placeholder="Selecciona un tipo"
+              isRequired
+              classNames={{
+                trigger: inputClassNames.inputWrapper,
+                label: inputClassNames.label,
+                value: "text-[13px]",
+              }}
+              labelPlacement="outside"
+            >
+              {["reels", "stories", "post_estatico", "podcast", "newsletter", "paquete"].map(
+                (t) => (
+                  <SelectItem key={t}>{t.replace("_", " ")}</SelectItem>
+                )
+              )}
+            </Select>
+            <Select
+              name="estado"
+              label="Estado"
+              defaultSelectedKeys={["prospecto"]}
+              classNames={{
+                trigger: inputClassNames.inputWrapper,
+                label: inputClassNames.label,
+                value: "text-[13px]",
+              }}
+              labelPlacement="outside"
+            >
+              {["prospecto", "en_negociacion", "confirmada", "cerrada"].map((e) => (
+                <SelectItem key={e}>{e.replace("_", " ")}</SelectItem>
+              ))}
+            </Select>
           </div>
-        )}
+        </InfoCard>
 
-        <div>
-          <label className={labelClass}>Marca *</label>
-          <input name="marca" required placeholder="Nombre de la marca" className={fieldClass} />
-        </div>
-
-        <div>
-          <label className={labelClass}>Tipo *</label>
-          <select name="tipo" required className={fieldClass}>
-            {["reels", "stories", "post_estatico", "podcast", "newsletter", "paquete"].map((t) => (
-              <option key={t} value={t}>
-                {t.replace("_", " ")}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className={labelClass}>Estado</label>
-          <select name="estado" defaultValue="prospecto" className={fieldClass}>
-            {["prospecto", "en_negociacion", "confirmada", "cerrada"].map((e) => (
-              <option key={e} value={e}>
-                {e.replace("_", " ")}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className={labelClass}>Valor (MXN)</label>
-          <input name="valor_mxn" type="number" placeholder="0.00" className={fieldClass} />
-        </div>
-
-        <div>
-          <label className={labelClass}>Nombre del contacto</label>
-          <input name="contacto_nombre" placeholder="Ana López" className={fieldClass} />
-        </div>
-
-        <div>
-          <label className={labelClass}>Email del contacto</label>
-          <input name="contacto_email" type="email" placeholder="ana@marca.com" className={fieldClass} />
-        </div>
-
-        <div>
-          <label className={labelClass}>Notas</label>
-          <textarea
-            name="notas"
-            rows={3}
-            placeholder="Propuesta, condiciones, detalles..."
-            className={`${fieldClass} resize-none`}
+        <InfoCard title="Detalles financieros">
+          <Input
+            name="valor_mxn"
+            type="number"
+            label="Valor (MXN)"
+            placeholder="0.00"
+            classNames={inputClassNames}
+            labelPlacement="outside"
           />
-        </div>
+        </InfoCard>
 
-        <div className="flex gap-2.5 pt-2">
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-5 py-2.5 rounded-xl text-[13px] font-medium bg-[var(--c-invert)] text-[var(--c-invert-fg)] disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? "Guardando..." : "Crear colaboración"}
-          </button>
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="px-5 py-2.5 rounded-xl text-[13px] font-medium text-[var(--c-text-muted)] border border-[var(--c-border)] hover:bg-[var(--c-surface-2)] hover:text-[var(--c-text)] transition-colors"
-          >
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </div>
+        <InfoCard title="Contacto">
+          <div className="flex flex-col gap-4">
+            <Input
+              name="contacto_nombre"
+              label="Nombre"
+              placeholder="Ana López"
+              classNames={inputClassNames}
+              labelPlacement="outside"
+            />
+            <Input
+              name="contacto_email"
+              type="email"
+              label="Email"
+              placeholder="ana@marca.com"
+              classNames={inputClassNames}
+              labelPlacement="outside"
+            />
+          </div>
+        </InfoCard>
+
+        <InfoCard title="Notas">
+          <Textarea
+            name="notas"
+            placeholder="Propuesta, condiciones, detalles..."
+            minRows={3}
+            classNames={inputClassNames}
+          />
+        </InfoCard>
+      </StaggerList>
+
+      <div className="flex gap-2.5 pt-2">
+        <Button
+          type="submit"
+          color="primary"
+          isLoading={loading}
+          className="rounded-xl"
+        >
+          {loading ? "Guardando..." : "Crear colaboración"}
+        </Button>
+        <Button
+          type="button"
+          variant="flat"
+          onPress={() => router.back()}
+          className="rounded-xl"
+        >
+          Cancelar
+        </Button>
+      </div>
+    </form>
   )
 }

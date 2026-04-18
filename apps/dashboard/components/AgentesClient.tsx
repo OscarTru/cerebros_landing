@@ -1,18 +1,33 @@
 "use client"
 import { useState } from "react"
-import { Bot, Send, Loader2 } from "lucide-react"
+import { Bot, Send, Loader2, Plus, Sparkles, LineChart, Briefcase } from "lucide-react"
+import { Button, Input } from "@heroui/react"
+import { motion } from "framer-motion"
 import { cn } from "@cerebros/lib"
+import { TwoColumnLayout } from "./ui/TwoColumnLayout"
+import { InfoCard } from "./ui/InfoCard"
 
 interface Message {
   role: "user" | "assistant"
   content: string
 }
 
-const SUGERENCIAS = [
-  "¿Qué contenido funcionó mejor este mes?",
-  "¿Cuáles colaboraciones debo priorizar?",
-  "¿Cómo está creciendo mi newsletter?",
-  "Sugiere temas para los próximos posts",
+const PRESETS = [
+  {
+    icon: LineChart,
+    title: "Análisis semanal",
+    prompt: "Haz un resumen de las métricas clave de esta semana",
+  },
+  {
+    icon: Sparkles,
+    title: "Estrategia de contenido",
+    prompt: "Sugiere 5 temas de contenido basados en mis posts más populares",
+  },
+  {
+    icon: Briefcase,
+    title: "Review colaboraciones",
+    prompt: "¿Qué colaboraciones debo priorizar esta semana?",
+  },
 ]
 
 export function AgentesClient() {
@@ -40,89 +55,137 @@ export function AgentesClient() {
     setLoading(false)
   }
 
+  function resetChat() {
+    setMessages([])
+  }
+
   return (
-    <div className="flex-1 p-8 flex flex-col max-w-3xl w-full min-h-0">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-[var(--c-surface)] border border-[var(--c-border)]">
-          <Bot className="w-[18px] h-[18px] text-[var(--c-text-muted)]" />
-        </div>
-        <div>
-          <h2 className="text-[15px] font-semibold tracking-tight text-[var(--c-text)]">
-            Análisis de métricas
-          </h2>
-          <p className="text-[13px] text-[var(--c-text-muted)] mt-0.5">
-            Pregúntale a Claude sobre tu contenido y audiencia
-          </p>
-        </div>
-      </div>
-
-      {/* Sugerencias */}
-      {messages.length === 0 && (
-        <div className="grid grid-cols-2 gap-2 mb-6">
-          {SUGERENCIAS.map((s) => (
-            <button
-              key={s}
-              onClick={() => enviar(s)}
-              className="text-left text-[13px] text-[var(--c-text-muted)] px-4 py-3 rounded-xl bg-[var(--c-surface)] border border-[var(--c-border)] hover:border-[var(--c-border-strong)] hover:text-[var(--c-text)] transition-colors"
+    <div className="flex min-h-0 w-full flex-1 flex-col">
+      <TwoColumnLayout
+        leftWidth="narrow"
+        left={
+          <div className="flex flex-col gap-3">
+            <Button
+              variant="flat"
+              startContent={<Plus className="h-3.5 w-3.5" />}
+              className="justify-start rounded-xl bg-[var(--c-surface)] text-[13px]"
+              onPress={resetChat}
             >
-              {s}
-            </button>
-          ))}
-        </div>
-      )}
+              Nueva conversación
+            </Button>
 
-      {/* Messages */}
-      <div className="flex-1 flex flex-col gap-4 mb-4 overflow-y-auto min-h-0">
-        {messages.map((m, i) => (
-          <div
-            key={i}
-            className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}
-          >
-            <div
-              className={cn(
-                "max-w-[85%] rounded-2xl px-4 py-3 text-[13px] leading-relaxed whitespace-pre-wrap",
-                m.role === "user"
-                  ? "bg-[var(--c-invert)] text-[var(--c-invert-fg)]"
-                  : "bg-[var(--c-surface)] border border-[var(--c-border)] text-[var(--c-text)]"
+            <InfoCard title="Presets" padded={false}>
+              <div className="flex flex-col">
+                {PRESETS.map((p) => (
+                  <button
+                    key={p.title}
+                    onClick={() => enviar(p.prompt)}
+                    className="flex items-start gap-3 border-b border-[var(--c-border)] px-4 py-3 text-left transition-colors last:border-b-0 hover:bg-[var(--c-surface-2)]"
+                  >
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[var(--c-border)] bg-[var(--c-surface-2)]">
+                      <p.icon className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />
+                    </div>
+                    <div>
+                      <p className="text-[12px] font-medium text-[var(--c-text)]">
+                        {p.title}
+                      </p>
+                      <p className="mt-0.5 text-[11px] text-[var(--c-text-muted)]">
+                        {p.prompt.slice(0, 50)}...
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </InfoCard>
+          </div>
+        }
+        right={
+          <div className="flex min-h-[520px] flex-col rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
+            <div className="flex items-center gap-3 border-b border-[var(--c-border)] px-5 py-4">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)]">
+                <Bot className="h-4 w-4 text-[var(--c-text-muted)]" />
+              </div>
+              <div>
+                <p className="text-[13px] font-medium text-[var(--c-text)]">Claude</p>
+                <p className="text-[11px] text-[var(--c-text-muted)]">
+                  Análisis de métricas
+                </p>
+              </div>
+            </div>
+
+            <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-5">
+              {messages.length === 0 && (
+                <div className="flex flex-1 items-center justify-center">
+                  <p className="text-center text-[13px] text-[var(--c-text-muted)]">
+                    Elige un preset o escribe tu pregunta abajo.
+                  </p>
+                </div>
               )}
-            >
-              {m.content}
-            </div>
-          </div>
-        ))}
-        {loading && (
-          <div className="flex justify-start">
-            <div className="flex items-center px-4 py-3 rounded-2xl bg-[var(--c-surface)] border border-[var(--c-border)]">
-              <Loader2 className="w-4 h-4 text-[var(--c-text-muted)] animate-spin" />
-            </div>
-          </div>
-        )}
-      </div>
 
-      {/* Input form */}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          enviar(input)
-        }}
-        className="flex gap-2"
-      >
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Pregunta algo sobre tus métricas..."
-          disabled={loading}
-          className="flex-1 px-4 py-2.5 rounded-xl text-[13px] bg-[var(--c-surface)] border border-[var(--c-border)] text-[var(--c-text)] placeholder:text-[var(--c-text-faint)] outline-none focus:border-[var(--c-border-strong)]"
-        />
-        <button
-          type="submit"
-          disabled={loading || !input.trim()}
-          className="w-10 h-10 rounded-xl flex items-center justify-center bg-[var(--c-invert)] text-[var(--c-invert-fg)] disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Send className="w-3.5 h-3.5" />
-        </button>
-      </form>
+              {messages.map((m, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className={cn(
+                    "flex",
+                    m.role === "user" ? "justify-end" : "justify-start"
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-[13px] leading-relaxed",
+                      m.role === "user"
+                        ? "bg-[var(--c-invert)] text-[var(--c-invert-fg)]"
+                        : "border border-[var(--c-border)] bg-[var(--c-surface-2)] text-[var(--c-text)]"
+                    )}
+                  >
+                    {m.content}
+                  </div>
+                </motion.div>
+              ))}
+
+              {loading && (
+                <div className="flex justify-start">
+                  <div className="flex items-center rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-4 py-3">
+                    <Loader2 className="h-4 w-4 animate-spin text-[var(--c-text-muted)]" />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                enviar(input)
+              }}
+              className="flex gap-2 border-t border-[var(--c-border)] p-3"
+            >
+              <Input
+                value={input}
+                onValueChange={setInput}
+                placeholder="Pregunta algo sobre tus métricas..."
+                isDisabled={loading}
+                classNames={{
+                  inputWrapper:
+                    "bg-[var(--c-surface-2)] border border-[var(--c-border)] shadow-none",
+                  input: "text-[13px]",
+                }}
+              />
+              <Button
+                type="submit"
+                color="primary"
+                isIconOnly
+                isDisabled={loading || !input.trim()}
+                className="rounded-xl"
+              >
+                <Send className="h-3.5 w-3.5" />
+              </Button>
+            </form>
+          </div>
+        }
+      />
     </div>
   )
 }

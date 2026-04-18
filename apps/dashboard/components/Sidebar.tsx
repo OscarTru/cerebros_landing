@@ -11,6 +11,7 @@ import {
   Users,
   LayoutDashboard,
 } from "lucide-react"
+import { motion } from "framer-motion"
 import { cn } from "@cerebros/lib"
 
 const navItems = [
@@ -27,53 +28,54 @@ export function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="relative w-56 shrink-0 h-screen sticky top-0 flex flex-col bg-[var(--c-surface)] border-r border-[var(--c-border)] backdrop-blur-xl">
-      {/* Ambient glow */}
+    <aside className="sticky top-0 flex h-screen w-56 shrink-0 flex-col border-r border-[var(--c-border)] bg-[var(--c-surface)] backdrop-blur-xl shadow-[1px_0_0_var(--c-border)]">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-16 -left-10 w-60 h-60 z-0"
+        className="pointer-events-none absolute -left-10 -top-16 h-60 w-60 z-0"
         style={{ background: "radial-gradient(circle, var(--c-glow) 0%, transparent 65%)" }}
       />
 
-      <div className="relative z-10 flex flex-col flex-1 overflow-hidden">
-        {/* Branding */}
-        <div className="flex items-center gap-2.5 px-4 py-5 border-b border-[var(--c-border)]">
-          <div className="w-7 h-7 rounded-md bg-[var(--c-invert)] shrink-0" />
+      <div className="relative z-10 flex flex-1 flex-col overflow-hidden">
+        <div className="flex items-center gap-2.5 border-b border-[var(--c-border)] px-4 py-5">
+          <div className="h-7 w-7 shrink-0 rounded-md bg-[var(--c-invert)]" />
           <div className="min-w-0">
-            <p className="text-xs font-semibold text-[var(--c-text)] tracking-tight leading-tight truncate">
+            <p className="truncate text-xs font-semibold leading-tight tracking-tight text-[var(--c-text)]">
               Cerebros Esponjosos
             </p>
-            <p className="text-[10px] text-[var(--c-text-subtle)] leading-none mt-0.5">
+            <p className="mt-0.5 text-[10px] leading-none text-[var(--c-text-subtle)]">
               Dashboard
             </p>
           </div>
         </div>
 
-        {/* Nav */}
-        <nav className="flex-1 px-2.5 py-3 flex flex-col gap-0.5 overflow-y-auto">
+        <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto px-2.5 py-3">
           {navItems.map(({ href, label, icon: Icon }) => {
             const active = pathname === href
             return (
-              <Link
+              <motion.div
                 key={href}
-                href={href}
-                aria-current={active ? "page" : undefined}
-                className={cn(
-                  "flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition-colors",
-                  active
-                    ? "bg-[var(--c-invert)] text-[var(--c-invert-fg)] font-medium"
-                    : "text-[var(--c-text-muted)] hover:bg-[var(--c-surface-2)] hover:text-[var(--c-text)]"
-                )}
+                whileHover={!active ? { x: 2 } : undefined}
+                transition={{ duration: 0.15 }}
               >
-                <Icon className="w-[15px] h-[15px] shrink-0" />
-                {label}
-              </Link>
+                <Link
+                  href={href}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] transition-colors",
+                    active
+                      ? "bg-[var(--c-invert)] font-medium text-[var(--c-invert-fg)]"
+                      : "text-[var(--c-text-muted)] hover:bg-[var(--c-surface-2)] hover:text-[var(--c-text)]"
+                  )}
+                >
+                  <Icon className="h-[15px] w-[15px] shrink-0" />
+                  {label}
+                </Link>
+              </motion.div>
             )
           })}
         </nav>
 
-        {/* User */}
-        <div className="flex items-center gap-2.5 px-4 py-3 border-t border-[var(--c-border)]">
+        <div className="flex items-center gap-2.5 border-t border-[var(--c-border)] px-4 py-3">
           <UserButton appearance={{ elements: { avatarBox: { width: 28, height: 28 } } }} />
         </div>
       </div>
