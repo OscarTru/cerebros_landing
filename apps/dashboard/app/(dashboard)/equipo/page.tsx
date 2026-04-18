@@ -8,19 +8,24 @@ export default async function EquipoPage() {
   if (role !== "owner") redirect("/")
 
   return (
-    <>
+    <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
       <Header title="Equipo" />
-      <div className="p-6">
+      <div style={{ padding: "32px" }}>
         <OrganizationProfile
           appearance={{
             elements: {
-              card: "bg-[var(--c-surface)] border border-[var(--c-border)] shadow-none rounded-2xl",
-              navbar: "hidden",
-              pageScrollBox: "p-0",
+              card: {
+                background: "var(--c-surface)",
+                border: "1px solid var(--c-border)",
+                boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                borderRadius: "16px",
+              },
+              navbar: { display: "none" },
+              pageScrollBox: { padding: 0 },
             },
           }}
         />
       </div>
-    </>
+    </div>
   )
 }

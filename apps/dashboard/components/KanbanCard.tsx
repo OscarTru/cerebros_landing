@@ -16,38 +16,51 @@ const ESTADOS: Colaboracion["estado"][] = [
 export function KanbanCard({ colaboracion, onEstadoChange }: KanbanCardProps) {
   return (
     <div
-      className="rounded-xl p-4 flex flex-col gap-3 transition-colors card-elevated"
       style={{
         background: "var(--c-surface)",
         border: "1px solid var(--c-border)",
+        borderRadius: "12px",
+        padding: "14px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+        transition: "border-color 0.15s, box-shadow 0.15s",
       }}
       onMouseEnter={(e) => {
         (e.currentTarget as HTMLDivElement).style.borderColor = "var(--c-border-strong)"
+        ;(e.currentTarget as HTMLDivElement).style.boxShadow = "0 2px 6px rgba(0,0,0,0.08)"
       }}
       onMouseLeave={(e) => {
         (e.currentTarget as HTMLDivElement).style.borderColor = "var(--c-border)"
+        ;(e.currentTarget as HTMLDivElement).style.boxShadow = "0 1px 3px rgba(0,0,0,0.04)"
       }}
     >
       <div>
-        <p className="text-sm font-medium" style={{ color: "var(--c-text)" }}>
+        <p style={{ fontSize: "13px", fontWeight: 500, color: "var(--c-text)", margin: 0 }}>
           {colaboracion.marca}
         </p>
-        <p className="text-xs mt-0.5" style={{ color: "var(--c-text-muted)" }}>
+        <p style={{ fontSize: "11px", color: "var(--c-text-muted)", margin: 0, marginTop: "2px" }}>
           {colaboracion.tipo}
         </p>
       </div>
 
       {colaboracion.valor_mxn && (
-        <p className="text-sm font-semibold" style={{ color: "var(--c-text)" }}>
+        <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--c-text)", margin: 0 }}>
           ${colaboracion.valor_mxn.toLocaleString("es-MX")} MXN
         </p>
       )}
 
       {colaboracion.notas && (
-        <p
-          className="text-xs line-clamp-2"
-          style={{ color: "var(--c-text-subtle)" }}
-        >
+        <p style={{
+          fontSize: "11px",
+          color: "var(--c-text-subtle)",
+          margin: 0,
+          display: "-webkit-box",
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: "vertical",
+          overflow: "hidden",
+        }}>
           {colaboracion.notas}
         </p>
       )}
@@ -57,11 +70,16 @@ export function KanbanCard({ colaboracion, onEstadoChange }: KanbanCardProps) {
         onChange={(e) =>
           onEstadoChange(colaboracion.id, e.target.value as Colaboracion["estado"])
         }
-        className="w-full text-xs rounded-lg px-2 py-1.5 cursor-pointer"
         style={{
+          width: "100%",
+          fontSize: "11px",
+          padding: "6px 8px",
+          borderRadius: "8px",
           background: "var(--c-surface-2)",
           border: "1px solid var(--c-border)",
           color: "var(--c-text)",
+          cursor: "pointer",
+          outline: "none",
         }}
       >
         {ESTADOS.map((e) => (

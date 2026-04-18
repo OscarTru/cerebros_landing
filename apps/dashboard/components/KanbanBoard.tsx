@@ -38,44 +38,59 @@ export function KanbanBoard({ initialColaboraciones }: KanbanBoardProps) {
   )
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(4, 1fr)",
+      gap: "16px",
+    }}>
       {COLUMNAS.map(({ id, label }) => {
         const items = colaboraciones.filter((c) => c.estado === id)
         return (
           <div
             key={id}
-            className="rounded-xl p-3 flex flex-col gap-3"
             style={{
               background: "var(--c-surface-3)",
               border: "1px solid var(--c-border)",
+              borderRadius: "16px",
+              padding: "14px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+              minHeight: "180px",
             }}
           >
             {/* Column header */}
-            <div className="flex items-center justify-between px-1">
-              <h3
-                className="font-medium uppercase"
-                style={{
-                  fontSize: "10px",
-                  letterSpacing: "0.08em",
-                  color: "var(--c-text-subtle)",
-                }}
-              >
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "0 4px",
+            }}>
+              <h3 style={{
+                fontSize: "10px",
+                fontWeight: 600,
+                color: "var(--c-text-subtle)",
+                textTransform: "uppercase",
+                letterSpacing: "0.1em",
+                margin: 0,
+              }}>
                 {label}
               </h3>
-              <span
-                className="px-2 py-0.5 rounded-full"
-                style={{
-                  color: "var(--c-text-faint)",
-                  background: "var(--c-surface-2)",
-                  fontSize: "10px",
-                }}
-              >
+              <span style={{
+                fontSize: "10px",
+                fontWeight: 500,
+                padding: "2px 8px",
+                borderRadius: "999px",
+                color: "var(--c-text-muted)",
+                background: "var(--c-surface-2)",
+                border: "1px solid var(--c-border)",
+              }}>
                 {items.length}
               </span>
             </div>
 
             {/* Cards */}
-            <div className="flex flex-col gap-2 min-h-24">
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               {items.map((c) => (
                 <KanbanCard
                   key={c.id}

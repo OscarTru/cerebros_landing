@@ -1,8 +1,26 @@
 "use client"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Button } from "@cerebros/ui"
-import { Input } from "@cerebros/ui"
+
+const fieldStyle: React.CSSProperties = {
+  width: "100%",
+  background: "var(--c-surface)",
+  border: "1px solid var(--c-border)",
+  borderRadius: "10px",
+  padding: "10px 14px",
+  fontSize: "13px",
+  color: "var(--c-text)",
+  outline: "none",
+  fontFamily: "inherit",
+}
+
+const labelStyle: React.CSSProperties = {
+  fontSize: "12px",
+  fontWeight: 500,
+  color: "var(--c-text)",
+  marginBottom: "6px",
+  display: "block",
+}
 
 export function NuevaColaboracionClient() {
   const router = useRouter()
@@ -41,87 +59,103 @@ export function NuevaColaboracionClient() {
   }
 
   return (
-    <div className="p-6 max-w-xl">
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div style={{ padding: "32px", maxWidth: "560px", width: "100%" }}>
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm">
+          <div style={{
+            background: "rgba(239,68,68,0.08)",
+            border: "1px solid rgba(239,68,68,0.25)",
+            color: "#ef4444",
+            borderRadius: "12px",
+            padding: "12px 16px",
+            fontSize: "13px",
+          }}>
             {error}
           </div>
         )}
 
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[var(--c-text)]">Marca *</label>
-          <Input name="marca" required placeholder="Nombre de la marca" />
+        <div>
+          <label style={labelStyle}>Marca *</label>
+          <input name="marca" required placeholder="Nombre de la marca" style={fieldStyle} />
         </div>
 
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[var(--c-text)]">Tipo *</label>
-          <select
-            name="tipo"
-            required
-            className="w-full bg-[var(--c-surface)] border border-[var(--c-border)] rounded-xl px-3 py-2.5 text-sm text-[var(--c-text)]"
-          >
-            {["reels", "stories", "post_estatico", "podcast", "newsletter", "paquete"].map(
-              (t) => (
-                <option key={t} value={t}>
-                  {t.replace("_", " ")}
-                </option>
-              )
-            )}
-          </select>
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[var(--c-text)]">Estado</label>
-          <select
-            name="estado"
-            defaultValue="prospecto"
-            className="w-full bg-[var(--c-surface)] border border-[var(--c-border)] rounded-xl px-3 py-2.5 text-sm text-[var(--c-text)]"
-          >
-            {["prospecto", "en_negociacion", "confirmada", "cerrada"].map((e) => (
-              <option key={e} value={e}>
-                {e.replace("_", " ")}
-              </option>
+        <div>
+          <label style={labelStyle}>Tipo *</label>
+          <select name="tipo" required style={fieldStyle}>
+            {["reels", "stories", "post_estatico", "podcast", "newsletter", "paquete"].map(t => (
+              <option key={t} value={t}>{t.replace("_", " ")}</option>
             ))}
           </select>
         </div>
 
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[var(--c-text)]">Valor (MXN)</label>
-          <Input name="valor_mxn" type="number" placeholder="0.00" />
+        <div>
+          <label style={labelStyle}>Estado</label>
+          <select name="estado" defaultValue="prospecto" style={fieldStyle}>
+            {["prospecto", "en_negociacion", "confirmada", "cerrada"].map(e => (
+              <option key={e} value={e}>{e.replace("_", " ")}</option>
+            ))}
+          </select>
         </div>
 
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[var(--c-text)]">Nombre del contacto</label>
-          <Input name="contacto_nombre" placeholder="Ana López" />
+        <div>
+          <label style={labelStyle}>Valor (MXN)</label>
+          <input name="valor_mxn" type="number" placeholder="0.00" style={fieldStyle} />
         </div>
 
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[var(--c-text)]">Email del contacto</label>
-          <Input name="contacto_email" type="email" placeholder="ana@marca.com" />
+        <div>
+          <label style={labelStyle}>Nombre del contacto</label>
+          <input name="contacto_nombre" placeholder="Ana López" style={fieldStyle} />
         </div>
 
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[var(--c-text)]">Notas</label>
+        <div>
+          <label style={labelStyle}>Email del contacto</label>
+          <input name="contacto_email" type="email" placeholder="ana@marca.com" style={fieldStyle} />
+        </div>
+
+        <div>
+          <label style={labelStyle}>Notas</label>
           <textarea
             name="notas"
             rows={3}
             placeholder="Propuesta, condiciones, detalles..."
-            className="w-full bg-[var(--c-surface)] border border-[var(--c-border)] rounded-xl px-3 py-2.5 text-sm text-[var(--c-text)] placeholder:text-[var(--c-text-faint)] resize-none"
+            style={{ ...fieldStyle, resize: "none" }}
           />
         </div>
 
-        <div className="flex gap-3 pt-2">
-          <Button type="submit" disabled={loading}>
+        <div style={{ display: "flex", gap: "10px", paddingTop: "8px" }}>
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              padding: "10px 18px",
+              fontSize: "13px",
+              fontWeight: 500,
+              borderRadius: "10px",
+              background: "var(--c-invert)",
+              color: "var(--c-invert-fg)",
+              border: "none",
+              cursor: loading ? "not-allowed" : "pointer",
+              opacity: loading ? 0.5 : 1,
+            }}
+          >
             {loading ? "Guardando..." : "Crear colaboración"}
-          </Button>
-          <Button
+          </button>
+          <button
             type="button"
-            variant="ghost"
             onClick={() => router.back()}
+            style={{
+              padding: "10px 18px",
+              fontSize: "13px",
+              fontWeight: 500,
+              borderRadius: "10px",
+              background: "transparent",
+              color: "var(--c-text-muted)",
+              border: "1px solid var(--c-border)",
+              cursor: "pointer",
+            }}
           >
             Cancelar
-          </Button>
+          </button>
         </div>
       </form>
     </div>

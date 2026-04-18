@@ -15,14 +15,32 @@ async function getSubscribers() {
   return { subscribers: (data ?? []) as NewsletterSubscriber[], total: count ?? 0, confirmed }
 }
 
+const thStyle: React.CSSProperties = {
+  padding: "12px 20px",
+  textAlign: "left",
+  fontSize: "11px",
+  fontWeight: 500,
+  color: "var(--c-text-muted)",
+  textTransform: "uppercase",
+  letterSpacing: "0.05em",
+  borderBottom: "1px solid var(--c-border)",
+}
+
+const tdStyle: React.CSSProperties = {
+  padding: "14px 20px",
+  fontSize: "13px",
+  borderTop: "1px solid var(--c-border)",
+}
+
 export default async function NewsletterPage() {
   const { subscribers, total, confirmed } = await getSubscribers()
 
   return (
-    <>
+    <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
       <Header title="Newsletter" />
-      <div className="p-6 space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div style={{ padding: "32px", display: "flex", flexDirection: "column", gap: "24px" }}>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
           <MetricCard
             label="Total suscriptores"
             value={total.toLocaleString("es-MX")}
@@ -36,38 +54,59 @@ export default async function NewsletterPage() {
           />
         </div>
 
-        <div className="bg-[var(--c-surface)] border border-[var(--c-border)] rounded-xl overflow-hidden">
-          <div className="px-5 py-3 border-b border-[var(--c-border)] flex items-center justify-between">
-            <p className="text-sm font-medium text-[var(--c-text)]">Suscriptores recientes</p>
-            <p className="text-xs text-[var(--c-text-muted)]">Últimos {subscribers.length}</p>
+        <div style={{
+          background: "var(--c-surface)",
+          border: "1px solid var(--c-border)",
+          borderRadius: "16px",
+          overflow: "hidden",
+          boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+        }}>
+          <div style={{
+            padding: "14px 20px",
+            borderBottom: "1px solid var(--c-border)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}>
+            <p style={{ fontSize: "13px", fontWeight: 500, color: "var(--c-text)", margin: 0 }}>
+              Suscriptores recientes
+            </p>
+            <p style={{ fontSize: "12px", color: "var(--c-text-muted)", margin: 0 }}>
+              Últimos {subscribers.length}
+            </p>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
-                <tr className="border-b border-[var(--c-border)]">
-                  <th className="px-5 py-2.5 text-left text-xs font-medium text-[var(--c-text-muted)]">Email</th>
-                  <th className="px-5 py-2.5 text-left text-xs font-medium text-[var(--c-text-muted)]">Nombre</th>
-                  <th className="px-5 py-2.5 text-left text-xs font-medium text-[var(--c-text-muted)]">Estado</th>
-                  <th className="px-5 py-2.5 text-left text-xs font-medium text-[var(--c-text-muted)]">Fecha</th>
+                <tr>
+                  <th style={thStyle}>Email</th>
+                  <th style={thStyle}>Nombre</th>
+                  <th style={thStyle}>Estado</th>
+                  <th style={thStyle}>Fecha</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--c-border)]">
+              <tbody>
                 {subscribers.map((s) => (
-                  <tr key={s.id} className="hover:bg-[var(--c-surface-2)]">
-                    <td className="px-5 py-3 text-[var(--c-text)]">{s.email}</td>
-                    <td className="px-5 py-3 text-[var(--c-text-muted)]">{s.nombre ?? "—"}</td>
-                    <td className="px-5 py-3">
-                      <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                          s.confirmed
-                            ? "bg-emerald-100 text-emerald-700"
-                            : "bg-zinc-100 text-zinc-600"
-                        }`}
-                      >
+                  <tr key={s.id}>
+                    <td style={{ ...tdStyle, color: "var(--c-text)" }}>{s.email}</td>
+                    <td style={{ ...tdStyle, color: "var(--c-text-muted)" }}>{s.nombre ?? "—"}</td>
+                    <td style={tdStyle}>
+                      <span style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        padding: "3px 10px",
+                        borderRadius: "999px",
+                        fontSize: "11px",
+                        fontWeight: 500,
+                        background: s.confirmed ? "rgba(16,185,129,0.12)" : "var(--c-surface-2)",
+                        color: s.confirmed ? "#10b981" : "var(--c-text-muted)",
+                        border: s.confirmed ? "1px solid rgba(16,185,129,0.25)" : "1px solid var(--c-border)",
+                      }}>
                         {s.confirmed ? "Confirmado" : "Pendiente"}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-[var(--c-text-muted)]">
+                    <td style={{ ...tdStyle, color: "var(--c-text-muted)" }}>
                       {new Date(s.created_at).toLocaleDateString("es-MX", {
                         day: "2-digit",
                         month: "short",
@@ -80,7 +119,8 @@ export default async function NewsletterPage() {
             </table>
           </div>
         </div>
+
       </div>
-    </>
+    </div>
   )
 }
