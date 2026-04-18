@@ -1,6 +1,6 @@
 import { cache } from "react"
 import type { InstagramAnalytics, Period, TimeSeriesPoint } from "../types"
-import { getBasicStats, getRecentMedia, getProfileInsights, getMediaInsights, type IGMedia } from "./client"
+import { getBasicStats, getRecentMedia, getProfileInsights, getMediaInsights, getAudienceDemographics, type IGMedia } from "./client"
 import {
   mockDemographicsAge,
   mockDemographicsGender,
@@ -167,7 +167,33 @@ export const getInstagramAnalytics = cache(async function getInstagramAnalytics(
   mockFields.push("followersSeries")
   const followersSeries = approximateFollowersSeries(basic.followers, period)
 
-  mockFields.push("demographics", "topCities", "bestPostingHours", "storiesPerformance")
+  // bestPostingHours and storiesPerformance remain mock — those endpoints aren't exposed
+  mockFields.push("bestPostingHours", "storiesPerformance")
+
+  // Try to fetch real demographics + cities
+  let realDemographicsAge = mockDemographicsAge()
+  let realDemographicsGender = mockDemographicsGender()
+  let realTopCities = mockTopCities()
+  try {
+    const demo = await getAudienceDemographics(accessToken, userId)
+    if (demo.age.length > 0) {
+      realDemographicsAge = demo.age
+    } else {
+      mockFields.push("demographics.age")
+    }
+    if (demo.gender.length > 0) {
+      realDemographicsGender = demo.gender
+    } else {
+      mockFields.push("demographics.gender")
+    }
+    if (demo.cities.length > 0) {
+      realTopCities = demo.cities
+    } else {
+      mockFields.push("topCities")
+    }
+  } catch {
+    mockFields.push("demographics", "topCities")
+  }
 
   return {
     followers: basic.followers,
@@ -179,8 +205,8 @@ export const getInstagramAnalytics = cache(async function getInstagramAnalytics(
     websiteClicks30d: insights.websiteClicks ?? 0,
     engagementRate,
     followersSeries,
-    demographics: { age: mockDemographicsAge(), gender: mockDemographicsGender() },
-    topCities: mockTopCities(),
+    demographics: { age: realDemographicsAge, gender: realDemographicsGender },
+    topCities: realTopCities,
     bestPostingHours: mockBestPostingHours(),
     topPosts: postsWithInsights,
     storiesPerformance: mockStoriesPerformance(),
