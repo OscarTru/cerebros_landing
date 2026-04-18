@@ -22,8 +22,14 @@ export function YouTubePanel({ data }: YouTubePanelProps) {
   return (
     <div className="flex flex-col gap-6">
       {data.mockFields.length > 0 && (
-        <div>
+        <div className="flex items-center gap-3 flex-wrap">
           <MockDataBadge fields={data.mockFields} />
+          <a
+            href="/api/youtube/oauth/start"
+            className="inline-flex items-center gap-1.5 rounded-full bg-red-500/10 border border-red-500/25 px-3 py-1 text-[11px] font-medium text-red-500 hover:bg-red-500/15 transition-colors"
+          >
+            Conectar YouTube Analytics →
+          </a>
         </div>
       )}
 

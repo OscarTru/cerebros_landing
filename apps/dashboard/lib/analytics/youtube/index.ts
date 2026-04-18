@@ -7,6 +7,7 @@ import {
   deriveViewsSeriesFromVideos,
   type YTVideo,
 } from "./client"
+import { getYouTubeAnalyticsData } from "./analytics-client"
 import {
   mockYTAvgViewDuration,
   mockYTRetention,
@@ -90,50 +91,97 @@ export const getYouTubeAnalytics = cache(async function getYouTubeAnalytics(peri
     const videoIds = await getRecentVideoIds(apiKey, stats.uploadsPlaylistId, 25)
     const videos = await getVideosBatch(apiKey, videoIds)
 
+    // Try YouTube Analytics API (OAuth). Returns null if not connected.
+    const analytics = await getYouTubeAnalyticsData(periodToDays(period)).catch(() => null)
+
+    const mockFields: string[] = []
+
+    // Top videos with CTR from analytics if available
     const topVideos = videos
       .slice()
       .sort((a: YTVideo, b: YTVideo) => b.views - a.views)
       .slice(0, 5)
-      .map((v) => ({
-        id: v.id,
-        thumbnail: v.thumbnail,
-        title: v.title,
-        views: v.views,
-        likes: v.likes,
-        comments: v.comments,
-        publishedAt: v.publishedAt,
-        ctr: mockYTCTR(),
+      .map((v) => {
+        const realCtr = analytics?.topVideosCtr?.get(v.id)
+        if (realCtr === undefined) mockFields.push(`topVideos[${v.id}].ctr`)
+        return {
+          id: v.id,
+          thumbnail: v.thumbnail,
+          title: v.title,
+          views: v.views,
+          likes: v.likes,
+          comments: v.comments,
+          publishedAt: v.publishedAt,
+          ctr: realCtr ?? mockYTCTR(),
+        }
+      })
+    // Simplify mockFields if all CTRs are missing
+    if (topVideos.length > 0 && topVideos.every((v) => !analytics?.topVideosCtr?.has(v.id))) {
+      // remove all per-video entries and add a single "topVideos[].ctr"
+      mockFields.splice(0, mockFields.length)
+      mockFields.push("topVideos[].ctr")
+    }
+
+    // Views time series: prefer Analytics API (real daily views)
+    let viewsSeries: TimeSeriesPoint[]
+    if (analytics?.viewsSeries && analytics.viewsSeries.length > 0) {
+      viewsSeries = analytics.viewsSeries
+    } else {
+      viewsSeries = deriveViewsSeriesFromVideos(videos, period)
+      mockFields.push("viewsSeries (approx)")
+    }
+
+    // Subs gained: prefer real
+    let subsGainedSeries: TimeSeriesPoint[]
+    if (analytics?.subsGainedSeries && analytics.subsGainedSeries.length > 0) {
+      subsGainedSeries = analytics.subsGainedSeries
+    } else {
+      const rnd = seededRandom(dailySeed() + 3)
+      subsGainedSeries = viewsSeries.map((p) => ({
+        date: p.date,
+        value: Math.round(rnd() * 6),
       }))
+      mockFields.push("subsGainedSeries")
+    }
 
-    const viewsSeries = deriveViewsSeriesFromVideos(videos, period)
+    // Watch hours: prefer real
+    const totalWatchHours = analytics?.totalWatchMinutes !== null && analytics?.totalWatchMinutes !== undefined
+      ? Math.round(analytics.totalWatchMinutes / 60)
+      : (mockFields.push("totalWatchHours"), mockYTWatchHours(stats.totalViews))
 
-    const rnd = seededRandom(dailySeed() + 3)
-    const subsGainedSeries: TimeSeriesPoint[] = viewsSeries.map((p) => ({
-      date: p.date,
-      value: Math.round(rnd() * 6),
-    }))
+    // Avg view duration: prefer real
+    const avgViewDuration = analytics?.avgViewDuration !== null && analytics?.avgViewDuration !== undefined
+      ? Math.round(analytics.avgViewDuration)
+      : (mockFields.push("avgViewDuration"), mockYTAvgViewDuration())
+
+    // Retention: prefer real
+    const retentionAvg = analytics?.avgViewPercentage !== null && analytics?.avgViewPercentage !== undefined
+      ? Math.round(analytics.avgViewPercentage)
+      : (mockFields.push("retentionAvg"), mockYTRetention())
+
+    // Traffic sources: prefer real
+    const trafficSources = analytics?.trafficSources && analytics.trafficSources.length > 0
+      ? analytics.trafficSources
+      : (mockFields.push("trafficSources"), mockYTTrafficSources())
+
+    // Top countries: prefer real
+    const topCountries = analytics?.topCountries && analytics.topCountries.length > 0
+      ? analytics.topCountries
+      : (mockFields.push("topCountries"), mockYTTopCountries())
 
     return {
       subscribers: stats.subscribers,
       totalViews: stats.totalViews,
-      totalWatchHours: mockYTWatchHours(stats.totalViews),
+      totalWatchHours,
       videosCount: stats.videosCount,
-      avgViewDuration: mockYTAvgViewDuration(),
+      avgViewDuration,
       viewsSeries,
       subsGainedSeries,
-      retentionAvg: mockYTRetention(),
+      retentionAvg,
       topVideos,
-      trafficSources: mockYTTrafficSources(),
-      topCountries: mockYTTopCountries(),
-      mockFields: [
-        "totalWatchHours",
-        "avgViewDuration",
-        "retentionAvg",
-        "trafficSources",
-        "topCountries",
-        "topVideos[].ctr",
-        "subsGainedSeries",
-      ],
+      trafficSources,
+      topCountries,
+      mockFields,
     }
   } catch (err) {
     console.warn("[analytics/youtube] fetch failed, falling back to mock:", err)
