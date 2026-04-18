@@ -1,4 +1,3 @@
-import { cn } from "@cerebros/lib"
 import type { LucideIcon } from "lucide-react"
 
 interface MetricCardProps {
@@ -20,13 +19,18 @@ export function MetricCard({
 }: MetricCardProps) {
   return (
     <div
-      className={cn("rounded-2xl p-6 relative overflow-hidden card-elevated", className)}
+      className={className}
       style={{
         background: "var(--c-surface)",
         border: "1px solid var(--c-border)",
+        borderRadius: "16px",
+        padding: "24px",
+        position: "relative",
+        overflow: "hidden",
+        boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
       }}
     >
-      {/* Ambient glow top-right */}
+      {/* Ambient glow */}
       <div
         aria-hidden="true"
         style={{
@@ -40,58 +44,66 @@ export function MetricCard({
         }}
       />
 
-      {/* Icon */}
-      {Icon && (
-        <div
-          className="w-9 h-9 rounded-xl flex items-center justify-center mb-4"
-          style={{
+      {/* Icon + label row */}
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "16px" }}>
+        <p style={{
+          fontSize: "11px",
+          fontWeight: 500,
+          textTransform: "uppercase",
+          letterSpacing: "0.08em",
+          color: "var(--c-text-subtle)",
+          margin: 0,
+        }}>
+          {label}
+        </p>
+        {Icon && (
+          <div style={{
+            width: "32px",
+            height: "32px",
+            borderRadius: "8px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             background: "var(--c-surface-2)",
             border: "1px solid var(--c-border)",
-          }}
-        >
-          <Icon className="w-4 h-4" style={{ color: "var(--c-text-muted)" }} />
-        </div>
-      )}
-
-      {/* Label */}
-      <p
-        className="font-medium uppercase mb-2"
-        style={{
-          fontSize: "10px",
-          letterSpacing: "0.1em",
-          color: "var(--c-text-subtle)",
-        }}
-      >
-        {label}
-      </p>
+            flexShrink: 0,
+          }}>
+            <Icon style={{ width: "14px", height: "14px", color: "var(--c-text-muted)" }} />
+          </div>
+        )}
+      </div>
 
       {/* Value */}
-      <p
-        className="text-3xl font-semibold"
-        style={{ color: "var(--c-text)", letterSpacing: "-0.04em", lineHeight: 1 }}
-      >
+      <p style={{
+        fontSize: "36px",
+        fontWeight: 600,
+        color: "var(--c-text)",
+        letterSpacing: "-0.04em",
+        lineHeight: 1,
+        margin: 0,
+      }}>
         {value}
       </p>
 
       {sublabel && (
-        <p className="text-xs mt-2" style={{ color: "var(--c-text-faint)" }}>
+        <p style={{ fontSize: "12px", color: "var(--c-text-faint)", marginTop: "6px" }}>
           {sublabel}
         </p>
       )}
 
       {trend && (
-        <div
-          className="mt-4 pt-4 flex items-center gap-1.5"
-          style={{ borderTop: "1px solid var(--c-border)" }}
-        >
-          <span
-            className="text-xs font-medium"
-            style={{ color: trend.value >= 0 ? "#10b981" : "#ef4444" }}
-          >
-            {trend.value >= 0 ? "+" : ""}
-            {trend.value}%
+        <div style={{
+          marginTop: "16px",
+          paddingTop: "16px",
+          borderTop: "1px solid var(--c-border)",
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+        }}>
+          <span style={{ fontSize: "12px", fontWeight: 500, color: trend.value >= 0 ? "#10b981" : "#ef4444" }}>
+            {trend.value >= 0 ? "+" : ""}{trend.value}%
           </span>
-          <span className="text-xs" style={{ color: "var(--c-text-subtle)" }}>
+          <span style={{ fontSize: "12px", color: "var(--c-text-subtle)" }}>
             {trend.label}
           </span>
         </div>
