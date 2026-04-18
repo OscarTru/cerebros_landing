@@ -1,3 +1,4 @@
+"use client"
 import { Users, Video, Heart, Share2, Play, MessageCircle } from "lucide-react"
 import { StatCard } from "@/components/ui/StatCard"
 import { InfoCard } from "@/components/ui/InfoCard"

@@ -24,6 +24,8 @@ export interface IGInsights {
   impressions?: number
   profileVisits?: number
   websiteClicks?: number
+  accountsEngaged?: number
+  totalInteractions?: number
 }
 
 interface IGUserResponse {
@@ -54,6 +56,15 @@ interface IGInsightValue {
 
 interface IGInsightsResponse {
   data?: IGInsightValue[]
+}
+
+interface IGInsightWithTotalValue {
+  name: string
+  total_value?: { value: number }
+}
+
+interface IGInsightsResponseWithTotal {
+  data?: IGInsightWithTotalValue[]
 }
 
 interface IGMediaInsightsResponse {
@@ -103,23 +114,25 @@ export async function getProfileInsights(
   accessToken: string,
   userId: string
 ): Promise<IGInsights> {
-  const metrics = ["reach", "impressions", "profile_views", "website_clicks"]
-  const url = `${IG_BASE}/${userId}/insights?metric=${metrics.join(",")}&period=day&metric_type=total_value&access_token=${accessToken}`
+  // IG Graph API v21: metric_type=total_value requires period=days_28 (not "day")
+  const metrics = ["reach", "profile_views", "website_clicks", "accounts_engaged", "total_interactions"]
+  const url = `${IG_BASE}/${userId}/insights?metric=${metrics.join(",")}&period=days_28&metric_type=total_value&access_token=${accessToken}`
   const res = await fetch(url, { next: { revalidate: 300 } })
   if (!res.ok) {
     throw new Error(`IG profile insights failed: ${res.status}`)
   }
-  const data = (await res.json()) as IGInsightsResponse
+  const data = (await res.json()) as IGInsightsResponseWithTotal
   const map: Record<string, number> = {}
   for (const m of data.data ?? []) {
-    const total = m.values.reduce((acc, v) => acc + (v.value ?? 0), 0)
-    map[m.name] = total
+    map[m.name] = m.total_value?.value ?? 0
   }
   return {
     reach: map.reach,
-    impressions: map.impressions,
+    impressions: map.accounts_engaged, // "accounts engaged" is the closest signal available on Creator tier (impressions deprecated)
     profileVisits: map.profile_views,
     websiteClicks: map.website_clicks,
+    accountsEngaged: map.accounts_engaged,
+    totalInteractions: map.total_interactions,
   }
 }
 

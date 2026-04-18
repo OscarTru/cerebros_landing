@@ -118,14 +118,26 @@ export const getInstagramAnalytics = cache(async function getInstagramAnalytics(
     mockFields.push("topPosts")
   }
 
-  let insights: { reach?: number; impressions?: number; profileVisits?: number; websiteClicks?: number } = {}
+  let insights: {
+    reach?: number
+    impressions?: number
+    profileVisits?: number
+    websiteClicks?: number
+    accountsEngaged?: number
+    totalInteractions?: number
+  } = {}
   try {
     insights = await getProfileInsights(accessToken, userId)
   } catch {
-    // Profile insights endpoint requires extended permissions (Business tier).
-    // Silently fall back to mock — expected for many Creator accounts.
+    // Profile insights failed — fall back to mock for these fields
     mockFields.push("reach30d", "impressions30d", "profileVisits30d", "websiteClicks30d")
   }
+
+  // If specific insight fields are missing (null), mark them as mock individually
+  if (insights.reach === undefined) mockFields.push("reach30d")
+  if (insights.impressions === undefined) mockFields.push("impressions30d")
+  if (insights.profileVisits === undefined) mockFields.push("profileVisits30d")
+  if (insights.websiteClicks === undefined) mockFields.push("websiteClicks30d")
 
   const sorted = media.slice().sort((a, b) => b.likeCount + b.commentsCount - (a.likeCount + a.commentsCount))
   const topSix = sorted.slice(0, 6)
@@ -161,10 +173,10 @@ export const getInstagramAnalytics = cache(async function getInstagramAnalytics(
     followers: basic.followers,
     following: basic.following,
     postsCount: basic.postsCount,
-    reach30d: insights.reach ?? 1_200_000,
-    impressions30d: insights.impressions ?? 2_800_000,
-    profileVisits30d: insights.profileVisits ?? 48_000,
-    websiteClicks30d: insights.websiteClicks ?? 1_200,
+    reach30d: insights.reach ?? 0,
+    impressions30d: insights.impressions ?? 0,
+    profileVisits30d: insights.profileVisits ?? 0,
+    websiteClicks30d: insights.websiteClicks ?? 0,
     engagementRate,
     followersSeries,
     demographics: { age: mockDemographicsAge(), gender: mockDemographicsGender() },

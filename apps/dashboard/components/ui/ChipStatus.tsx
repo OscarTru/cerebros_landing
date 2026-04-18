@@ -1,3 +1,4 @@
+"use client"
 import { Chip } from "@heroui/react"
 import { cn } from "@cerebros/lib"
 

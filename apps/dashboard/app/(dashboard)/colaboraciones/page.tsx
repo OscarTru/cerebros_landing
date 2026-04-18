@@ -6,7 +6,6 @@ import type { Colaboracion } from "@cerebros/lib"
 import { PageHeader } from "@/components/ui/PageHeader"
 import { StatCard } from "@/components/ui/StatCard"
 import { FadeIn } from "@/components/ui/effects/FadeIn"
-import { Button } from "@heroui/react"
 
 async function getColaboraciones(): Promise<Colaboracion[]> {
   const { data } = await getSupabase()
@@ -53,15 +52,12 @@ export default async function ColaboracionesPage() {
         title="Colaboraciones"
         subtitle={`${colaboraciones.length} colaboraciones en total`}
         actions={
-          <Link href="/colaboraciones/new">
-            <Button
-              color="primary"
-              size="sm"
-              startContent={<Plus className="h-3.5 w-3.5" />}
-              className="rounded-xl"
-            >
-              Nueva
-            </Button>
+          <Link
+            href="/colaboraciones/new"
+            className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-xl text-[12px] font-medium bg-[var(--c-invert)] text-[var(--c-invert-fg)] hover:opacity-90 transition-opacity"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Nueva
           </Link>
         }
       />
@@ -72,25 +68,25 @@ export default async function ColaboracionesPage() {
               label="Pipeline total"
               value={`$${pipelineTotal.toLocaleString("es-MX")}`}
               sublabel="MXN en negociación + confirmadas"
-              icon={DollarSign}
+              icon={<DollarSign className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />}
               animate={false}
             />
             <StatCard
               label="Confirmadas este mes"
               value={confirmadasMes}
-              icon={CheckCircle}
+              icon={<CheckCircle className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />}
             />
             <StatCard
               label="Conversion rate"
               value={`${conversionRate}%`}
               sublabel="confirmadas + cerradas"
-              icon={TrendingUp}
+              icon={<TrendingUp className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />}
               animate={false}
             />
             <StatCard
               label="Ticket promedio"
               value={`$${avgTicket.toLocaleString("es-MX")}`}
-              icon={Briefcase}
+              icon={<Briefcase className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />}
               animate={false}
             />
           </div>

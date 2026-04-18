@@ -1,3 +1,4 @@
+"use client"
 import { Tooltip } from "@heroui/react"
 import { AlertCircle } from "lucide-react"
 
