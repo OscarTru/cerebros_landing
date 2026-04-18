@@ -28,7 +28,7 @@ export function Sidebar() {
 
   return (
     <aside
-      className="w-56 shrink-0 h-screen sticky top-0 flex flex-col"
+      className="w-56 shrink-0 h-screen sticky top-0 flex flex-col card-elevated"
       style={{
         background: "var(--c-surface)",
         backdropFilter: "blur(12px)",

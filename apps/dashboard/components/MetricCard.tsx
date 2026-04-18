@@ -20,7 +20,7 @@ export function MetricCard({
 }: MetricCardProps) {
   return (
     <div
-      className={cn("rounded-xl p-5 relative overflow-hidden", className)}
+      className={cn("rounded-xl p-5 relative overflow-hidden card-elevated", className)}
       style={{
         background: "var(--c-surface)",
         border: "1px solid var(--c-border)",

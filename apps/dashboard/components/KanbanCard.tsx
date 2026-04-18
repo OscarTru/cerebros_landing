@@ -16,7 +16,7 @@ const ESTADOS: Colaboracion["estado"][] = [
 export function KanbanCard({ colaboracion, onEstadoChange }: KanbanCardProps) {
   return (
     <div
-      className="rounded-xl p-4 flex flex-col gap-3 transition-colors"
+      className="rounded-xl p-4 flex flex-col gap-3 transition-colors card-elevated"
       style={{
         background: "var(--c-surface)",
         border: "1px solid var(--c-border)",
