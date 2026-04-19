@@ -1,4 +1,5 @@
 "use client"
+import { useId } from "react"
 import { AreaChart, Area, ResponsiveContainer } from "recharts"
 
 interface SparklineInlineProps {
@@ -14,10 +15,12 @@ export function SparklineInline({
   width = 80,
   height = 24,
 }: SparklineInlineProps) {
+  const uid = useId()
+  const id = `spark-${uid.replace(/:/g, "")}`
+
   if (data.length === 0) {
     return <div style={{ width, height }} />
   }
-  const id = `spark-${Math.random().toString(36).slice(2, 8)}`
   return (
     <div style={{ width, height }}>
       <ResponsiveContainer>
