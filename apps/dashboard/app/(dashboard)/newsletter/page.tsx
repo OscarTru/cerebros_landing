@@ -22,7 +22,12 @@ export default async function NewsletterPage() {
   const { subscribers, total, confirmed } = await getSubscribers()
   return (
     <>
-      <PageHeader title="Newsletter" subtitle={`${total.toLocaleString("es-MX")} suscriptores`} />
+      <PageHeader
+        variant="editorial"
+        eyebrow="· AUDIENCIA · NEWSLETTER ·"
+        title="Newsletter, tu línea directa."
+        subtitle={`${total.toLocaleString("es-MX")} suscriptores · ${confirmed.toLocaleString("es-MX")} confirmados`}
+      />
       <div className="flex flex-col gap-6 p-8">
         <NewsletterClient subscribers={subscribers} total={total} confirmed={confirmed} />
       </div>

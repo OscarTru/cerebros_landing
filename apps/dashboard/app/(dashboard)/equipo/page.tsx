@@ -10,8 +10,10 @@ export default async function EquipoPage() {
   return (
     <>
       <PageHeader
-        title="Equipo"
-        subtitle="Administra los miembros de tu organización"
+        variant="editorial"
+        eyebrow="· EQUIPO · ORGANIZACIÓN ·"
+        title="Equipo, los cerebros detrás."
+        subtitle="Administra los miembros y permisos de tu organización"
       />
       <div className="p-8">
         <OrganizationProfile

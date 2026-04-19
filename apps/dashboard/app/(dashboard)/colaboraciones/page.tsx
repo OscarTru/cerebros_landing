@@ -49,8 +49,10 @@ export default async function ColaboracionesPage() {
   return (
     <>
       <PageHeader
-        title="Colaboraciones"
-        subtitle={`${colaboraciones.length} colaboraciones en total`}
+        variant="editorial"
+        eyebrow="· MARCAS · PIPELINE ·"
+        title="Colaboraciones, el negocio."
+        subtitle={`${colaboraciones.length} colaboraciones · $${pipelineTotal.toLocaleString("es-MX")} MXN en pipeline activo`}
         actions={
           <Link
             href="/colaboraciones/new"

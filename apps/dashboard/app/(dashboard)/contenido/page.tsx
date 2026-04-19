@@ -44,8 +44,10 @@ export default async function ContenidoPage() {
   return (
     <>
       <PageHeader
-        title="Contenido"
-        subtitle={`${posts.length} artículos · ${totalLikes} likes totales`}
+        variant="editorial"
+        eyebrow="· BLOG · ARTÍCULOS ·"
+        title="Contenido, lo que dejas en la red."
+        subtitle={`${posts.length} artículos publicados · ${totalLikes.toLocaleString("es-MX")} likes en total`}
       />
       <div className="flex flex-col gap-6 p-8">
         <ContenidoClient posts={posts} />
