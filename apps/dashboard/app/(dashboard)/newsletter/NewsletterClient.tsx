@@ -39,8 +39,8 @@ export function NewsletterClient({ subscribers, total, confirmed }: Props) {
   return (
     <>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <StatCard label="Total suscriptores" value={total} icon={Mail} />
-        <StatCard label="Confirmados" value={confirmed} icon={CheckCircle} />
+        <StatCard label="Total suscriptores" value={total} icon={<Mail className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />} />
+        <StatCard label="Confirmados" value={confirmed} icon={<CheckCircle className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />} />
         <StatCard
           label="Tasa de confirmación"
           value={`${confirmRate}%`}
