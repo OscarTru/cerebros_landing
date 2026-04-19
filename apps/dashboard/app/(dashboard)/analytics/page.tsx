@@ -26,11 +26,16 @@ export default async function AnalyticsPage({
     analyticsAdapter.getBlog(period),
   ])
 
+  const platformCount = summary.audienceByPlatform.length
+  const platformsLabel = summary.audienceByPlatform.map((p) => p.label).join(", ")
+
   return (
     <>
       <PageHeader
-        title="Analytics"
-        subtitle="Métricas de redes sociales y blog"
+        variant="editorial"
+        eyebrow="· MÉTRICAS · ÚLTIMOS 30 DÍAS ·"
+        title="Analytics, con algo que contar."
+        subtitle={`Sincronizado ${summary.lastSync} · ${platformCount} plataformas: ${platformsLabel}`}
         actions={<AnalyticsHeaderActions lastSync={summary.lastSync} />}
       />
       <div className="flex flex-col gap-6 p-8">
