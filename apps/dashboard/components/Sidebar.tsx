@@ -11,73 +11,102 @@ import {
   Users,
   LayoutDashboard,
 } from "lucide-react"
-import { motion } from "framer-motion"
 import { cn } from "@cerebros/lib"
+import Image from "next/image"
 
-const navItems = [
-  { href: "/", label: "Overview", icon: LayoutDashboard },
-  { href: "/analytics", label: "Analytics", icon: BarChart2 },
-  { href: "/newsletter", label: "Newsletter", icon: Mail },
-  { href: "/colaboraciones", label: "Colaboraciones", icon: Handshake },
-  { href: "/contenido", label: "Contenido", icon: FileText },
-  { href: "/agentes", label: "Agentes IA", icon: Bot },
-  { href: "/equipo", label: "Equipo", icon: Users },
+const navGroups = [
+  {
+    label: "Hoy",
+    items: [
+      { href: "/", label: "Overview", icon: LayoutDashboard },
+      { href: "/analytics", label: "Analytics", icon: BarChart2 },
+      { href: "/agentes", label: "Agentes IA", icon: Bot, badge: "nuevo" },
+    ],
+  },
+  {
+    label: "Operación",
+    items: [
+      { href: "/newsletter", label: "Newsletter", icon: Mail },
+      { href: "/colaboraciones", label: "Colaboraciones", icon: Handshake },
+      { href: "/contenido", label: "Contenido", icon: FileText },
+      { href: "/equipo", label: "Equipo", icon: Users },
+    ],
+  },
 ]
 
 export function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="sticky top-0 flex h-screen w-56 shrink-0 flex-col border-r border-[var(--c-border)] bg-[var(--c-surface)] backdrop-blur-xl shadow-[1px_0_0_var(--c-border)]">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-10 -top-16 h-60 w-60 z-0"
-        style={{ background: "radial-gradient(circle, var(--c-glow) 0%, transparent 65%)" }}
-      />
+    <aside className="sticky top-0 flex h-screen w-56 shrink-0 flex-col border-r border-[var(--c-border)] bg-[var(--c-surface)]">
+      {/* Logo */}
+      <div className="flex items-center gap-2.5 border-b border-[var(--c-border)] px-4 py-4">
+        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[var(--c-invert)]">
+          <Image
+            src="/assets/brain.png"
+            alt="Cerebros Esponjosos"
+            width={18}
+            height={18}
+            className="invert dark:invert-0"
+          />
+        </div>
+        <div className="min-w-0">
+          <p className="truncate text-[13px] font-semibold leading-tight tracking-tight text-[var(--c-text)]">
+            Cerebros
+          </p>
+          <p className="mt-0.5 text-[10px] leading-none tracking-[0.05em] text-[var(--c-text-subtle)] uppercase">
+            Dashboard
+          </p>
+        </div>
+      </div>
 
-      <div className="relative z-10 flex flex-1 flex-col overflow-hidden">
-        <div className="flex items-center gap-2.5 border-b border-[var(--c-border)] px-4 py-5">
-          <div className="h-7 w-7 shrink-0 rounded-md bg-[var(--c-invert)]" />
-          <div className="min-w-0">
-            <p className="truncate text-xs font-semibold leading-tight tracking-tight text-[var(--c-text)]">
-              Cerebros Esponjosos
+      {/* Nav groups */}
+      <nav className="flex flex-1 flex-col gap-5 overflow-y-auto px-2.5 py-4">
+        {navGroups.map((group) => (
+          <div key={group.label}>
+            <p className="mb-1 px-2.5 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--c-text-subtle)]">
+              {group.label}
             </p>
-            <p className="mt-0.5 text-[10px] leading-none text-[var(--c-text-subtle)]">
-              Dashboard
-            </p>
+            <div className="flex flex-col gap-0.5">
+              {group.items.map(({ href, label, icon: Icon, badge }) => {
+                const active = pathname === href
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] transition-colors",
+                      active
+                        ? "bg-[var(--c-invert)] font-medium text-[var(--c-invert-fg)]"
+                        : "text-[var(--c-text-muted)] hover:bg-[var(--c-surface-2)] hover:text-[var(--c-text)]"
+                    )}
+                  >
+                    <Icon className="h-[15px] w-[15px] shrink-0" strokeWidth={1.75} />
+                    <span className="flex-1">{label}</span>
+                    {badge && (
+                      <span
+                        className={cn(
+                          "rounded-full px-1.5 py-px text-[10px] font-medium",
+                          active
+                            ? "bg-white/15 text-white/90"
+                            : "bg-[var(--c-surface-2)] text-[var(--c-text-muted)]"
+                        )}
+                      >
+                        {badge}
+                      </span>
+                    )}
+                  </Link>
+                )
+              })}
+            </div>
           </div>
-        </div>
+        ))}
+      </nav>
 
-        <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto px-2.5 py-3">
-          {navItems.map(({ href, label, icon: Icon }) => {
-            const active = pathname === href
-            return (
-              <motion.div
-                key={href}
-                whileHover={!active ? { x: 2 } : undefined}
-                transition={{ duration: 0.15 }}
-              >
-                <Link
-                  href={href}
-                  aria-current={active ? "page" : undefined}
-                  className={cn(
-                    "flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] transition-colors",
-                    active
-                      ? "bg-[var(--c-invert)] font-medium text-[var(--c-invert-fg)]"
-                      : "text-[var(--c-text-muted)] hover:bg-[var(--c-surface-2)] hover:text-[var(--c-text)]"
-                  )}
-                >
-                  <Icon className="h-[15px] w-[15px] shrink-0" />
-                  {label}
-                </Link>
-              </motion.div>
-            )
-          })}
-        </nav>
-
-        <div className="flex items-center gap-2.5 border-t border-[var(--c-border)] px-4 py-3">
-          <UserButton appearance={{ elements: { avatarBox: { width: 28, height: 28 } } }} />
-        </div>
+      {/* User */}
+      <div className="flex items-center gap-2.5 border-t border-[var(--c-border)] px-4 py-3">
+        <UserButton appearance={{ elements: { avatarBox: { width: 28, height: 28 } } }} />
       </div>
     </aside>
   )
