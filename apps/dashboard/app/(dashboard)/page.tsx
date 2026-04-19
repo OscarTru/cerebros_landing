@@ -74,7 +74,7 @@ async function getOverviewData() {
         id: `blog-${p.slug}`,
         title: p.title,
         platform: "blog",
-        metric: `${p.readingTime ?? "—"} min lectura`,
+        metric: `Publicado ${p.date}`,
         metricValue: String(p.likes),
         href: `/blog/${p.slug}`,
       })
