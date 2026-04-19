@@ -1,5 +1,4 @@
 import { Users, Eye, Video, Clock, Play, Heart, MessageCircle } from "lucide-react"
-import { StatCard } from "@/components/ui/StatCard"
 import { InfoCard } from "@/components/ui/InfoCard"
 import { LineChartCard } from "@/components/ui/charts/LineChartCard"
 import { DonutChartCard } from "@/components/ui/charts/DonutChartCard"
@@ -20,29 +19,75 @@ function formatDuration(seconds: number): string {
 
 export function YouTubePanel({ data }: YouTubePanelProps) {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       {data.mockFields.length > 0 && (
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex flex-wrap items-center gap-3">
           <MockDataBadge fields={data.mockFields} />
           <a
             href="/api/youtube/oauth/start"
-            className="inline-flex items-center gap-1.5 rounded-full bg-red-500/10 border border-red-500/25 px-3 py-1 text-[11px] font-medium text-red-500 hover:bg-red-500/15 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-full border border-red-500/25 bg-red-500/10 px-3 py-1 text-[11px] font-medium text-red-500 transition-colors hover:bg-red-500/15"
           >
             Conectar YouTube Analytics →
           </a>
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <StatCard label="Subscribers" value={data.subscribers} icon={<Users className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />} />
-        <StatCard label="Vistas totales" value={data.totalViews} icon={<Eye className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />} />
-        <StatCard label="Videos" value={data.videosCount} icon={<Video className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />} />
-        <StatCard
-          label="Avg view duration"
-          value={formatDuration(data.avgViewDuration)}
-          icon={<Clock className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />}
-          animate={false}
-        />
+      {/* Hero stat */}
+      <div>
+        <p className="mb-2 font-mono text-[10px] uppercase tracking-widest text-[var(--c-text-faint)]">
+          · YOUTUBE · CANAL ·
+        </p>
+        <div className="flex items-end gap-4">
+          <span className="text-[96px] font-bold leading-none tracking-tight text-[var(--c-text)]">
+            {data.subscribers.toLocaleString("es-MX")}
+          </span>
+          <div className="mb-3 flex flex-col gap-1">
+            <span className="flex items-center gap-1.5 text-[12px] text-[var(--c-text-muted)]">
+              <Users className="h-3.5 w-3.5" />
+              suscriptores
+            </span>
+          </div>
+        </div>
+
+        {/* Callout row */}
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-4 py-3">
+            <p className="mb-1 text-[10px] uppercase tracking-widest text-[var(--c-text-faint)]">
+              <Eye className="mr-1 inline h-3 w-3" />Vistas
+            </p>
+            <p className="text-[28px] font-bold leading-none text-[var(--c-text)]">
+              {data.totalViews.toLocaleString("es-MX")}
+            </p>
+            <p className="mt-1 text-[11px] text-[var(--c-text-subtle)]">totales</p>
+          </div>
+          <div className="rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-4 py-3">
+            <p className="mb-1 text-[10px] uppercase tracking-widest text-[var(--c-text-faint)]">
+              <Video className="mr-1 inline h-3 w-3" />Videos
+            </p>
+            <p className="text-[28px] font-bold leading-none text-[var(--c-text)]">
+              {data.videosCount}
+            </p>
+            <p className="mt-1 text-[11px] text-[var(--c-text-subtle)]">publicados</p>
+          </div>
+          <div className="rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-4 py-3">
+            <p className="mb-1 text-[10px] uppercase tracking-widest text-[var(--c-text-faint)]">
+              <Clock className="mr-1 inline h-3 w-3" />Duración avg
+            </p>
+            <p className="text-[28px] font-bold leading-none text-[var(--c-text)]">
+              {formatDuration(data.avgViewDuration)}
+            </p>
+            <p className="mt-1 text-[11px] text-[var(--c-text-subtle)]">por vista</p>
+          </div>
+          <div className="rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-4 py-3">
+            <p className="mb-1 text-[10px] uppercase tracking-widest text-[var(--c-text-faint)]">
+              Retención
+            </p>
+            <p className="text-[28px] font-bold leading-none text-[var(--c-text)]">
+              {data.retentionAvg}%
+            </p>
+            <p className="mt-1 text-[11px] text-[var(--c-text-subtle)]">promedio</p>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -59,17 +104,6 @@ export function YouTubePanel({ data }: YouTubePanelProps) {
           height={240}
         />
       </div>
-
-      <InfoCard title="Retención promedio">
-        <div className="flex items-end gap-6">
-          <p className="text-[48px] font-semibold leading-none tracking-[-0.04em] text-[var(--c-text)]">
-            {data.retentionAvg}%
-          </p>
-          <p className="pb-2 text-[13px] text-[var(--c-text-muted)]">
-            de duración promedio vista por los espectadores
-          </p>
-        </div>
-      </InfoCard>
 
       <PostGridCard
         title="Top 5 videos"

@@ -8,7 +8,6 @@ import {
   Heart,
   MessageCircle,
 } from "lucide-react"
-import { StatCard } from "@/components/ui/StatCard"
 import { InfoCard } from "@/components/ui/InfoCard"
 import { LineChartCard } from "@/components/ui/charts/LineChartCard"
 import { BarChartCard } from "@/components/ui/charts/BarChartCard"
@@ -25,30 +24,69 @@ interface InstagramPanelProps {
 
 export function InstagramPanel({ data }: InstagramPanelProps) {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       {data.mockFields.length > 0 && (
         <div>
           <MockDataBadge fields={data.mockFields} />
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <StatCard label="Seguidores" value={data.followers} icon={<Users className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />} />
-        <StatCard label="Posts publicados" value={data.postsCount} icon={<ImageIcon className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />} />
-        <StatCard label="Alcance 30d" value={data.reach30d} icon={<Eye className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />} />
-        <StatCard label="Impressions 30d" value={data.impressions30d} icon={<Zap className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />} />
-      </div>
+      {/* Hero stat */}
+      <div>
+        <p className="mb-2 font-mono text-[10px] uppercase tracking-widest text-[var(--c-text-faint)]">
+          · INSTAGRAM · AUDIENCIA ·
+        </p>
+        <div className="flex items-end gap-4">
+          <span className="text-[96px] font-bold leading-none tracking-tight text-[var(--c-text)]">
+            {data.followers.toLocaleString("es-MX")}
+          </span>
+          <div className="mb-3 flex flex-col gap-1">
+            <span className="flex items-center gap-1.5 text-[12px] text-[var(--c-text-muted)]">
+              <Users className="h-3.5 w-3.5" />
+              seguidores
+            </span>
+          </div>
+        </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <StatCard label="Profile visits" value={data.profileVisits30d} icon={<UserCheck className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />} />
-        <StatCard label="Website clicks" value={data.websiteClicks30d} icon={<ExternalLink className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />} />
-        <StatCard
-          label="Engagement rate"
-          value={`${data.engagementRate}%`}
-          sublabel="promedio por post"
-          icon={<Heart className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />}
-          animate={false}
-        />
+        {/* Callout row */}
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-4 py-3">
+            <p className="mb-1 text-[10px] uppercase tracking-widest text-[var(--c-text-faint)]">
+              <ImageIcon className="mr-1 inline h-3 w-3" />Posts
+            </p>
+            <p className="text-[28px] font-bold leading-none text-[var(--c-text)]">
+              {data.postsCount}
+            </p>
+            <p className="mt-1 text-[11px] text-[var(--c-text-subtle)]">publicados</p>
+          </div>
+          <div className="rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-4 py-3">
+            <p className="mb-1 text-[10px] uppercase tracking-widest text-[var(--c-text-faint)]">
+              <Eye className="mr-1 inline h-3 w-3" />Alcance
+            </p>
+            <p className="text-[28px] font-bold leading-none text-[var(--c-text)]">
+              {data.reach30d.toLocaleString("es-MX")}
+            </p>
+            <p className="mt-1 text-[11px] text-[var(--c-text-subtle)]">últimos 30d</p>
+          </div>
+          <div className="rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-4 py-3">
+            <p className="mb-1 text-[10px] uppercase tracking-widest text-[var(--c-text-faint)]">
+              <Heart className="mr-1 inline h-3 w-3" />Engagement
+            </p>
+            <p className="text-[28px] font-bold leading-none text-[var(--c-text)]">
+              {data.engagementRate}%
+            </p>
+            <p className="mt-1 text-[11px] text-[var(--c-text-subtle)]">por post</p>
+          </div>
+          <div className="rounded-xl border border-[var(--c-border)] bg-[var(--c-surface-2)] px-4 py-3">
+            <p className="mb-1 text-[10px] uppercase tracking-widest text-[var(--c-text-faint)]">
+              <ExternalLink className="mr-1 inline h-3 w-3" />Website
+            </p>
+            <p className="text-[28px] font-bold leading-none text-[var(--c-text)]">
+              {data.websiteClicks30d.toLocaleString("es-MX")}
+            </p>
+            <p className="mt-1 text-[11px] text-[var(--c-text-subtle)]">clics 30d</p>
+          </div>
+        </div>
       </div>
 
       <LineChartCard
@@ -83,19 +121,19 @@ export function InstagramPanel({ data }: InstagramPanelProps) {
         <div className="grid grid-cols-3 gap-6">
           <div>
             <p className="text-[10px] uppercase tracking-wider text-[var(--c-text-subtle)]">Avg views</p>
-            <p className="mt-1 text-xl font-semibold text-[var(--c-text)]">
+            <p className="mt-1 text-[28px] font-bold leading-none text-[var(--c-text)]">
               {data.storiesPerformance.avgViews.toLocaleString("es-MX")}
             </p>
           </div>
           <div>
             <p className="text-[10px] uppercase tracking-wider text-[var(--c-text-subtle)]">Completion rate</p>
-            <p className="mt-1 text-xl font-semibold text-[var(--c-text)]">
+            <p className="mt-1 text-[28px] font-bold leading-none text-[var(--c-text)]">
               {data.storiesPerformance.completionRate}%
             </p>
           </div>
           <div>
             <p className="text-[10px] uppercase tracking-wider text-[var(--c-text-subtle)]">Replies</p>
-            <p className="mt-1 text-xl font-semibold text-[var(--c-text)]">
+            <p className="mt-1 text-[28px] font-bold leading-none text-[var(--c-text)]">
               {data.storiesPerformance.replies}
             </p>
           </div>
