@@ -1,15 +1,26 @@
 import { cn } from "@cerebros/lib"
+import type { LucideIcon } from "lucide-react"
 import type { ReactNode } from "react"
 import { AnimatedNumber } from "./animate/AnimatedNumber"
+
+type IconProp = LucideIcon | ReactNode
 
 interface StatCardProps {
   label: string
   value: number | string
   sublabel?: string
-  icon?: ReactNode
+  icon?: IconProp
   trend?: { value: number; label: string }
   animate?: boolean
   className?: string
+}
+
+function renderIcon(icon: IconProp) {
+  if (typeof icon === "function") {
+    const Icon = icon as LucideIcon
+    return <Icon className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />
+  }
+  return icon as ReactNode
 }
 
 export function StatCard({
@@ -40,9 +51,9 @@ export function StatCard({
         <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--c-text-subtle)]">
           {label}
         </p>
-        {icon && (
+        {icon != null && (
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--c-border)] bg-[var(--c-surface-2)]">
-            {icon}
+            {renderIcon(icon)}
           </div>
         )}
       </div>
