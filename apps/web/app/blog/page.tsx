@@ -46,11 +46,26 @@ function PostImage({
 
   if (image) {
     if (isCloudinaryId(image)) {
+      const src = cloudinaryUrl(image, 800)
+      // Si no hay CLOUD_NAME, cloudinaryUrl devuelve "" — cae al placeholder
+      if (src) {
+        return (
+          <img
+            src={src}
+            srcSet={cloudinarySrcSet(image)}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 800px"
+            alt={title}
+            className={className}
+            style={{ objectFit: "cover" }}
+            loading={eager ? "eager" : "lazy"}
+            decoding={eager ? "sync" : "async"}
+          />
+        )
+      }
+    } else {
       return (
         <img
-          src={cloudinaryUrl(image, 800)}
-          srcSet={cloudinarySrcSet(image)}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 800px"
+          src={image}
           alt={title}
           className={className}
           style={{ objectFit: "cover" }}
@@ -59,16 +74,6 @@ function PostImage({
         />
       )
     }
-    return (
-      <img
-        src={image}
-        alt={title}
-        className={className}
-        style={{ objectFit: "cover" }}
-        loading={eager ? "eager" : "lazy"}
-        decoding={eager ? "sync" : "async"}
-      />
-    )
   }
 
   return (

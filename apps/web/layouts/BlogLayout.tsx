@@ -154,6 +154,7 @@ export function BlogLayout({ title, date, author, description, slug, image, chil
               <FadeIn delay={0.09}>
                 <div className="mb-12 rounded-xl overflow-hidden">
                   {isCloudinaryId(image) ? (
+                    cloudinaryUrl(image, 800) ? (
                     <img
                       src={cloudinaryUrl(image, 800)}
                       srcSet={cloudinarySrcSet(image)}
@@ -163,6 +164,7 @@ export function BlogLayout({ title, date, author, description, slug, image, chil
                       loading="eager"
                       decoding="sync"
                     />
+                    ) : null
                   ) : (
                     <img
                       src={image}
