@@ -72,37 +72,40 @@ export function BlogMarkdownEditor({ value, onChange }: Props) {
     )
   }
 
+  // editor is non-null past this point (narrowed by the guard above)
+  const e = editor
+
   const isActive = (name: string, attrs?: Record<string, unknown>) =>
-    editor.isActive(name, attrs)
+    e.isActive(name, attrs)
 
   function promptLink() {
-    const prev = editor.getAttributes("link").href as string | undefined
+    const prev = e.getAttributes("link").href as string | undefined
     const url = window.prompt("URL del link", prev ?? "https://")
     if (url === null) return
     if (url === "") {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run()
+      e.chain().focus().extendMarkRange("link").unsetLink().run()
       return
     }
-    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run()
+    e.chain().focus().extendMarkRange("link").setLink({ href: url }).run()
   }
 
   function handleImageUploaded(publicId: string) {
     const cloud = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "demo"
     const src = `https://res.cloudinary.com/${cloud}/image/upload/q_auto,f_auto,w_1200/${publicId}`
-    editor.chain().focus().setImage({ src, alt: "" }).run()
+    e.chain().focus().setImage({ src, alt: "" }).run()
   }
 
   return (
     <div className="rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)]">
       <div className="sticky top-0 z-10 flex flex-wrap items-center gap-0.5 border-b border-[var(--c-border)] bg-[var(--c-surface)] px-3 py-2 rounded-t-2xl">
         <ToolBtn
-          onClick={() => editor.chain().focus().toggleBold().run()}
+          onClick={() => e.chain().focus().toggleBold().run()}
           icon={Bold}
           label="Bold (⌘B)"
           active={isActive("bold")}
         />
         <ToolBtn
-          onClick={() => editor.chain().focus().toggleItalic().run()}
+          onClick={() => e.chain().focus().toggleItalic().run()}
           icon={Italic}
           label="Italic (⌘I)"
           active={isActive("italic")}
@@ -110,52 +113,52 @@ export function BlogMarkdownEditor({ value, onChange }: Props) {
         <ToolBtn onClick={promptLink} icon={Link2} label="Link (⌘K)" active={isActive("link")} />
         {isActive("link") && (
           <ToolBtn
-            onClick={() => editor.chain().focus().unsetLink().run()}
+            onClick={() => e.chain().focus().unsetLink().run()}
             icon={Unlink}
             label="Quitar link"
           />
         )}
         <Divider />
         <ToolBtn
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          onClick={() => e.chain().focus().toggleHeading({ level: 1 }).run()}
           icon={Heading1}
           label="Título 1"
           active={isActive("heading", { level: 1 })}
         />
         <ToolBtn
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          onClick={() => e.chain().focus().toggleHeading({ level: 2 }).run()}
           icon={Heading2}
           label="Título 2"
           active={isActive("heading", { level: 2 })}
         />
         <ToolBtn
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          onClick={() => e.chain().focus().toggleHeading({ level: 3 }).run()}
           icon={Heading3}
           label="Título 3"
           active={isActive("heading", { level: 3 })}
         />
         <Divider />
         <ToolBtn
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          onClick={() => e.chain().focus().toggleBulletList().run()}
           icon={List}
           label="Lista"
           active={isActive("bulletList")}
         />
         <ToolBtn
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          onClick={() => e.chain().focus().toggleBlockquote().run()}
           icon={Quote}
           label="Cita"
           active={isActive("blockquote")}
         />
         <ToolBtn
-          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          onClick={() => e.chain().focus().setHorizontalRule().run()}
           icon={Minus}
           label="Separador"
         />
         <Divider />
         <ImageUploadButton onUploaded={handleImageUploaded} />
         <ToolBtn
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          onClick={() => e.chain().focus().toggleCodeBlock().run()}
           icon={Code}
           label="Código"
           active={isActive("codeBlock")}
