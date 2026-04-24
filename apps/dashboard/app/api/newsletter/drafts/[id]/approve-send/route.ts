@@ -4,7 +4,7 @@ import { requireRole } from "@/lib/clerk"
 import { getSupabase } from "@/lib/supabase"
 import { renderFromDraft, type DraftShape } from "@cerebros/email-templates"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function getResend() { return new Resend(process.env.RESEND_API_KEY ?? "") }
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest, { params }: Params) {
   })
 
   try {
-    const createRes = await resend.broadcasts.create({
+    const createRes = await getResend().broadcasts.create({
       audienceId,
       name: draft.title || draft.subject,
       from: "Cerebros Esponjosos <newsletter@cerebrosesponjosos.com>",

@@ -7,7 +7,7 @@ import { DraftList, type DraftListItem } from "@/components/newsletter/DraftList
 import { CollapsibleDraftList } from "@/components/newsletter/CollapsibleDraftList"
 import { ScheduledList, type ScheduledItem } from "./ScheduledList"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function getResend() { return new Resend(process.env.RESEND_API_KEY ?? "") }
 
 interface AudienceData {
   subscribers: NewsletterSubscriber[]
@@ -63,7 +63,7 @@ async function getAudienceFromResend(): Promise<AudienceData | null> {
   const audienceId = process.env.RESEND_AUDIENCE_ID
   if (!audienceId) return null
   try {
-    const res = await resend.contacts.list({ audienceId })
+    const res = await getResend().contacts.list({ audienceId })
     if (res.error || !res.data) return null
     const contacts = res.data.data ?? []
     const weekAgo = Date.now() - 7 * 86400000

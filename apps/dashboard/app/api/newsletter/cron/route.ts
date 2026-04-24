@@ -3,7 +3,7 @@ import { Resend } from "resend"
 import { getSupabase } from "@/lib/supabase"
 import { renderFromDraft, type DraftShape } from "@cerebros/email-templates"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function getResend() { return new Resend(process.env.RESEND_API_KEY ?? "") }
 
 export const dynamic = "force-dynamic"
 export const maxDuration = 60
@@ -66,7 +66,7 @@ export async function GET(req: NextRequest) {
       let sent = 0
       for (let i = 0; i < emails.length; i += BATCH) {
         const batch = emails.slice(i, i + BATCH)
-        await resend.batch.send(
+        await getResend().batch.send(
           batch.map((to) => ({
             from: "Cerebros Esponjosos <newsletter@cerebrosesponjosos.com>",
             to,

@@ -5,7 +5,7 @@ import { requireRole } from "@/lib/clerk"
 import { getSupabase } from "@/lib/supabase"
 import { renderFromDraft, type DraftShape } from "@cerebros/email-templates"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function getResend() { return new Resend(process.env.RESEND_API_KEY ?? "") }
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -38,7 +38,7 @@ export async function POST(_req: NextRequest, { params }: Params) {
 
   const html = renderFromDraft({ email: to, draft })
   try {
-    await resend.emails.send({
+    await getResend().emails.send({
       from: "Cerebros Esponjosos <newsletter@cerebrosesponjosos.com>",
       to,
       subject: `[PRUEBA] ${draft.subject}`,

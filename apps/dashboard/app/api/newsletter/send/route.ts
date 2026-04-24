@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { Resend } from "resend"
 import { getSupabase } from "@/lib/supabase"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function getResend() { return new Resend(process.env.RESEND_API_KEY ?? "") }
 
 export async function POST(req: NextRequest) {
   const { userId } = await auth()
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
   let sent = 0
   for (let i = 0; i < emails.length; i += BATCH) {
     const batch = emails.slice(i, i + BATCH)
-    await resend.batch.send(
+    await getResend().batch.send(
       batch.map((to) => ({
         from: "Cerebros Esponjosos <newsletter@cerebrosesponjosos.com>",
         to,

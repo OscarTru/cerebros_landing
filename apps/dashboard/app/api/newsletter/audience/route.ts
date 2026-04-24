@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { Resend } from "resend"
 import { requireRole } from "@/lib/clerk"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function getResend() { return new Resend(process.env.RESEND_API_KEY ?? "") }
 
 export const revalidate = 60
 
@@ -19,7 +19,7 @@ export async function GET() {
   }
 
   try {
-    const res = await resend.contacts.list({ audienceId })
+    const res = await getResend().contacts.list({ audienceId })
     if (res.error) {
       return NextResponse.json({ error: res.error.message }, { status: 500 })
     }
