@@ -1,99 +1,85 @@
-import fs from "node:fs"
-import path from "node:path"
+import { createClient, type SupabaseClient } from "@supabase/supabase-js"
 import type { PostMeta, Heading } from "@cerebros/lib"
 
 export type { PostMeta, Heading }
 
-const BLOG_DIR = path.join(process.cwd(), "content/blog")
+// Legacy shape extendido con `content` (MDX source) para /blog/[slug] renders.
+export interface BlogPost extends PostMeta {
+  content: string
+}
 
-function parseFrontmatter(content: string): Record<string, unknown> {
-  const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/)
-  if (!match) return {}
-  const yaml = match[1]
-  const result: Record<string, unknown> = {}
-  for (const line of yaml.split("\n")) {
-    const colonIdx = line.indexOf(":")
-    if (colonIdx === -1) continue
-    const key = line.slice(0, colonIdx).trim()
-    const rawVal = line.slice(colonIdx + 1).trim()
-    if (!key) continue
-    // Strip quotes
-    if ((rawVal.startsWith('"') && rawVal.endsWith('"')) ||
-        (rawVal.startsWith("'") && rawVal.endsWith("'"))) {
-      result[key] = rawVal.slice(1, -1)
-    } else if (rawVal === "true") {
-      result[key] = true
-    } else if (rawVal === "false") {
-      result[key] = false
-    } else if (!isNaN(Number(rawVal)) && rawVal !== "") {
-      result[key] = Number(rawVal)
-    } else {
-      result[key] = rawVal
-    }
+let _client: SupabaseClient | null = null
+
+function getClient(): SupabaseClient | null {
+  if (_client) return _client
+  const url = process.env.SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) {
+    // En CI sin env vars, devolvemos null y las funciones retornan vacío.
+    return null
   }
-  return result
+  _client = createClient(url, key, { auth: { persistSession: false } })
+  return _client
 }
 
-function parseHeadings(yaml: string): Heading[] {
-  const headingsMatch = yaml.match(/^headings:\s*\n((?:\s+-\s+\{[^\n]+\}\n?)*)/m)
-  if (!headingsMatch) return []
-  const lines = headingsMatch[1].split("\n").filter(Boolean)
-  return lines
-    .map((line) => {
-      const m = line.match(/\{\s*id:\s*"([^"]+)",\s*text:\s*"([^"]+)",\s*level:\s*(\d+)\s*\}/)
-      if (!m) return null
-      return { id: m[1], text: m[2], level: Number(m[3]) }
-    })
-    .filter((h): h is Heading => h !== null)
+function rowToPostMeta(row: Record<string, unknown>): PostMeta {
+  const publishedAt = row.published_at as string | null
+  const date = publishedAt ? publishedAt.slice(0, 10) : (row.created_at as string).slice(0, 10)
+  return {
+    slug: row.slug as string,
+    title: (row.title as string) ?? "",
+    date,
+    description: (row.description as string) ?? "",
+    author: (row.author as string) ?? "",
+    image: (row.image as string | null) ?? undefined,
+    readingTime: (row.reading_time as number | null) ?? 1,
+    headings: ((row.headings as Heading[] | null) ?? []),
+  }
 }
 
-let _posts: PostMeta[] | null = null
-
-export function getAllPosts(): PostMeta[] {
-  if (_posts) return _posts
-  const files = fs.readdirSync(BLOG_DIR).filter((f) => f.endsWith(".mdx"))
-
-  const posts = files
-    .map((file) => {
-      const slug = file.replace(".mdx", "")
-      const raw = fs.readFileSync(path.join(BLOG_DIR, file), "utf8")
-      const frontmatterMatch = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/)
-      if (!frontmatterMatch) return null
-      const yamlBlock = frontmatterMatch[1]
-      const f = parseFrontmatter(raw) as Partial<PostMeta>
-      if (!f.slug) return null
-      const headings = parseHeadings(yamlBlock)
-      return {
-        ...f,
-        slug: f.slug,
-        title: f.title ?? "",
-        date: f.date ?? "",
-        description: f.description ?? "",
-        author: f.author ?? "",
-        readingTime: f.readingTime ?? 1,
-        headings,
-      } satisfies PostMeta
-    })
-    .filter((p): p is PostMeta => p !== null)
-    .sort((a, b) => (a.date < b.date ? 1 : -1))
-
-  _posts = posts
-  return posts
+export async function getAllPosts(): Promise<PostMeta[]> {
+  const client = getClient()
+  if (!client) return []
+  const { data, error } = await client
+    .from("blog_posts")
+    .select("slug, title, description, author, image, reading_time, headings, published_at, created_at")
+    .eq("status", "published")
+    .order("published_at", { ascending: false, nullsFirst: false })
+    .order("created_at", { ascending: false })
+    .limit(500)
+  if (error) {
+    console.error("getAllPosts error:", error)
+    return []
+  }
+  return (data ?? []).map(rowToPostMeta)
 }
 
-export function getAllSlugs(): string[] {
-  return getAllPosts().map((p) => p.slug)
+export async function getAllSlugs(): Promise<string[]> {
+  const posts = await getAllPosts()
+  return posts.map((p) => p.slug)
 }
 
-export function getPostBySlug(slug: string): PostMeta | undefined {
-  return getAllPosts().find((p) => p.slug === slug)
+export async function getPostBySlug(slug: string): Promise<BlogPost | undefined> {
+  const client = getClient()
+  if (!client) return undefined
+  const { data, error } = await client
+    .from("blog_posts")
+    .select("slug, title, description, author, image, reading_time, headings, published_at, created_at, content")
+    .eq("slug", slug)
+    .eq("status", "published")
+    .maybeSingle()
+  if (error || !data) return undefined
+  return {
+    ...rowToPostMeta(data),
+    content: (data.content as string) ?? "",
+  }
 }
 
-export function getAdjacentPosts(slug: string): {
+export async function getAdjacentPosts(slug: string): Promise<{
   prevPost?: { slug: string; title: string }
   nextPost?: { slug: string; title: string }
-} {
-  const posts = getAllPosts()
+}> {
+  const posts = await getAllPosts()
   const slugs = posts.map((p) => p.slug)
   const idx = slugs.indexOf(slug)
   return {

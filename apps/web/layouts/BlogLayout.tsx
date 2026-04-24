@@ -99,6 +99,15 @@ function ShareBar({ title, slug }: { title: string; slug: string }) {
 }
 
 export function BlogLayout({ title, date, author, description, slug, image, children }: BlogLayoutProps) {
+  // Fire-and-forget view counter. Idempotente al nivel de Supabase (sin rate limit aquí todavía).
+  useEffect(() => {
+    const key = `view:${slug}`
+    const last = typeof window !== "undefined" ? window.sessionStorage.getItem(key) : null
+    if (last) return
+    fetch(`/api/blog/${encodeURIComponent(slug)}/view`, { method: "POST" }).catch(() => {})
+    if (typeof window !== "undefined") window.sessionStorage.setItem(key, "1")
+  }, [slug])
+
   return (
     <div className="relative min-h-screen bg-[var(--c-bg)] text-[var(--c-text)] overflow-x-hidden font-sans">
         <NoiseOverlay />
@@ -145,6 +154,7 @@ export function BlogLayout({ title, date, author, description, slug, image, chil
               <FadeIn delay={0.09}>
                 <div className="mb-12 rounded-xl overflow-hidden">
                   {isCloudinaryId(image) ? (
+                    cloudinaryUrl(image, 800) ? (
                     <img
                       src={cloudinaryUrl(image, 800)}
                       srcSet={cloudinarySrcSet(image)}
@@ -154,6 +164,7 @@ export function BlogLayout({ title, date, author, description, slug, image, chil
                       loading="eager"
                       decoding="sync"
                     />
+                    ) : null
                   ) : (
                     <img
                       src={image}
