@@ -4,7 +4,7 @@ import StarterKit from "@tiptap/starter-kit"
 import Link from "@tiptap/extension-link"
 import Image from "@tiptap/extension-image"
 import Placeholder from "@tiptap/extension-placeholder"
-import { useEffect, useRef } from "react"
+import { useEffect, useMemo } from "react"
 import {
   Bold, Italic, Link2, Heading1, Heading2, Heading3,
   List, Quote, Minus, Code, Unlink,
@@ -20,10 +20,8 @@ interface Props {
 
 export function BlogMarkdownEditor({ value, onChange }: Props) {
   // Value inicial: si es markdown legacy, se convierte a HTML una vez.
-  const initialContent = useRef<string>("")
-  if (initialContent.current === "") {
-    initialContent.current = markdownToHtml(value)
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const initialContent = useMemo(() => markdownToHtml(value), [])
 
   const editor = useEditor({
     extensions: [
@@ -41,7 +39,7 @@ export function BlogMarkdownEditor({ value, onChange }: Props) {
         placeholder: "Empieza a escribir tu post...",
       }),
     ],
-    content: initialContent.current,
+    content: initialContent,
     immediatelyRender: false,
     editorProps: {
       attributes: {

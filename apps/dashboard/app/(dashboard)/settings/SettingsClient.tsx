@@ -33,7 +33,9 @@ export function SettingsClient({ initialSettings }: Props) {
 
   useEffect(() => {
     const t = searchParams.get("tab") as Tab | null
-    if (t && VALID_TABS.includes(t)) setTab(t)
+    if (t && VALID_TABS.includes(t)) {
+      queueMicrotask(() => setTab(t))
+    }
   }, [searchParams])
 
   async function save(partial: Partial<UserSettings>) {
@@ -294,7 +296,7 @@ function TeamTab() {
                   <p className="truncate text-[11.5px] text-[var(--c-text-muted)]">{f.role}</p>
                 </div>
               </div>
-              <p className="text-[12px] leading-relaxed text-[var(--c-text-muted)]">"{f.quote}"</p>
+              <p className="text-[12px] leading-relaxed text-[var(--c-text-muted)]">&ldquo;{f.quote}&rdquo;</p>
               <div className="flex flex-wrap gap-1.5 border-t border-[var(--c-border)] pt-3">
                 {f.platforms.map(({ icon: Icon, label }) => (
                   <div

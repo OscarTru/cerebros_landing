@@ -140,7 +140,7 @@ export function ContenidoClient({ posts, totalLikes, totalViews = 0, streak, top
     if (!isNew) return
     const validPlatforms: Plataforma[] = ["instagram", "youtube", "blog", "newsletter"]
     const platform = platformParam && validPlatforms.includes(platformParam) ? platformParam : "instagram"
-    openModal(new Date().toISOString().slice(0, 10), platform)
+    queueMicrotask(() => openModal(new Date().toISOString().slice(0, 10), platform))
     router.replace("/contenido")
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

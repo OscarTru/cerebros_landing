@@ -173,7 +173,7 @@ export function HtmlEditor({ value, onChange }: Props) {
           className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-[var(--c-border)] bg-[var(--c-surface-2)] text-[12px] font-medium text-[var(--c-text-muted)] hover:bg-[var(--c-surface-3)]"
         >
           <FileCode className="h-3.5 w-3.5" />
-          Usar plantilla "Esponjosos"
+          Usar plantilla &ldquo;Esponjosos&rdquo;
         </button>
       </div>
       <textarea

@@ -16,11 +16,17 @@ export function EmailPreview({ draftId, revision }: Props) {
 
   useEffect(() => {
     let cancelled = false
-    setLoading(true)
-    fetch(`/api/newsletter/drafts/${draftId}/preview-render`, { method: "POST" })
-      .then((r) => r.json())
-      .then((j) => { if (!cancelled) setHtml(j.html ?? "") })
-      .finally(() => { if (!cancelled) setLoading(false) })
+    async function load() {
+      setLoading(true)
+      try {
+        const r = await fetch(`/api/newsletter/drafts/${draftId}/preview-render`, { method: "POST" })
+        const j = await r.json()
+        if (!cancelled) setHtml(j.html ?? "")
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    void load()
     return () => { cancelled = true }
   }, [draftId, revision])
 
