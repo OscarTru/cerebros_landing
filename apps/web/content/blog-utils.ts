@@ -10,12 +10,13 @@ export interface BlogPost extends PostMeta {
 
 let _client: SupabaseClient | null = null
 
-function getClient(): SupabaseClient {
+function getClient(): SupabaseClient | null {
   if (_client) return _client
   const url = process.env.SUPABASE_URL
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!url || !key) {
-    throw new Error("SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY requeridas")
+    // En CI sin env vars, devolvemos null y las funciones retornan vacío.
+    return null
   }
   _client = createClient(url, key, { auth: { persistSession: false } })
   return _client
@@ -37,7 +38,9 @@ function rowToPostMeta(row: Record<string, unknown>): PostMeta {
 }
 
 export async function getAllPosts(): Promise<PostMeta[]> {
-  const { data, error } = await getClient()
+  const client = getClient()
+  if (!client) return []
+  const { data, error } = await client
     .from("blog_posts")
     .select("slug, title, description, author, image, reading_time, headings, published_at, created_at")
     .eq("status", "published")
@@ -57,7 +60,9 @@ export async function getAllSlugs(): Promise<string[]> {
 }
 
 export async function getPostBySlug(slug: string): Promise<BlogPost | undefined> {
-  const { data, error } = await getClient()
+  const client = getClient()
+  if (!client) return undefined
+  const { data, error } = await client
     .from("blog_posts")
     .select("slug, title, description, author, image, reading_time, headings, published_at, created_at, content")
     .eq("slug", slug)
