@@ -1,0 +1,258 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <!-- Background gradient -->
+    <radialGradient id="bgGlow" cx="72%" cy="50%" r="55%" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1c1c22" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#0a0a0b" stop-opacity="1"/>
+    </radialGradient>
+
+    <!-- Center-right soft glow -->
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.07"/>
+      <stop offset="60%" stop-color="#ffffff" stop-opacity="0.02"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Neural node glow -->
+    <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Edge fade for top/bottom vignette -->
+    <linearGradient id="vignetteTop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0a0a0b" stop-opacity="0.6"/>
+      <stop offset="30%" stop-color="#0a0a0b" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="vignetteBottom" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="70%" stop-color="#0a0a0b" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#0a0a0b" stop-opacity="0.7"/>
+    </linearGradient>
+
+    <!-- Left fade for text area separation -->
+    <linearGradient id="leftFade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0a0a0b" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#0a0a0b" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Subtle horizontal rule gradient -->
+    <linearGradient id="ruleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f4f4f5" stop-opacity="0.3"/>
+      <stop offset="60%" stop-color="#f4f4f5" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#f4f4f5" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Filter: soft blur for glow elements -->
+    <filter id="softBlur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <filter id="nodeBlur" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+    <filter id="largeBlur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="40"/>
+    </filter>
+  </defs>
+
+  <!-- Base background -->
+  <rect width="1200" height="630" fill="#0a0a0b"/>
+  <rect width="1200" height="630" fill="url(#bgGlow)"/>
+
+  <!-- Center-right radial glow blob -->
+  <ellipse cx="860" cy="315" rx="320" ry="260" fill="url(#centerGlow)"/>
+  <!-- Extra subtle halo -->
+  <ellipse cx="860" cy="315" rx="180" ry="150" fill="#ffffff" fill-opacity="0.03" filter="url(#largeBlur)"/>
+
+  <!-- ===================== NEURAL NETWORK DECORATION ===================== -->
+  <!-- Positioned center-right, abstract and minimal -->
+
+  <!-- Connection lines between nodes (rendered first, behind nodes) -->
+  <!-- Long range connections -->
+  <g stroke="#ffffff" stroke-opacity="0.08" stroke-width="1" fill="none">
+    <line x1="780" y1="180" x2="920" y2="260"/>
+    <line x1="780" y1="180" x2="850" y2="130"/>
+    <line x1="780" y1="180" x2="690" y2="230"/>
+    <line x1="920" y1="260" x2="1010" y2="200"/>
+    <line x1="920" y1="260" x2="980" y2="340"/>
+    <line x1="920" y1="260" x2="840" y2="315"/>
+    <line x1="840" y1="315" x2="780" y2="400"/>
+    <line x1="840" y1="315" x2="950" y2="380"/>
+    <line x1="840" y1="315" x2="760" y2="290"/>
+    <line x1="950" y1="380" x2="1050" y2="420"/>
+    <line x1="950" y1="380" x2="980" y2="340"/>
+    <line x1="780" y1="400" x2="690" y2="460"/>
+    <line x1="780" y1="400" x2="870" y2="470"/>
+    <line x1="1010" y1="200" x2="1090" y2="260"/>
+    <line x1="1090" y1="260" x2="1120" y2="340"/>
+    <line x1="1120" y1="340" x2="1050" y2="420"/>
+    <line x1="690" y1="230" x2="620" y2="180"/>
+    <line x1="690" y1="230" x2="760" y2="290"/>
+    <line x1="760" y1="290" x2="690" y2="340"/>
+    <line x1="690" y1="340" x2="690" y2="460"/>
+    <line x1="850" y1="130" x2="960" y2="110"/>
+    <line x1="960" y1="110" x2="1010" y2="200"/>
+    <line x1="870" y1="470" x2="1050" y2="420"/>
+    <line x1="870" y1="470" x2="980" y2="530"/>
+    <line x1="690" y1="460" x2="750" y2="530"/>
+    <line x1="750" y1="530" x2="870" y2="530" stroke-opacity="0.05"/>
+    <line x1="870" y1="530" x2="980" y2="530" stroke-opacity="0.04"/>
+    <!-- extra cross-links for richness -->
+    <line x1="1010" y1="200" x2="980" y2="340" stroke-opacity="0.05"/>
+    <line x1="620" y1="180" x2="690" y2="340" stroke-opacity="0.04"/>
+    <line x1="1120" y1="340" x2="980" y2="340" stroke-opacity="0.06"/>
+  </g>
+
+  <!-- Node glow halos (blurred, very subtle) -->
+  <g filter="url(#nodeBlur)">
+    <circle cx="840" cy="315" r="14" fill="#ffffff" fill-opacity="0.12"/>
+    <circle cx="920" cy="260" r="10" fill="#ffffff" fill-opacity="0.09"/>
+    <circle cx="950" cy="380" r="9"  fill="#ffffff" fill-opacity="0.08"/>
+    <circle cx="780" cy="180" r="8"  fill="#ffffff" fill-opacity="0.07"/>
+    <circle cx="1010" cy="200" r="7" fill="#ffffff" fill-opacity="0.07"/>
+    <circle cx="980" cy="340" r="7"  fill="#ffffff" fill-opacity="0.07"/>
+    <circle cx="780" cy="400" r="7"  fill="#ffffff" fill-opacity="0.06"/>
+  </g>
+
+  <!-- Node dots (crisp, rendered on top) -->
+  <g fill="#f4f4f5">
+    <!-- Primary / brightest nodes -->
+    <circle cx="840" cy="315" r="4.5" fill-opacity="0.85"/>
+    <circle cx="920" cy="260" r="3.5" fill-opacity="0.65"/>
+    <circle cx="950" cy="380" r="3.5" fill-opacity="0.60"/>
+    <circle cx="780" cy="180" r="3"   fill-opacity="0.55"/>
+    <circle cx="1010" cy="200" r="3"  fill-opacity="0.50"/>
+    <circle cx="980" cy="340" r="3"   fill-opacity="0.50"/>
+    <circle cx="780" cy="400" r="3"   fill-opacity="0.50"/>
+    <!-- Secondary nodes -->
+    <circle cx="850" cy="130" r="2.5" fill-opacity="0.40"/>
+    <circle cx="690" cy="230" r="2.5" fill-opacity="0.38"/>
+    <circle cx="760" cy="290" r="2.5" fill-opacity="0.38"/>
+    <circle cx="690" cy="340" r="2.5" fill-opacity="0.35"/>
+    <circle cx="1090" cy="260" r="2.5" fill-opacity="0.35"/>
+    <circle cx="1120" cy="340" r="2.5" fill-opacity="0.33"/>
+    <circle cx="1050" cy="420" r="2.5" fill-opacity="0.33"/>
+    <circle cx="870" cy="470" r="2.5" fill-opacity="0.32"/>
+    <circle cx="690" cy="460" r="2.5" fill-opacity="0.30"/>
+    <circle cx="620" cy="180" r="2"   fill-opacity="0.28"/>
+    <circle cx="960" cy="110" r="2"   fill-opacity="0.28"/>
+    <circle cx="750" cy="530" r="2"   fill-opacity="0.20"/>
+    <circle cx="870" cy="530" r="2"   fill-opacity="0.18"/>
+    <circle cx="980" cy="530" r="2"   fill-opacity="0.18"/>
+  </g>
+
+  <!-- ===================== VIGNETTE OVERLAYS ===================== -->
+  <rect width="1200" height="630" fill="url(#vignetteTop)"/>
+  <rect width="1200" height="630" fill="url(#vignetteBottom)"/>
+
+  <!-- Left-side content fade: text area gets slightly darker left edge -->
+  <rect width="540" height="630" fill="#0a0a0b" fill-opacity="0.18"/>
+
+  <!-- ===================== BORDER / FRAME ===================== -->
+  <rect x="1" y="1" width="1198" height="628" rx="0" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1.5"/>
+
+  <!-- ===================== TEXT CONTENT ===================== -->
+
+  <!-- Small eyebrow label top-left -->
+  <text
+    x="72"
+    y="108"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-size="16"
+    font-weight="400"
+    letter-spacing="3"
+    fill="#71717a"
+    text-anchor="start"
+  >NEUROCIENCIAS · EDUCACIÓN</text>
+
+  <!-- Horizontal rule under eyebrow -->
+  <rect x="72" y="122" width="320" height="1" fill="url(#ruleGrad)"/>
+
+  <!-- Brand name — large serif -->
+  <text
+    x="72"
+    y="230"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="82"
+    font-weight="700"
+    fill="#f4f4f5"
+    fill-opacity="0.97"
+    text-anchor="start"
+    letter-spacing="-1"
+  >Cerebros</text>
+  <text
+    x="72"
+    y="320"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="82"
+    font-weight="700"
+    fill="#f4f4f5"
+    fill-opacity="0.97"
+    text-anchor="start"
+    letter-spacing="-1"
+  >Esponjosos</text>
+
+  <!-- Tagline — two lines for readability -->
+  <text
+    x="72"
+    y="378"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-size="21"
+    font-weight="300"
+    fill="#a1a1aa"
+    text-anchor="start"
+    letter-spacing="0.2"
+  >Convertimos las Neurociencias en algo que</text>
+  <text
+    x="72"
+    y="406"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-size="21"
+    font-weight="300"
+    fill="#a1a1aa"
+    text-anchor="start"
+    letter-spacing="0.2"
+  >puedas entender, recordar y aplicar.</text>
+
+  <!-- Separator dot row -->
+  <circle cx="72"  cy="455" r="2" fill="#3f3f46"/>
+  <circle cx="84"  cy="455" r="2" fill="#3f3f46"/>
+  <circle cx="96"  cy="455" r="2" fill="#3f3f46"/>
+
+  <!-- Authors label -->
+  <text
+    x="72"
+    y="498"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-size="17"
+    font-weight="400"
+    fill="#71717a"
+    text-anchor="start"
+    letter-spacing="0.5"
+  >Oscar &amp; Stephanie · Residentes de Neurología</text>
+
+  <!-- Domain — bottom right, muted -->
+  <text
+    x="1128"
+    y="582"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-size="15"
+    font-weight="400"
+    fill="#52525b"
+    text-anchor="end"
+    letter-spacing="0.8"
+  >cerebrosesponjosos.com</text>
+
+  <!-- Bottom-left subtle branding mark — small horizontal line + text -->
+  <rect x="72" y="570" width="28" height="1.5" fill="#3f3f46" rx="1"/>
+  <text
+    x="108"
+    y="582"
+    font-family="'Helvetica Neue', Arial, sans-serif"
+    font-size="13"
+    font-weight="400"
+    fill="#3f3f46"
+    text-anchor="start"
+    letter-spacing="1.5"
+  >PODCAST · YOUTUBE · BLOG</text>
+
+</svg>

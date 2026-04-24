@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cerebros Esponjosos - Aprende sobre tu cerebro</title>
+    <meta name="description" content="Aprende sobre tu cerebro. Convertimos las Neurociencias en algo que puedas entender, recordar y aplicar." />
+    <meta property="og:title" content="Cerebros Esponjosos - Aprende sobre tu cerebro" />
+    <meta property="og:description" content="Aprende sobre tu cerebro. Convertimos las Neurociencias en algo que puedas entender, recordar y aplicar." />
+    <meta property="og:type" content="website" />
+    <script>
+      // No-flash theme init — runs before React mounts
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var isDark = stored ? stored === "dark" : prefersDark;
+          if (isDark) document.documentElement.classList.add("dark");
+        } catch (e) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

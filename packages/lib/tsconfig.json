@@ -1,0 +1,4 @@
+{
+  "extends": "@cerebros/config/tsconfig/base",
+  "include": ["src"]
+}
